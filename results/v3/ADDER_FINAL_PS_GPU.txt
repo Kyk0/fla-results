@@ -1,0 +1,31 @@
+Mon Nov 16 01:38:39 UTC 2026
+    PID    PPID USER     COMMAND
+   2362       1 kkolesni /usr/lib/systemd/systemd --user
+   2366    2362 kkolesni (sd-pam)
+ 274392    2362 kkolesni /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+1424628 1424599 kkolesni sshd: kkolesni@notty
+1434562 1424628 kkolesni bash -c date -u; ps -u kkolesni -o pid,ppid,user,args; nvidia-smi; pids=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | paste -sd, -); if [ -n "$pids" ]; then ps -o pid,user,args -p "$pids"; fi; ls -l /data/kkolesni/fla-terrain/agents/STOP
+1434587 1434562 kkolesni ps -u kkolesni -o pid,ppid,user,args
+Sun Nov 15 20:38:39 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.99.02              Driver Version: 595.99.02      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 NVL                Off |   00000000:B5:00.0 Off |                    0 |
+| N/A   65C    P0            309W /  350W |    1264MiB /  95830MiB |     58%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         1432266      C   ...4bit-release-8.2.1/FahCore_27       1254MiB |
++-----------------------------------------------------------------------------------------+
+    PID USER     COMMAND
+1432266 traklovi /data/traklovi/fah/cores/openmm-core-27/centos-7.9.2009-64bit/release/fahcore-27-centos-7.9.2009-64bit-release-8.2.1/FahCore_27 -dir rGVEmdIdVkhB8D7DxqCJEnnsHNk5kPjGocI3Nr_XqGg -suffix 01 -version 8.5.6 -lifeline 7663 -gpu-uuid 6b7392b2-7c42-868b-d579-2c293736daae -gpu-platform cuda -gpu-vendor nvidia -opencl-platform 0 -opencl-device 0 -cuda-platform 0 -cuda-device 0 -gpu 0
+-rw-r--r-- 1 kkolesni CSCI-CS-STUDENTS 0 Nov 15 20:37 /data/kkolesni/fla-terrain/agents/STOP

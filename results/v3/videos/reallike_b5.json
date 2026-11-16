@@ -1,0 +1,85 @@
+{
+ "commit": "a0e6e6f166b53008eb31ac473821d2c5fa335b8d clean",
+ "seed": 0,
+ "reading": "noise-free",
+ "clips": {
+  "reallike_vs_v2_edge.mp4": {
+   "duration_s": 3.266667,
+   "fps": 30.0,
+   "width": 1920,
+   "height": 1080,
+   "frames": 98,
+   "bytes": 878901,
+   "fell": null,
+   "foot": "L",
+   "stance_t": [
+    6.4,
+    7.02
+   ],
+   "partial_frames": 31,
+   "stance_frames": 31,
+   "true_force_identical": true,
+   "ratio_sum_over_true": {
+    "nominal": {
+     "max": 1.1111111308509094,
+     "median": 0.9996740242325617,
+     "frames": 31
+    },
+    "reallike60": {
+     "max": 2.644242037193923,
+     "median": 1.5079322911591373,
+     "frames": 31
+    },
+    "reallike30": {
+     "max": 4.599392713652833,
+     "median": 2.0840896046865733,
+     "frames": 31
+    }
+   },
+   "stills": [
+    "/data/kkolesni/fla-terrain/render/v3/frames/reallike_vs_v2_edge_0.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/reallike_vs_v2_edge_1.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/reallike_vs_v2_edge_2.png"
+   ]
+  },
+  "reallike_vs_v2_hard_grip.mp4": {
+   "duration_s": 3.266667,
+   "fps": 30.0,
+   "width": 1920,
+   "height": 1080,
+   "frames": 98,
+   "bytes": 451105,
+   "fell": null,
+   "foot": "L",
+   "stance_t": [
+    3.42,
+    4.04
+   ],
+   "partial_frames": 0,
+   "stance_frames": 31,
+   "true_force_identical": true,
+   "ratio_sum_over_true": {
+    "nominal": {
+     "max": 1.1111111353089669,
+     "median": 1.0001323131252309,
+     "frames": 30
+    },
+    "reallike60": {
+     "max": 2.643976519354776,
+     "median": 1.5205449327779912,
+     "frames": 30
+    },
+    "reallike30": {
+     "max": 4.598596106977726,
+     "median": 2.09688934383251,
+     "frames": 30
+    }
+   },
+   "stills": [
+    "/data/kkolesni/fla-terrain/render/v3/frames/reallike_vs_v2_hard_grip_0.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/reallike_vs_v2_hard_grip_1.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/reallike_vs_v2_hard_grip_2.png"
+   ]
+  }
+ }
+}

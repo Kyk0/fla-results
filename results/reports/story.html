@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The project, step by step</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+<style id="site-extra">
+.topnav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topnav .in { max-width: 880px; margin: 0 auto; padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; font-size: 14.5px; }
+.topnav a { color: var(--muted); text-decoration: none; }
+.topnav a:hover { color: var(--accent); }
+.topnav a.home { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); margin-right: 6px; }
+</style>
+<style>
+.steps { display: flex; flex-direction: column; gap: 0; }
+.stepb { display: grid; grid-template-columns: 64px 1fr; gap: 0 22px; padding: 30px 0; border-top: 1px solid var(--line); scroll-margin-top: 50px; }
+.stepb .no { font-family: var(--font-display); font-weight: 600; font-size: 38px; color: var(--accent); line-height: 1; }
+.stepb h2 { font-size: 25px; margin: 0 0 4px; }
+.stepb .when { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); margin-bottom: 14px; }
+.qa { display: grid; grid-template-columns: 120px 1fr; gap: 8px 16px; margin: 0; }
+.qa dt { font-size: 12.5px; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding-top: 4px; }
+.qa dd { margin: 0; }
+.qa dd.res { font-weight: 500; }
+.stepb .more { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.stepb .more a { font-size: 14px; text-decoration: none; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 5px 13px; }
+.stepb .more a:hover { border-color: var(--accent); color: var(--accent); }
+.stepb figure { margin-top: 16px; }
+.part { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 34px 0 6px; }
+.no.fail { color: #9b2c2c; } @media (prefers-color-scheme: dark) { .no.fail { color: #f09a94; } }
+@media (max-width: 600px) { .stepb { grid-template-columns: 1fr; } .qa { grid-template-columns: 1fr; gap: 2px 0; } .qa dd { margin-bottom: 10px; } }
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Site"><div class="in"><a class="home" href="index.html">FLA results</a><a href="story.html">Step by step</a><a href="index.html#sole">The sole</a><a href="index.html#camera">The camera</a><a href="index.html#vlm">The language model</a><a href="index.html#lies">Floors that lie</a><a href="index.html#walking">Walking</a><a href="index.html#sure">How sure are we</a><a href="index.html#reports">All pages</a><a href="index.html#words">Words</a></div></nav>
+<main>
+
+<header>
+  <div class="meta">FLA · the whole project in order · <a href="index.html">overview</a></div>
+  <h1>The project, step by step</h1>
+  <p class="lede">Twelve steps, in the order they happened. For each: the question, what was done, what came out, and what it means. Every step links to its full page.</p>
+  <div class="flag">Simulation only. Nothing here comes from the real sole yet.</div>
+</header>
+
+<nav class="toc" aria-label="Steps">
+  <ol>
+    <li><a href="#s1">A first sole with eight zones</a></li><li><a href="#s2">A finer sole, three gaits</a></li><li><a href="#s3">How many sensing points?</a></li><li><a href="#s4">Give the robot eyes</a></li><li><a href="#s5">Train two teachers</a></li><li><a href="#s6">Teachers train the camera</a></li><li><a href="#s7">A large language model</a></li><li><a href="#s8">Someone else checks</a></li><li><a href="#s9">One patch, hard or soft</a></li><li><a href="#s10">Check again</a></li><li><a href="#s11">Softer landings on the G1</a></li><li><a href="#s12">The same recipe on the K1</a></li>
+  </ol>
+</nav>
+
+<section class="steps">
+<div class="part">Part one · what the sole can feel</div><div class="stepb" id="s1"><div class="no">1</div><div>
+  <h2>A first sole with eight zones</h2><div class="when">Step 1, first run</div>
+  <dl class="qa"><dt>The question</dt><dd>Does a sole that feels pressure and sideways force help a humanoid tell what it is standing on?</dd><dt>What I did</dt><dd>Built a simulated sole with eight pressure zones per foot for the Booster K1 in MuJoCo. Trained a classifier to name six kinds of floor, with and without the sole, and to estimate friction.</dd><dt>The result</dt><dd class="res">Naming the floor: 0.80 without the sole, 0.86 with pressure. Adding sideways force (shear) lowered the friction error from 0.166 to 0.150, less than the improvement set as the target beforehand.</dd><dt>What it means</dt><dd>The sole helps. Shear helped less than hoped, and friction turned out to be measurable only when the foot is close to slipping.</dd></dl>
+  <div class="more"><a href="step1-run1.html">Full report</a></div>
+</div></div>
+<div class="stepb" id="s2"><div class="no">2</div><div>
+  <h2>A finer sole, and three ways of walking</h2><div class="when">Step 1, second run</div>
+  <dl class="qa"><dt>The question</dt><dd>Does a detailed pressure map do better, and does it still work when the robot walks differently?</dd><dt>What I did</dt><dd>Rebuilt the sole with 19 by 8 pressure points and four shear arrows per foot. Recorded 6,139 episodes with two flat-foot gaits and one human-like heel-to-toe gait.</dd><dt>The result</dt><dd class="res">Naming the floor: 0.89 with the sole against 0.82 from joint sensors alone. Knowing whether the foot is supported: 0.93 against 0.76. A lifted robot is noticed in 0.1 s instead of 0.3 s. On a gait never seen in training, a sole-only model scores 0.53 and a model that also reads joints 0.07.</dd><dt>What it means</dt><dd>The clearest gain is knowing about foot support, and a model that reads only the sole carries over to a new gait where a joint-based one does not.</dd></dl>
+  <div class="more"><a href="../summary_en.html">Step 1 summary</a><a href="step1-run2.html">Full report</a></div>
+</div></div>
+<div class="stepb" id="s3"><div class="no">3</div><div>
+  <h2>How many sensing points are worth having?</h2><div class="when">Step 1, third run</div>
+  <dl class="qa"><dt>The question</dt><dd>Is a denser sole always better?</dd><dt>What I did</dt><dd>Pooled the pressure map down to 4, 8 and 18 zones per foot and tested each with and without shear, on familiar data, on a new gait, and with the sensor model changed.</dd><dt>The result</dt><dd class="res">On familiar data more points help: 0.78 with 4 zones, 0.86 with all 152 points. With a changed sensor the order reverses: 0.69 with 4 zones, 0.48 with the full map. Four shear arrows help at every density.</dd><dt>What it means</dt><dd>Detail in the pressure map is fragile in simulation. Four pressure zones with four shear arrows per foot is the combination that holds, so everything after this uses only that.</dd></dl>
+  <figure><video controls muted playsinline preload="metadata" src="media/sole-closeup_clip.mp4"></video><figcaption>The sole during a step, slowed down.</figcaption></figure><div class="more"><a href="step1-run3.html">The sensor-layout check</a><a href="sole-closeup.html">The sole, close up</a></div>
+</div></div>
+<div class="part">Part two · teaching the camera, six floor types</div><div class="stepb" id="s4"><div class="no">4</div><div>
+  <h2>Give the robot eyes</h2><div class="when">Step 2</div>
+  <dl class="qa"><dt>The question</dt><dd>What did the robot see just before each step?</dd><dt>What I did</dt><dd>Replayed the recorded episodes exactly and rendered them through a camera on the torso, with photo textures on the floor. Some floors were made to deceive: they look like one type and behave like another.</dd><dt>The result</dt><dd class="res">54,010 footsteps from 1,572 episodes, each with the picture before the step and the sole reading after it. A quarter of the textures and all deceptive floors are kept for testing only.</dd><dt>What it means</dt><dd>This is the dataset every later comparison uses. Building it also exposed a gap: the simulated sole does not register a force that pushes along it, as at toe-off.</dd></dl>
+  <figure><img src="media/dataset_pilot_frames.png" alt="Camera frames with the spot where the foot will land marked in red." loading="lazy" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Camera frames with the spot where the foot will land marked in red.</figcaption></figure><div class="more"><a href="dataset.html">The dataset</a></div>
+</div></div>
+<div class="stepb" id="s5"><div class="no">5</div><div>
+  <h2>Train two teachers</h2><div class="when">Step 2</div>
+  <dl class="qa"><dt>The question</dt><dd>How well can the floor be named after the step, from the sole and from the joints?</dd><dt>What I did</dt><dd>Trained one classifier on the sole's four zones and four arrows, and one on joint sensors, both on two gaits only.</dd><dt>The result</dt><dd class="res">On those gaits they tie: 0.804 and 0.805. On the third gait the sole teacher keeps 0.399 and the joint teacher drops to 0.095, which is guessing.</dd><dt>What it means</dt><dd>Both can label steps for the camera on familiar gaits. Only the sole is still useful on a new one.</dd></dl>
+  <div class="more"><a href="teachers.html">The teachers</a></div>
+</div></div>
+<div class="stepb" id="s6"><div class="no">6</div><div>
+  <h2>Let the teachers train the camera</h2><div class="when">Step 2</div>
+  <dl class="qa"><dt>The question</dt><dd>Does a camera taught by the sole learn the floor, and is the sole a better teacher than the joints?</dd><dt>What I did</dt><dd>Took a frozen vision model (DINOv3) and trained a small part on top, three times: with the sole's labels, the joint teacher's labels, and perfect labels as the ceiling.</dd><dt>The result</dt><dd class="res">Familiar gaits: 0.82 from the sole, 0.82 from the joints, 0.86 from perfect labels. New gait: 0.49 from the sole, 0.10 from the joints. On deceptive floors the camera scores about 0.1 and the sole after the step 0.82.</dd><dt>What it means</dt><dd>The camera does learn from touch. The sole is the better teacher exactly when the gait is new. A camera cannot see what a deceptive floor hides.</dd></dl>
+  <figure><img src="media/vision-head_fig_abc.png" alt="Camera score by who supplied the labels. Left: familiar gaits. Middle: a new gait." loading="lazy" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Camera score by who supplied the labels. Left: familiar gaits. Middle: a new gait.</figcaption></figure><div class="more"><a href="vision-head.html">Sole or joints as the teacher</a><a href="support-state.html">A weak side result: foot support</a></div>
+</div></div>
+<div class="stepb" id="s7"><div class="no">7</div><div>
+  <h2>Try a large language-and-vision model</h2><div class="when">Step 2</div>
+  <dl class="qa"><dt>The question</dt><dd>Can a general 7-billion-parameter model simply be asked what the floor is?</dd><dt>What I did</dt><dd>Asked Qwen2.5-VL for the floor type in real floor photos and in the simulated frames, then tuned it on the sole's labels.</dd><dt>The result</dt><dd class="res">Real photos, no training: 0.68. Simulated frames: 0.34, rising to 0.72 after tuning. After that tuning its real-photo score fell to 0.38.</dd><dt>What it means</dt><dd>It knows something about real floors out of the box, but it is weaker than the small trained model, and tuning it on simulation damages what it knew.</dd></dl>
+  <div class="more"><a href="vlm-real-photos.html">On real photos</a><a href="vlm-lora.html">Tuning it</a></div>
+</div></div>
+<div class="stepb" id="s8"><div class="no">8</div><div>
+  <h2>Have someone else check</h2><div class="when">Step 2</div>
+  <dl class="qa"><dt>The question</dt><dd>Do the numbers survive a re-check by someone who did none of the work?</dd><dt>What I did</dt><dd>An independent re-check recomputed every headline number with its own code, searched for leaks between training and test, and looked at samples.</dd><dt>The result</dt><dd class="res">Of 59 claims, 33 hold, 22 hold with caveats, 1 does not hold, 3 could not be verified. No leaks.</dd><dt>What it means</dt><dd>The results stand. The caveats: only three test textures per floor type, and one new gait.</dd></dl>
+  <div class="more"><a href="recheck-1.html">The re-check</a></div>
+</div></div>
+<div class="part">Part three · a simpler, sharper experiment</div><div class="stepb" id="s9"><div class="no">9</div><div>
+  <h2>Narrow it down to one patch, hard or soft</h2><div class="when">Step 2, second experiment</div>
+  <dl class="qa"><dt>The question</dt><dd>Does it work in the simplest useful form: one patch of floor ahead of the feet, hard or soft, on every frame?</dd><dt>What I did</dt><dd>Tilted the camera steeply down, chose a fixed patch 0.45 m ahead where the legs do not get in the way, and rendered 400 episodes with 72 floor textures.</dd><dt>The result</dt><dd class="res">A camera taught by the sole scores 0.985, the same as with perfect labels. A small vision model matches the large one at about 4,000 pictures per second; the language model scores 0.668 at 47. On deceptive floors the camera scores 0.03 and the sole 0.997. The camera sees a change of floor about 1.3 steps early.</dd><dt>What it means</dt><dd>In its simplest form the idea works and runs fast. This experiment cannot rank the teachers, because hard and soft are too easy to tell apart after the step.</dd></dl>
+  <figure><video controls muted playsinline preload="metadata" src="media/fixed-patch_course.mp4"></video><figcaption>Hard, soft and two deceptive patches. Green is right, red is wrong.</figcaption></figure><div class="more"><a href="fixed-patch.html">The five comparisons</a><a href="dataset-2.html">Dataset and camera</a><a href="teachers-2.html">The teachers</a></div>
+</div></div>
+<div class="stepb" id="s10"><div class="no">10</div><div>
+  <h2>Check again, and find the weak points</h2><div class="when">Step 2, second experiment</div>
+  <dl class="qa"><dt>The question</dt><dd>What could make that 0.985 misleading?</dd><dt>What I did</dt><dd>A second independent re-check, with extra controls: no picture at all, colour only, and a whole material left out of training.</dd><dt>The result</dt><dd class="res">Of 39 claims, 20 hold, 17 hold with caveats, none fails. With a whole material unseen the camera drops to 0.726. Even with no picture, body height alone gives 0.957, because the robot stands about 6 mm lower on soft floor.</dd><dt>What it means</dt><dd>The score is real but generous: new kinds of material are the weak point, and a simulated soft floor gives itself away through the body.</dd></dl>
+  <div class="more"><a href="recheck-2.html">The re-check</a></div>
+</div></div>
+<div class="part">Part four · walking</div><div class="stepb" id="s11"><div class="no fail">11</div><div>
+  <h2>Softer landings on another robot</h2><div class="when">Walking</div>
+  <dl class="qa"><dt>The question</dt><dd>Can a walking policy be trained to land more gently using touch?</dd><dt>What I did</dt><dd>Rebuilt a published touch-aware method on a Unitree G1, starting from a pretrained hiking policy, and compared landings at the same walking speed.</dd><dt>The result</dt><dd class="res">It lands harder: 782 N against 680 N for the policy it started from. An early pass came only from walking slower.</dd><dt>What it means</dt><dd>It did not work within the training budget used. The lesson kept: always compare at equal speed.</dd></dl>
+  <div class="more"><a href="walking-g1.html">The G1 attempt</a></div>
+</div></div>
+<div class="stepb" id="s12"><div class="no fail">12</div><div>
+  <h2>The same recipe on the K1</h2><div class="when">Walking</div>
+  <dl class="qa"><dt>The question</dt><dd>Can that hiking recipe make the Booster K1 walk?</dd><dt>What I did</dt><dd>Ported the task to the K1 and tried three times, the last one starting from an existing K1 walking policy.</dd><dt>The result</dt><dd class="res">Two attempts stood still. The third walks at 0.41 m/s without falling in the simulator it was trained in, falls in 10 of 24 runs in a second simulator, and gets slower with more training.</dd><dt>What it means</dt><dd>Not solved. The two simulators disagree about the same policy, which is itself a warning about trusting either.</dd></dl>
+  <figure><video controls muted playsinline preload="metadata" src="media/walking-k1_attempt3_it200.mp4"></video><figcaption>The best attempt, in the simulator it was trained in.</figcaption></figure><div class="more"><a href="walking-k1.html">The K1 attempts</a></div>
+</div></div>
+<div class="part">Where this leaves things</div>
+<div class="short" style="margin-top:8px">
+  <h2>What is established, and what is not</h2>
+  <ol>
+    <li><strong>Established in simulation:</strong> the sole can label floors well enough to train a camera, and the camera then recognises familiar kinds of floor before the step.</li>
+    <li><strong>Established in simulation:</strong> a camera is fooled by looks; the sole is the check that catches it.</li>
+    <li><strong>Not established:</strong> any of this on the real robot. The sole model has known faults and has never been compared with the real sole.</li>
+    <li><strong>Not solved:</strong> recognising materials the camera has never seen, and changing how the robot walks.</li>
+    <li><strong>Next:</strong> a short recording with the real sole and camera; then estimating friction and stiffness as numbers, which is what a walking controller needs.</li>
+  </ol>
+</div>
+</section>
+
+<p class="small">Scores run from 0 to 1, where 1 is every step right. Words are explained in the <a href="index.html#words">glossary</a>.</p>
+
+</main>
+</body>
+</html>

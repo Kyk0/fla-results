@@ -1,0 +1,36 @@
+Mon Nov 16 01:38:02 UTC 2026
+    PID    PPID USER     COMMAND
+   2362       1 kkolesni /usr/lib/systemd/systemd --user
+   2367    2362 kkolesni (sd-pam)
+  16915    2362 kkolesni /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+1554189 1554162 kkolesni sshd: kkolesni@notty
+1560696 1554189 kkolesni bash -c date -u; ps -u kkolesni -o pid,ppid,user,args; nvidia-smi; pids=$(nvidia-smi --query-compute-apps=pid --format=csv,noheader | paste -sd, -); if [ -n "$pids" ]; then ps -o pid,user,args -p "$pids"; fi; ls -l /data/kkolesni/fla-terrain/agents/STOP /data/kkolesni/fla-terrain/agents/STOP_DEPUTY
+1560778 1560696 kkolesni ps -u kkolesni -o pid,ppid,user,args
+Mon Nov 16 01:38:02 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 595.99.02              Driver Version: 595.99.02      CUDA Version: 13.2     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA H100 NVL                Off |   00000000:B5:00.0 Off |                    0 |
+| N/A   40C    P0             89W /  350W |   87783MiB /  95830MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A         1043183      C   .../atran16/anaconda3/bin/python       1622MiB |
+|    0   N/A  N/A         1292579      C   ...dscribe/vllm/.venv/bin/python      11898MiB |
+|    0   N/A  N/A         1293413      C   ...dscribe/vllm/.venv/bin/python      74240MiB |
++-----------------------------------------------------------------------------------------+
+    PID USER     COMMAND
+1043183 atran16  /data/atran16/anaconda3/bin/python -m backend.app
+1292579 atran16  /data/atran16/external-share/medscribe/vllm/.venv/bin/python -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=48, pipe_handle=50) --multiprocessing-fork
+1293413 atran16  /data/atran16/external-share/medscribe/vllm/.venv/bin/python -c from multiprocessing.spawn import spawn_main; spawn_main(tracker_fd=46, pipe_handle=48) --multiprocessing-fork
+-rw-r--r-- 1 kkolesni CSCI-CS-STUDENTS 0 Nov 16 01:37 /data/kkolesni/fla-terrain/agents/STOP
+-rw-r--r-- 1 kkolesni CSCI-CS-STUDENTS 0 Nov 16 01:37 /data/kkolesni/fla-terrain/agents/STOP_DEPUTY

@@ -1,0 +1,111 @@
+{
+  "adder": {
+    "all_processes": [
+      {
+        "pid": 2362,
+        "ppid": 1,
+        "start": "1664",
+        "cmd": "/usr/lib/systemd/systemd --user"
+      },
+      {
+        "pid": 2366,
+        "ppid": 2362,
+        "start": "1765",
+        "cmd": "(sd-pam)"
+      },
+      {
+        "pid": 274392,
+        "ppid": 2362,
+        "start": "2882375",
+        "cmd": "/usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+      },
+      {
+        "pid": 761009,
+        "ppid": 1,
+        "start": "9153566",
+        "cmd": "bash -c cd /data/kkolesni/fla-terrain/agents && sed \"s|last=\\$(cat \\$M/last_end 2>/dev/null \\|\\| echo 0)|last=\\$(cat \\$M/last_end 2>/dev/null \\|\\| echo 0); lstart=\\$(cat \\$(ls \\$M/turn_*.start 2>/dev/null \\| tail -1) 2>/dev/null \\|\\| echo 0)|; s|\\[ \\$inbox -gt \\$last \\]|[ \\$inbox -gt \\$lstart ]|g\" manager_loop.sh > manager_loop.sh.new && diff manager_loop.sh manager_loop.sh.new; bash -n manager_loop.sh.new && chmod +x manager_loop.sh.new && mv manager_loop.sh.new manager_loop.sh && kill $(cat manager_loop.pid) && sleep 1 && nohup setsid ./manager_loop.sh >> manager_loop.log 2>&1 < /dev/null & sleep 2; cd /data/kkolesni/fla-terrain/agents && pgrep -f \"agents/manager_loop.sh|\\./manager_loop.sh\" | head -3 > /tmp/kk_lp; cat /tmp/kk_lp; head -1 /tmp/kk_lp > manager_loop.pid; rm /tmp/kk_lp; kill -0 $(cat manager_loop.pid) && echo \"loop alive pid $(cat manager_loop.pid)\"; kill -0 $(cat manager/pid) && echo \"manager tick still running (reading your message)\""
+      },
+      {
+        "pid": 761023,
+        "ppid": 761009,
+        "start": "9153667",
+        "cmd": "/bin/bash ./manager_loop.sh"
+      },
+      {
+        "pid": 1424628,
+        "ppid": 1424599,
+        "start": "18206033",
+        "cmd": "sshd: kkolesni@notty"
+      },
+      {
+        "pid": 1433462,
+        "ppid": 761023,
+        "start": "18282174",
+        "cmd": "sleep 60"
+      },
+      {
+        "pid": 1433873,
+        "ppid": 1424628,
+        "start": "18287408",
+        "cmd": "python3 -c import os,pwd,json,pathlib,subprocess\nuid=pwd.getpwnam('kkolesni').pw_uid\nallp=[]\nfor p in pathlib.Path('/proc').iterdir():\n if not p.name.isdigit():continue\n try:\n  if p.stat().st_uid!=uid:continue\n  cmd=(p/'cmdline').read_bytes().replace(b'\\0',b' ').decode(errors='replace').strip()\n  stat=(p/'stat').read_text().split(') ',1)[1].split()\n  allp.append(dict(pid=int(p.name),ppid=int(stat[1]),start=stat[19],cmd=cmd))\n except (OSError,IndexError):pass\n# Exclude inspection process and its ancestors even when its command contains search strings.\nexcluded=set(); pid=os.getpid()\nwhile pid and pid not in excluded:\n excluded.add(pid); q=next((p for p in allp if p['pid']==pid),None);pid=q['ppid'] if q else 0\nmarkers=['manager_loop.sh','watchdog.sh','run_agent.sh','/claude','claude --','run_v3.py','train_v3','v3_run','qc_unseen','tmux']\nselected={p['pid'] for p in allp if p['pid'] not in excluded and any(m in p['cmd'] for m in markers)}\nwhile True:\n more={p['pid'] for p in allp if p['ppid'] in selected and p['pid'] not in excluded}\n if more<=selected:break\n selected|=more\ntry:\n t=subprocess.run(['tmux','list-sessions'],capture_output=True,text=True);tmux=t.stdout+t.stderr\nexcept FileNotFoundError:tmux='tmux not installed/on PATH; no tmux process found unless listed below'\nprint(json.dumps(dict(all_processes=allp,selected=[p for p in allp if p['pid'] in selected],tmux=tmux)))"
+      }
+    ],
+    "selected": [
+      {
+        "pid": 761009,
+        "ppid": 1,
+        "start": "9153566",
+        "cmd": "bash -c cd /data/kkolesni/fla-terrain/agents && sed \"s|last=\\$(cat \\$M/last_end 2>/dev/null \\|\\| echo 0)|last=\\$(cat \\$M/last_end 2>/dev/null \\|\\| echo 0); lstart=\\$(cat \\$(ls \\$M/turn_*.start 2>/dev/null \\| tail -1) 2>/dev/null \\|\\| echo 0)|; s|\\[ \\$inbox -gt \\$last \\]|[ \\$inbox -gt \\$lstart ]|g\" manager_loop.sh > manager_loop.sh.new && diff manager_loop.sh manager_loop.sh.new; bash -n manager_loop.sh.new && chmod +x manager_loop.sh.new && mv manager_loop.sh.new manager_loop.sh && kill $(cat manager_loop.pid) && sleep 1 && nohup setsid ./manager_loop.sh >> manager_loop.log 2>&1 < /dev/null & sleep 2; cd /data/kkolesni/fla-terrain/agents && pgrep -f \"agents/manager_loop.sh|\\./manager_loop.sh\" | head -3 > /tmp/kk_lp; cat /tmp/kk_lp; head -1 /tmp/kk_lp > manager_loop.pid; rm /tmp/kk_lp; kill -0 $(cat manager_loop.pid) && echo \"loop alive pid $(cat manager_loop.pid)\"; kill -0 $(cat manager/pid) && echo \"manager tick still running (reading your message)\""
+      },
+      {
+        "pid": 761023,
+        "ppid": 761009,
+        "start": "9153667",
+        "cmd": "/bin/bash ./manager_loop.sh"
+      },
+      {
+        "pid": 1433462,
+        "ppid": 761023,
+        "start": "18282174",
+        "cmd": "sleep 60"
+      }
+    ],
+    "tmux": "tmux not installed/on PATH; no tmux process found unless listed below"
+  },
+  "viper": {
+    "all_processes": [
+      {
+        "pid": 2362,
+        "ppid": 1,
+        "start": "1659",
+        "cmd": "/usr/lib/systemd/systemd --user"
+      },
+      {
+        "pid": 2367,
+        "ppid": 2362,
+        "start": "1757",
+        "cmd": "(sd-pam)"
+      },
+      {
+        "pid": 16915,
+        "ppid": 2362,
+        "start": "194374",
+        "cmd": "/usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only"
+      },
+      {
+        "pid": 1554189,
+        "ppid": 1554162,
+        "start": "18138652",
+        "cmd": "sshd: kkolesni@notty"
+      },
+      {
+        "pid": 1560539,
+        "ppid": 1554189,
+        "start": "18220079",
+        "cmd": "python3 -c import os,pwd,json,pathlib,subprocess\nuid=pwd.getpwnam('kkolesni').pw_uid\nallp=[]\nfor p in pathlib.Path('/proc').iterdir():\n if not p.name.isdigit():continue\n try:\n  if p.stat().st_uid!=uid:continue\n  cmd=(p/'cmdline').read_bytes().replace(b'\\0',b' ').decode(errors='replace').strip()\n  stat=(p/'stat').read_text().split(') ',1)[1].split()\n  allp.append(dict(pid=int(p.name),ppid=int(stat[1]),start=stat[19],cmd=cmd))\n except (OSError,IndexError):pass\n# Exclude inspection process and its ancestors even when its command contains search strings.\nexcluded=set(); pid=os.getpid()\nwhile pid and pid not in excluded:\n excluded.add(pid); q=next((p for p in allp if p['pid']==pid),None);pid=q['ppid'] if q else 0\nmarkers=['manager_loop.sh','watchdog.sh','run_agent.sh','/claude','claude --','run_v3.py','train_v3','v3_run','qc_unseen','tmux']\nselected={p['pid'] for p in allp if p['pid'] not in excluded and any(m in p['cmd'] for m in markers)}\nwhile True:\n more={p['pid'] for p in allp if p['ppid'] in selected and p['pid'] not in excluded}\n if more<=selected:break\n selected|=more\ntry:\n t=subprocess.run(['tmux','list-sessions'],capture_output=True,text=True);tmux=t.stdout+t.stderr\nexcept FileNotFoundError:tmux='tmux not installed/on PATH; no tmux process found unless listed below'\nprint(json.dumps(dict(all_processes=allp,selected=[p for p in allp if p['pid'] in selected],tmux=tmux)))"
+      }
+    ],
+    "selected": [],
+    "tmux": "tmux not installed/on PATH; no tmux process found unless listed below"
+  }
+}

@@ -1,0 +1,156 @@
+{
+ "commit": "04a5da9cd8954600e601e1bb1ad8b9ff11a284c3",
+ "clean_tree": false,
+ "layouts": [
+  {
+   "kind": "pool",
+   "n": 1,
+   "K": 1,
+   "points_min": 152,
+   "points_max": 152,
+   "weight_min": 152.0,
+   "weight_max": 152.0,
+   "present_g1_min": 116.0
+  },
+  {
+   "kind": "pool",
+   "n": 2,
+   "K": 2,
+   "points_min": 80,
+   "points_max": 80,
+   "weight_min": 76.0,
+   "weight_max": 76.0,
+   "present_g1_min": 55.0
+  },
+  {
+   "kind": "pool",
+   "n": 4,
+   "K": 4,
+   "points_min": 40,
+   "points_max": 40,
+   "weight_min": 38.0,
+   "weight_max": 38.0,
+   "present_g1_min": 27.5
+  },
+  {
+   "kind": "pool",
+   "n": 8,
+   "K": 8,
+   "points_min": 20,
+   "points_max": 20,
+   "weight_min": 18.0,
+   "weight_max": 20.0,
+   "present_g1_min": 13.5
+  },
+  {
+   "kind": "pool",
+   "n": 18,
+   "K": 18,
+   "points_min": 8,
+   "points_max": 12,
+   "weight_min": 6.0,
+   "weight_max": 10.5,
+   "present_g1_min": 6.0
+  },
+  {
+   "kind": "pool",
+   "n": 40,
+   "K": 40,
+   "points_min": 4,
+   "points_max": 4,
+   "weight_min": 3.0,
+   "weight_max": 4.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "sub",
+   "n": 1,
+   "K": 1,
+   "points_min": 1,
+   "points_max": 1,
+   "weight_min": 1.0,
+   "weight_max": 1.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "sub",
+   "n": 2,
+   "K": 2,
+   "points_min": 1,
+   "points_max": 1,
+   "weight_min": 1.0,
+   "weight_max": 1.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "sub",
+   "n": 4,
+   "K": 4,
+   "points_min": 1,
+   "points_max": 1,
+   "weight_min": 1.0,
+   "weight_max": 1.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "sub",
+   "n": 8,
+   "K": 8,
+   "points_min": 1,
+   "points_max": 1,
+   "weight_min": 1.0,
+   "weight_max": 1.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "sub",
+   "n": 18,
+   "K": 18,
+   "points_min": 1,
+   "points_max": 1,
+   "weight_min": 1.0,
+   "weight_max": 1.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "sub",
+   "n": 40,
+   "K": 40,
+   "points_min": 1,
+   "points_max": 1,
+   "weight_min": 1.0,
+   "weight_max": 1.0,
+   "present_g1_min": 1.0
+  },
+  {
+   "kind": "shear",
+   "n": 1,
+   "K": 1,
+   "points_min": 152,
+   "points_max": 152,
+   "weight_min": 152.0,
+   "weight_max": 152.0,
+   "present_g1_min": 116.0
+  },
+  {
+   "kind": "shear",
+   "n": 2,
+   "K": 2,
+   "points_min": 48,
+   "points_max": 56,
+   "weight_min": 48.0,
+   "weight_max": 56.0,
+   "present_g1_min": 34.0
+  },
+  {
+   "kind": "shear",
+   "n": 4,
+   "K": 4,
+   "points_min": 24,
+   "points_max": 28,
+   "weight_min": 24.0,
+   "weight_max": 28.0,
+   "present_g1_min": 17.0
+  }
+ ]
+}

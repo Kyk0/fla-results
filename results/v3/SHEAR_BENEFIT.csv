@@ -1,0 +1,5 @@
+source_layout,seen_paired_delta,unseen_SONIC_paired_delta,unseen_G113_paired_delta,changed_sensor_mean_paired_delta
+Npool4,0.039 ± 0.005,0.116 ± 0.034,0.142 ± 0.030,0.049 ± 0.005
+Npool8,0.034 ± 0.004,0.107 ± 0.026,0.157 ± 0.027,0.069 ± 0.009
+Npool18,0.027 ± 0.003,0.086 ± 0.015,0.140 ± 0.008,0.056 ± 0.026
+Nreal,0.026 ± 0.001,0.108 ± 0.021,0.065 ± 0.048,0.052 ± 0.007

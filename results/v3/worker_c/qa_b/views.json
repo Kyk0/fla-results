@@ -1,0 +1,7 @@
+{
+ "windows": 50,
+ "Npool4_max_abs_diff_N": 0.03755393624305725,
+ "Npool4_max_rel_diff": 0.00022711648622532373,
+ "Nsub8_one_point_per_column": true,
+ "Nsub8_windows_all_values_in_point_set": 50
+}

@@ -1,0 +1,197 @@
+{
+"commit": "7194a89a677805e0690bc9d316e6e915ea7cc0dc",
+"clean": true,
+"args": {
+"sources": "K1V2_r4_m1000",
+"courses": 4,
+"seed0": 0,
+"procs": 4,
+"tag": "mgr_check"
+},
+"rows": [
+{
+"source": "K1V2_r4_m1000",
+"seed": 0,
+"finished": true,
+"hold": false,
+"seconds": 72.71255077612987,
+"t_fail": null,
+"why": null,
+"fail_class": null,
+"fail_variant": null,
+"order": [
+"rough",
+"soft",
+"edge",
+"slope",
+"hard_grip",
+"hard_slip",
+"hard_grip"
+],
+"crossed_all": true,
+"t_crossed": 66.918,
+"x_final": 25.821118745763716,
+"y_final": 1.0566883533731537,
+"speed": 0.3509987449561781,
+"chunks_crossed": 7,
+"n_chunks": 7,
+"classes_entered": [
+"edge",
+"hard_grip",
+"hard_slip",
+"rough",
+"slope",
+"soft"
+],
+"entered": [
+"rough",
+"soft",
+"edge-steps",
+"slope",
+"hard_grip",
+"hard_slip",
+"hard_grip"
+]
+},
+{
+"source": "K1V2_r4_m1000",
+"seed": 1,
+"finished": true,
+"hold": false,
+"seconds": 71.81554331476505,
+"t_fail": null,
+"why": null,
+"fail_class": null,
+"fail_variant": null,
+"order": [
+"slope",
+"hard_grip",
+"soft",
+"hard_slip",
+"edge",
+"rough",
+"edge",
+"slope"
+],
+"crossed_all": true,
+"t_crossed": 67.19800000000001,
+"x_final": 25.091894133940528,
+"y_final": 3.352167630498778,
+"speed": 0.34522369083939797,
+"chunks_crossed": 8,
+"n_chunks": 8,
+"classes_entered": [
+"edge",
+"hard_grip",
+"hard_slip",
+"rough",
+"slope",
+"soft"
+],
+"entered": [
+"slope",
+"hard_grip",
+"soft",
+"hard_slip",
+"edge-steps",
+"rough",
+"edge-planks",
+"slope"
+]
+},
+{
+"source": "K1V2_r4_m1000",
+"seed": 2,
+"finished": true,
+"hold": false,
+"seconds": 76.56659143842846,
+"t_fail": null,
+"why": null,
+"fail_class": null,
+"fail_variant": null,
+"order": [
+"rough",
+"edge",
+"soft",
+"slope",
+"hard_grip",
+"hard_slip",
+"soft",
+"slope",
+"rough"
+],
+"crossed_all": true,
+"t_crossed": 74.438,
+"x_final": 25.841270280606754,
+"y_final": 0.7493454789148303,
+"speed": 0.3335937291756798,
+"chunks_crossed": 9,
+"n_chunks": 9,
+"classes_entered": [
+"edge",
+"hard_grip",
+"hard_slip",
+"rough",
+"slope",
+"soft"
+],
+"entered": [
+"rough",
+"edge-planks",
+"soft",
+"slope",
+"hard_grip",
+"hard_slip",
+"soft",
+"slope",
+"rough"
+]
+},
+{
+"source": "K1V2_r4_m1000",
+"seed": 3,
+"finished": true,
+"hold": false,
+"seconds": 69.73850302679882,
+"t_fail": null,
+"why": null,
+"fail_class": null,
+"fail_variant": null,
+"order": [
+"soft",
+"edge",
+"slope",
+"hard_slip",
+"rough",
+"hard_grip",
+"edge",
+"soft"
+],
+"crossed_all": true,
+"t_crossed": 67.378,
+"x_final": 23.476138762698195,
+"y_final": -0.9689525957568723,
+"speed": 0.3323410973198663,
+"chunks_crossed": 8,
+"n_chunks": 8,
+"classes_entered": [
+"edge",
+"hard_grip",
+"hard_slip",
+"rough",
+"slope",
+"soft"
+],
+"entered": [
+"soft",
+"edge-planks",
+"slope",
+"hard_slip",
+"rough",
+"hard_grip",
+"edge-planks",
+"soft"
+]
+}
+]
+}

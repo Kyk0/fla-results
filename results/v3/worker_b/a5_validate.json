@@ -1,0 +1,53 @@
+{
+ "n_nominal_test": 288,
+ "nominal_resim": {
+  "files": 288,
+  "valid": 288,
+  "same_array_names": 288,
+  "max_diff_foot_points": 0.0,
+  "min_diff_foot_points": 0.0,
+  "max_diff_other_arrays": 0.0,
+  "first_errors": []
+ },
+ "reallike30": {
+  "files": 288,
+  "valid": 288,
+  "same_array_names": 288,
+  "max_diff_foot_points": 60.0,
+  "min_diff_foot_points": 17.200000762939453,
+  "max_diff_other_arrays": 0.0,
+  "first_errors": []
+ },
+ "reallike60": {
+  "files": 288,
+  "valid": 288,
+  "same_array_names": 288,
+  "max_diff_foot_points": 60.0,
+  "min_diff_foot_points": 11.150001525878906,
+  "max_diff_other_arrays": 0.0,
+  "first_errors": []
+ },
+ "reallike100": {
+  "files": 288,
+  "valid": 288,
+  "same_array_names": 288,
+  "max_diff_foot_points": 60.0,
+  "min_diff_foot_points": 4.9166669845581055,
+  "max_diff_other_arrays": 0.0,
+  "first_errors": []
+ },
+ "reallike60_g1": {
+  "files": 288,
+  "valid": 288,
+  "same_array_names": 288,
+  "max_diff_foot_points": 60.21666666865349,
+  "min_diff_foot_points": 24.899999618530273,
+  "max_diff_other_arrays": 0.0,
+  "first_errors": []
+ },
+ "git": {
+  "commit": "94239548a856faae69d911b531e5da505f64c573",
+  "dirty": false,
+  "dirty_files": []
+ }
+}

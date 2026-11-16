@@ -1,0 +1,125 @@
+{
+ "seeds": {
+  "G113": 0,
+  "SONIC": 1
+ },
+ "clips": {
+  "closeup_sonic_hard_grip.mp4": {
+   "t0": 3.28,
+   "fell": null,
+   "duration_s": 8.0,
+   "fps": 30.0,
+   "width": 1280,
+   "height": 720,
+   "frames": 240,
+   "bytes": 975932,
+   "stills": [
+    "/data/kkolesni/fla-terrain/render/v3/frames/closeup_sonic_hard_grip_0.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/closeup_sonic_hard_grip_1.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/closeup_sonic_hard_grip_2.png"
+   ]
+  },
+  "side_g113_sonic_hard_grip.mp4": {
+   "duration_s": 8.0,
+   "fps": 30.0,
+   "width": 1280,
+   "height": 960,
+   "frames": 240,
+   "bytes": 1220508,
+   "stills": [
+    "/data/kkolesni/fla-terrain/render/v3/frames/side_g113_sonic_hard_grip_0.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/side_g113_sonic_hard_grip_1.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/side_g113_sonic_hard_grip_2.png"
+   ]
+  },
+  "closeup_sonic_hard_slip.mp4": {
+   "t0": 3.28,
+   "fell": null,
+   "duration_s": 8.0,
+   "fps": 30.0,
+   "width": 1280,
+   "height": 720,
+   "frames": 240,
+   "bytes": 1040530,
+   "stills": [
+    "/data/kkolesni/fla-terrain/render/v3/frames/closeup_sonic_hard_slip_0.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/closeup_sonic_hard_slip_1.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/closeup_sonic_hard_slip_2.png"
+   ]
+  },
+  "side_g113_sonic_hard_slip.mp4": {
+   "duration_s": 8.0,
+   "fps": 30.0,
+   "width": 1280,
+   "height": 960,
+   "frames": 240,
+   "bytes": 1310792,
+   "stills": [
+    "/data/kkolesni/fla-terrain/render/v3/frames/side_g113_sonic_hard_slip_0.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/side_g113_sonic_hard_slip_1.png",
+    "/data/kkolesni/fla-terrain/render/v3/frames/side_g113_sonic_hard_slip_2.png"
+   ]
+  }
+ },
+ "force_check": {
+  "G113_hard_grip": {
+   "cycles": 5,
+   "t0": 2.44,
+   "t1": 7.44,
+   "bw_N": 192.92345999999998,
+   "sensor_mean_over_bw": 0.8570621737760666,
+   "true_mean_over_bw": 0.9927118086315229,
+   "fell": null
+  },
+  "SONIC_hard_grip": {
+   "cycles": 3,
+   "t0": 3.28,
+   "t1": 6.9,
+   "bw_N": 192.92345999999998,
+   "sensor_mean_over_bw": 0.9576040724962065,
+   "true_mean_over_bw": 0.9977338564552027,
+   "fell": null
+  },
+  "G113_hard_slip": {
+   "cycles": 5,
+   "t0": 2.38,
+   "t1": 7.42,
+   "bw_N": 192.92345999999998,
+   "sensor_mean_over_bw": 0.8822610916985547,
+   "true_mean_over_bw": 0.9956722289096827,
+   "fell": null
+  },
+  "SONIC_hard_slip": {
+   "cycles": 3,
+   "t0": 3.28,
+   "t1": 6.9,
+   "bw_N": 192.92345999999998,
+   "sensor_mean_over_bw": 0.8689010638295409,
+   "true_mean_over_bw": 0.9931845382787018,
+   "fell": null
+  }
+ },
+ "touchdown": {
+  "hard_grip": {
+   "G113": {
+    "t_heel_strike": 3.44,
+    "pitch_td_deg": 17.273128945399684
+   },
+   "SONIC": {
+    "t_heel_strike": 3.28,
+    "pitch_td_deg": 9.428617237985486
+   }
+  },
+  "hard_slip": {
+   "G113": {
+    "t_heel_strike": 3.42,
+    "pitch_td_deg": 15.653402993429399
+   },
+   "SONIC": {
+    "t_heel_strike": 3.28,
+    "pitch_td_deg": 9.979561083517497
+   }
+  }
+ },
+ "commit": "6a8abb2e7dbd345e4a1d7ceadd83b8c12cf483b8 clean"
+}

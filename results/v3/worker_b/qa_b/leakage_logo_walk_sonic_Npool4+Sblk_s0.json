@@ -1,0 +1,19 @@
+{
+ "model": "logo_walk_sonic/Npool4+Sblk_s0",
+ "held_out": "walk_sonic",
+ "my_n_windows": {
+  "train": 267400,
+  "val": 38958,
+  "test": 41081
+ },
+ "config_n_windows": {
+  "train": 267400,
+  "val": 38958,
+  "test": 41081
+ },
+ "counts_equal": true,
+ "held_out_episodes_in_train_val": 0,
+ "stored_test_windows_not_held_walk_test": 0,
+ "stored_test_windows": 41081,
+ "test_split_keys_shared_with_train_val": 0
+}
