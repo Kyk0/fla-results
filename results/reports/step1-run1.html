@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terrain from Touch v1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">FLA · Step 1, first simulation run · 14 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Terrain from Touch: the first simulation run</h1>
+  <p class="lede">Does shear sensing in a humanoid's sole add anything to joints, IMU and normal pressure? A virtual sole with eight zones per foot on the Booster K1 in MuJoCo, three gaits, six terrains, and a pass/fail gate fixed before the data existed. The gate was not met.</p>
+  <div class="flag">Simulation only. Rigid-body contact, placeholder sensor noise, no real sole.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>The gate was not met: 0 of 3 criteria.</strong> Adding shear to joints, IMU and zone pressure reached none of the thresholds fixed in advance.</li>
+    <li><strong>Shear did lower the friction error</strong> in all three seeds: −10&nbsp;% pooled, −18&nbsp;% on slippery hard floor, −23&nbsp;% on the foot rig. It did not improve terrain classification, support-state detection or detection speed.</li>
+    <li><strong>Joints and IMU alone nearly solve grip against slip:</strong> <span class="num">0.948</span>, and <span class="num">0.975</span> with zone pressure, so the +5 points the gate asked for were out of reach.</li>
+    <li><strong>Zone pressure is what helps.</strong> Terrain <span class="num">0.802</span> → <span class="num">0.861</span>; partial support <span class="num">0.353</span> → <span class="num">0.633</span>; a lifted robot noticed in <span class="num">0.07</span> s instead of <span class="num">0.29</span> s.</li>
+    <li><strong>The largest effect is the gait.</strong> Models trained without a gait lose much of their score on it, and nothing transfers to human-like walking. On one held-out gait shear was worth +17 points: a hypothesis, not a result.</li>
+    <li><strong>The simulator is the weakest link.</strong> A rigid-body solver has no elastomer and no partial slip, so "no" here does not mean "no" on the real sole.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#verdict">The gate and the verdict</a></li>
+    <li><a href="#setup">Setup</a></li>
+    <li><a href="#results">Results by input</a></li>
+    <li><a href="#support">Support state and detection delays</a></li>
+    <li><a href="#modes">Standing, rig and lifted</a></li>
+    <li><a href="#prop">Do joints and IMU alone solve it?</a></li>
+    <li><a href="#why">Why shear did not pass</a></li>
+    <li><a href="#gait">A gait the model has not seen</a></li>
+    <li><a href="#integrity">Integrity checks</a></li>
+    <li><a href="#limits">Approximations and what was not done</a></li>
+    <li><a href="#next">Next steps</a></li>
+  </ol>
+</nav>
+
+<section id="verdict">
+  <div class="kicker">1</div>
+  <h2>The gate and the verdict</h2>
+  <p>Three inputs are compared throughout. <strong>P</strong>: joints, IMU and the walking command. <strong>P+N</strong>: plus the normal force on each of the sole's eight zones per foot. <strong>P+N+S</strong>: plus the shear force (Fx, Fy) on each zone. The gate asked whether P+N+S beats P+N on walking test data, over three seeds, by fixed margins. Every metric and the gate were defined in a protocol written before the dataset existed.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Gate criterion (P+N+S against P+N)</th><th class="n">P+N</th><th class="n">P+N+S</th><th class="n">Result</th><th class="n">Needed</th></tr></thead>
+    <tbody>
+      <tr><td>1. Hard-grip against hard-slip F1</td><td class="n">0.975 ± 0.004</td><td class="n">0.972 ± 0.008</td><td class="n">−0.3 points</td><td class="n">≥ +5 points</td></tr>
+      <tr><td>2. Surface change detected earlier (median steps)</td><td class="n">2.00</td><td class="n">2.00</td><td class="n">0 steps (0.52 s vs 0.55 s)</td><td class="n">≥ 1 step</td></tr>
+      <tr><td>3. Friction error (MAE)</td><td class="n">0.166 ± 0.006</td><td class="n">0.150 ± 0.003</td><td class="n">−10&nbsp;%</td><td class="n">≥ −20&nbsp;%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> None of the three criteria passed. Three things qualify the verdict. This is the primary test, on walking data with three different gaits (two velocity policies and SONIC, human-like heel-to-toe walking). Joints and IMU alone nearly solve the comparison shear was expected to win: P reaches 0.948 on grip against slip and P+N 0.975, so the most P+N+S could have gained was +2.5 points against the +5 required. And the simulator is the weakest link: a rigid-body solver has no elastomer, no partial slip inside the contact patch, and splits force across zones by a numerical regulariser. The result says shear did not pass the gate in this simulation, not that it will not help on the real sole.</p>
+  </div>
+</section>
+
+<section id="setup">
+  <div class="kicker">2</div>
+  <h2>Setup</h2>
+  <h3>Robot and sole</h3>
+  <p>The Booster K1, 22 degrees of freedom, 19.7 kg (weight 192.9 N), in MuJoCo 4.0.1 on CPU. MuJoCo was chosen because trained K1 policies already replay in it and it exposes the full 3D force of each contact. Each foot's collision box is replaced by 2 × 4 boxes tiling the same footprint with the same contact parameters; mass, joints and actuators are unchanged. A zone's force is the sum of the contact forces on its box, rotated into the sole frame (x toe, y left, z up; Fz ≥ 0 is load).</p>
+  <p>Sensor model: mean over physics steps per 1/150 s, a per-episode gain (3&nbsp;%) and offset (0.1 N), noise 0.15 N in shear and 0.25 N in normal force, 0.05 N quantisation, then the mean of 3 samples to 50 Hz. The noise values are placeholders: the real sole's noise is not known.</p>
+  <figure><img src="../figures/fig6_sole_diagram.png" alt="Diagram of the virtual sole: left and right foot, each 180 by 70 mm, divided into 2 by 4 numbered zones, with the sole frame axes x toe, y left, z up" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>The virtual sole: 2 × 4 zones per foot, 180 × 70 mm. Fz ≥ 0 is load; Fx and Fy are shear.</figcaption></figure>
+  <h3>Sanity checks</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Check</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Sliding box, |Ft| / Fn against set friction 0.3 / 0.6 / 0.9 (0.2 m/s)</td><td class="n" style="text-align:left">0.300 / 0.600 / 0.900 (tolerance 10&nbsp;%)</td></tr>
+      <tr><td>Standing: sum of Fz over both feet</td><td class="n" style="text-align:left">192.92 N = m·g, error +0.000&nbsp;% (tolerance 2&nbsp;%)</td></tr>
+      <tr><td>Single-leg stance</td><td class="n" style="text-align:left">stance foot −0.02&nbsp;% of m·g, swing foot 0 N, centre of pressure (+18, +3) mm inside the ±90 × ±35 mm sole</td></tr>
+      <tr><td>Foot dragged at friction 0.3 / 0.6 / 0.9 (foot-only rig)</td><td class="n" style="text-align:left">shear / Fz 0.300 / 0.600 / 0.900</td></tr>
+      <tr><td>Standing on a 5° / 10° slope</td><td class="n" style="text-align:left">shear / Fz within 0.1&nbsp;% of tan θ</td></tr>
+      <tr><td>Swing / lifted</td><td class="n" style="text-align:left">exactly 0 N</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The virtual sole measures the physics the simulator produces: friction ratios, body weight and slope angle come out exactly, and a foot in the air reads zero. All checks passed (6 of 6 for the sole), and an independent verification re-ran them. This shows the sensor model is wired correctly; it does not show the simulated contact is realistic.</p>
+  </div>
+  <h3>Terrains</h3>
+  <ul>
+    <li><strong>hard-grip</strong> (friction 0.7–1.3), <strong>hard-slip</strong> (0.08–0.36), <strong>soft</strong> (8–108 kN/m), <strong>rough</strong> (rigid bumps: maximum height per episode 0.5–2 cm, individual bumps 0.25–2 cm), <strong>slope</strong> (5–10°, random direction), <strong>edge</strong> (plank fields with gaps, and low platforms).</li>
+    <li><strong>Strips</strong> where one surface changes to another (grip→slip, slip→grip, grip→soft, grip→rough), and a <strong>lifted</strong> mode (whole episode, and lifted mid-walk).</li>
+    <li>Friction and stiffness are drawn from separate bands per split. The test split has one band inside the training span (test-in) and one outside it (test-out).</li>
+  </ul>
+  <h3>Motion sources</h3>
+  <p>No policy was trained for this run; working policies already existed.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Source</th><th>What it is</th><th class="n">Flat hard-grip</th><th class="n">Gait</th></tr></thead>
+    <tbody>
+      <tr><td>G113</td><td>velocity policy, ordinary flat-foot walking</td><td class="n">0/64 falls</td><td class="n">2.07 steps/s</td></tr>
+      <tr><td>G80</td><td>velocity policy, ordinary flat-foot walking</td><td class="n">0/64 falls</td><td class="n">2.37 steps/s</td></tr>
+      <tr><td>SONIC</td><td>motion tracking of 291 human walking clips, heel-to-toe</td><td class="n">0/32 falls</td><td class="n">1.4 steps/s</td></tr>
+      <tr><td>Stand</td><td>scripted weight shifts, squats, ankle rolls under PD control</td><td class="n dim">–</td><td class="n dim">–</td></tr>
+      <tr><td>Rig</td><td>foot-only rig: random load, tilt, sliding speed, overhang</td><td class="n dim">–</td><td class="n dim">–</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> All three walkers are stable on flat ground. The fall counts for G113 and G80 come from an independent evaluation on the plain K1 model, before the sole was added; with the sole both again had 0/16. In the dataset itself, hard-grip walking ended in a fall in 0/180 (G113), 0/180 (G80) and 5/180 (SONIC) episodes.</p>
+  </div>
+  <h3>Data and models</h3>
+  <ul>
+    <li><strong>Dataset.</strong> 4,572 episodes of 20 s, 24.7 h at 50 Hz, 1.2 GB: walking 17.4 h plus strips 2.7 h, stand 1.8 h, rig 1.5 h, lifted 1.3 h. Split by terrain instance: 3,100 / 452 / 1,020 episodes. 235 episodes end in a fall (5.1&nbsp;%); frames after a fall are labelled −1. The validator found 0 bad episodes of 4,572.</li>
+    <li><strong>Models.</strong> Windows of 1.0 s, stride 0.2 s (290 k / 43 k / 93 k windows). A causal dilated 1D-CNN (177 k parameters for P, slightly more with sole channels) with heads for terrain class, properties (friction, log stiffness, slope) and support state per foot; the label is the last frame of the window; epoch chosen on validation; 3 seeds. LightGBM on hand-made features is the classical baseline.</li>
+  </ul>
+</section>
+
+<section id="results">
+  <div class="kicker">3</div>
+  <h2>Results by input</h2>
+  <p>Walking, test split, mean ± sd over 3 seeds; LightGBM is a single run.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Terrain macro-F1</th><th class="n">Friction MAE</th><th class="n">log10 stiffness MAE</th><th class="n">Support-state F1</th></tr></thead>
+    <tbody>
+      <tr><td>P (joints, IMU, command)</td><td class="n">0.802 ± 0.001</td><td class="n">0.186 ± 0.008</td><td class="n">0.187 ± 0.004</td><td class="n">0.755 ± 0.003</td></tr>
+      <tr><td>P+N (+ Fz per zone)</td><td class="n best">0.861 ± 0.007</td><td class="n">0.166 ± 0.006</td><td class="n">0.145 ± 0.015</td><td class="n best">0.866 ± 0.010</td></tr>
+      <tr><td>P+N+S (+ Fx, Fy per zone)</td><td class="n">0.860 ± 0.006</td><td class="n best">0.150 ± 0.003</td><td class="n">0.141 ± 0.011</td><td class="n">0.853 ± 0.010</td></tr>
+      <tr class="sep"><td>LightGBM P / P+N / P+N+S</td><td class="n">0.730 / 0.826 / 0.841</td><td class="n">0.232 / 0.212 / 0.162</td><td class="n">0.358 / 0.110 / 0.104</td><td class="n">0.674 / 0.758 / 0.761</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Zone pressure is the step up: terrain from 0.802 to 0.861 and support state from 0.755 to 0.866. Shear adds nothing to either and lowers the friction error from 0.166 to 0.150. The CNN beats LightGBM on every score except stiffness with sole data, where LightGBM's hand features do slightly better.</p>
+  </div>
+  <figure><img src="../figures/fig1_ablation.png" alt="Bar chart of terrain macro-F1 and support-state F1 for P, P+N and P+N+S, with markers for each of three seeds" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Terrain and support-state F1 by input; markers are the individual seeds.</figcaption></figure>
+  <h3>Confusions</h3>
+  <p>With every input the largest errors are rough predicted as hard-grip (about 30&nbsp;% of rough windows) and edge predicted as hard-grip (34&nbsp;% with P, 22&nbsp;% with P+N, 19&nbsp;% with P+N+S); then edge predicted as rough (10–14&nbsp;%) and hard-grip predicted as rough (5–7&nbsp;%). Soft, slope and hard-slip are recognised in more than 95&nbsp;% of windows by P+N. A likely contributor to the rough and edge errors, which nothing here measures, is the labelling: a foot that lands between bumps, or fully on a plank, is physically on flat grippy ground but carries the rough or edge label.</p>
+  <figure><img src="../figures/fig2_confusion_PN.png" alt="Six by six terrain confusion matrix for P+N, rows normalised: rough is predicted as hard-grip in 0.30 of windows, edge in 0.22" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Terrain confusion matrix for P+N, walking test windows, summed over the three seeds.</figcaption></figure>
+</section>
+
+<section id="support">
+  <div class="kicker">4</div>
+  <h2>Support state and detection delays</h2>
+  <p>Support state per foot: in the air, partly supported (for example on an edge), or fully down.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Airborne</th><th class="n">Partial</th><th class="n">Full</th></tr></thead>
+    <tbody>
+      <tr><td>P</td><td class="n">0.968</td><td class="n">0.353</td><td class="n">0.942</td></tr>
+      <tr><td>P+N</td><td class="n best">0.992</td><td class="n best">0.633</td><td class="n best">0.972</td></tr>
+      <tr><td>P+N+S</td><td class="n best">0.992</td><td class="n">0.599</td><td class="n">0.968</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Partial support is the hard class and the one that matters when a robot steps off a stage. Zone pressure nearly doubles its F1. Adding shear does not improve it: 0.599 against 0.633, a drop of a little over one standard deviation across seeds.</p>
+  </div>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Surface change: s / steps (median)</th><th class="n">Edge: delay s / missed</th><th class="n">Lifted: delay s / missed</th></tr></thead>
+    <tbody>
+      <tr><td>P</td><td class="n">0.67 / 2</td><td class="n">0.12 / 52&nbsp;%</td><td class="n">0.29 / 0&nbsp;%</td></tr>
+      <tr><td>P+N</td><td class="n best">0.52 / 2</td><td class="n">0.12 / 29&nbsp;%</td><td class="n best">0.07 / 0&nbsp;%</td></tr>
+      <tr><td>P+N+S</td><td class="n">0.55 / 2</td><td class="n best">0.10 / 28&nbsp;%</td><td class="n">0.08 / 0&nbsp;%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Being lifted is detected in every episode, four times faster with normal force. A partial-support touchdown is still missed in 28–29&nbsp;% of cases with the sole. By strip type, grip→slip is detected on the first step by P+N (median 1.0) and slip→grip takes about 4 steps for every input.</p>
+  </div>
+  <div class="grid2">
+    <figure><img src="../figures/fig3_support_per_class.png" alt="Bar chart of support-state F1 per class, airborne, partial and full, for P, P+N and P+N+S" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Support-state F1 per class; partial support is the hard one.</figcaption></figure>
+    <figure><img src="../figures/fig4_delays.png" alt="Five bar charts of detection delays: strip surface change in seconds and steps, edge delay and miss rate, lifted delay" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Detection delays and edge miss rate; lower is better.</figcaption></figure>
+  </div>
+</section>
+
+<section id="modes">
+  <div class="kicker">5</div>
+  <h2>Standing, rig and lifted</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Mode</th><th>Input</th><th class="n">Terrain F1</th><th class="n">Friction MAE</th><th class="n">Support F1 (classes present)</th></tr></thead>
+    <tbody>
+      <tr><td>Stand</td><td>P / P+N / P+N+S</td><td class="n">0.534 / 0.714 / 0.701</td><td class="n">0.330 / 0.209 / 0.211</td><td class="n">0.487 / 0.729 / 0.727</td></tr>
+      <tr><td>Rig</td><td>P / P+N / P+N+S</td><td class="n">0.084 / 0.466 / 0.508</td><td class="n">0.359 / 0.302 / 0.232</td><td class="n">0.303 / 0.736 / 0.700</td></tr>
+      <tr><td>Lifted</td><td>P / P+N / P+N+S</td><td class="n">0.710 / 0.821 / 0.821</td><td class="n">0.212 / 0.182 / 0.168</td><td class="n">0.714 / 0.882 / 0.870</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Without walking, joints and IMU say much less, and the sole matters more. The foot rig is the only mode where shear clearly helps a property: friction MAE drops 23&nbsp;% (0.302 → 0.232). That is the case where the foot is deliberately slid.</p>
+  </div>
+</section>
+
+<section id="prop">
+  <div class="kicker">6</div>
+  <h2>Do joints and IMU alone solve the task?</h2>
+  <p>No, but they do a large part of it. P alone gives 0.80 terrain macro-F1, 0.948 on grip against slip, and detects lifting in 0.29 s. It fails on partial support (F1 0.35) and misses half of the edge touchdowns.</p>
+  <p>A probe that predicts the sole from joints and IMU (2 seeds) explains why. On hard-grip, a GRU reconstructs the foot's total Fz, total shear and centre of pressure with stance R² 0.93–0.95 (centre-of-pressure error 4 mm), and per-zone shear with 0.85. On hard-slip that drops to 0.63–0.80, and per-zone shear is the least predictable signal (R² 0.70). The shear that joints and IMU cannot explain is about twice as large on the slippery floor (RMS 15.1 N against 7.2 N).</p>
+  <p>For terrain the gain from normal force comes from the zone pattern, not the load: per-foot totals (P+Ntot) score the same as P (0.800 against 0.802), while zones give 0.861. For the airborne state totals are enough: they take lifted detection from 0.29 s to 0.06 s and airborne F1 from 0.968 to 0.990.</p>
+</section>
+
+<section id="why">
+  <div class="kicker">7</div>
+  <h2>Why shear did not pass, as far as the evidence goes</h2>
+  <p>Items marked <em>exploratory</em> were run after the gate result was known. They explain; they do not enter the gate.</p>
+  <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px">
+    <li><strong>A ceiling on criterion 1.</strong> P already gets 0.948 and P+N 0.975 on grip against slip: when a foot slides, the joints and IMU show it. With P+N at 0.975 the largest possible gain was +2.5 points, so no added sensor could have met the +5 threshold.</li>
+    <li><strong>Criterion 2 is at its floor, and too coarse.</strong> With a 0.2 s stride and a two-window confirmation, the minimum is one step by definition (the first touchdown on the new surface counts) and two is typical; P+N already detects grip→slip on the first step. Every run's median is exactly 2.0. In seconds shear is not faster either (0.55 s against 0.52 s). This is a limit of the criterion as defined in advance; it was kept.</li>
+    <li><strong>Friction is observable only at the friction limit.</strong> Against true foot slip in a separate diagnostic set (done before the gate result was known): at friction ≤ 0.2 at least 92&nbsp;% of steps reach the limit; at 0.4, 65–76&nbsp;%; at 0.9, 1–12&nbsp;%. Criterion 3 pools all classes, and most windows are on grippy ground (0.7–1.3), where this 50 Hz zone-averaged sensor rarely shows the limit: real touchdown skids of 9–26 mm per step exist even at 0.9, but a saturation test on the sensor signal catches only 30–47&nbsp;% of real slides. On hard-grip every model is close to the trivial "predict the class mean" reference (0.156–0.209 against 0.214; <em>exploratory</em> breakdown).</li>
+    <li><strong>Where friction is observable, shear helps more, but unevenly.</strong> The secondary number defined in advance, hard-grip plus hard-slip only: MAE 0.141 → 0.121 (−14&nbsp;%). <em>Exploratory</em> breakdown: hard-slip only 0.076 → 0.062 (−18&nbsp;%); the test-in slip band (friction 0.285–0.295) 0.076 → 0.052 (−32&nbsp;%), although there the trivial class-mean reference (0.044) beats every model; the test-out slip band (0.08–0.12) 0.077 → 0.075 (−3&nbsp;%). So friction within a class is barely recovered, and most of the gain comes from getting the class right. The gain is also not robust: with the command channels removed (one seed, section 9) the order reverses.</li>
+    <li><strong>The CNN may use shear poorly for friction.</strong> Friction needs a ratio of two inputs. The LightGBM baseline (planned in advance, single run), which has shear / normal as a hand feature, shows −24&nbsp;% (0.212 → 0.162). Taken alone that would pass the 20&nbsp;% threshold, but the gate is defined on the 3-seed CNN, whose P+N (0.166) is already about as good as LightGBM's P+N+S. <em>Exploratory:</em> giving the CNN explicit ratio channels (P+N+S+U, selected on validation, 3 seeds) gives 0.138, −17&nbsp;% against P+N: closer, still under the threshold, and after the fact.</li>
+    <li><strong>The simulated contact is not what a shear-sensing sole measures.</strong> Each zone is a rigid box with four corner contacts; how load and shear are split between zones is set by the solver's soft-constraint regularisation, not by elastomer mechanics. Only the per-foot totals are physically trustworthy, and totals are what joints and IMU already predict. There is no partial slip at the edge of the contact patch (the signal real shear sensors use to detect slip before it happens), no stick-slip, no surface texture. This may understate shear; that is an interpretation, not a measurement.</li>
+    <li><strong>Friction-model artefacts.</strong> MuJoCo's friction is regularised: below about 0.05 m/s of slip it under-reports (friction 0.9 reads 0.835), and sliding makes the normal force chatter at about 60 Hz. A control with low-passed Fz (P+N_lp) scores the same as P+N (0.864 against 0.861; grip/slip 0.974 against 0.975), so the chatter is not needed for the result. This does not prove the unfiltered model ignores it.</li>
+    <li><strong>No friction between 0.36 and 0.7 was sampled.</strong> The class definition leaves a gap. There the foot would slide less often and joints and IMU might lose their cue; this run cannot say.</li>
+  </ol>
+</section>
+
+<section id="gait">
+  <div class="kicker">8</div>
+  <h2>A gait the model has not seen</h2>
+  <p><em>Exploratory</em>, 3 seeds, large spread: train on two gaits, test on the third.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Held-out gait</th><th class="n">P</th><th class="n">P+N</th><th class="n">P+N+S</th><th class="n">Same gait seen in training</th></tr></thead>
+    <tbody>
+      <tr><td>G113</td><td class="n">0.31</td><td class="n">0.54 ± 0.03</td><td class="n best">0.72 ± 0.04</td><td class="n">0.85–0.89</td></tr>
+      <tr><td>G80</td><td class="n">0.30</td><td class="n">0.55 ± 0.01</td><td class="n best">0.58 ± 0.04</td><td class="n">0.83–0.88</td></tr>
+      <tr><td>SONIC</td><td class="n">0.11</td><td class="n">0.11</td><td class="n">0.07</td><td class="n">0.72–0.82</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The models are strongly gait-specific. Nothing transfers to SONIC (0.07–0.11, the same as the label-shuffle control's 0.09: no information). On a held-out velocity policy the loss is 53–54 points with P, 33–34 with P+N, and 17 (G113) or 29 (G80) with P+N+S. For the real robot this matters more than the shear question: the training data must contain the controller that will be running. On one of the three hold-outs shear is worth +17 points, far more than its effect on known gaits. That is one case with a seed spread of ±0.04, not defined in advance, so it is a hypothesis: shear may buy robustness to a change of gait rather than accuracy on a known gait.</p>
+  </div>
+  <figure><img src="../figures/fig5_gait_transfer.png" alt="Bar chart of terrain macro-F1 on a held-out gait for P, P+N and P+N+S, with outlines showing the score when the gait was seen in training" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Leave-one-gait-out. Filled bars: the held-out gait; outlines: the same gait seen in training.</figcaption></figure>
+</section>
+
+<section id="integrity">
+  <div class="kicker">9</div>
+  <h2>Integrity checks</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Check</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Leakage: terrain instances, parameter bands and actual friction and stiffness values per split</td><td>none shared (two independent implementations)</td></tr>
+      <tr><td>Independent recomputation of macro-F1, grip/slip F1, friction MAE and strip latency from raw episodes and saved predictions, without the evaluation code</td><td>difference 0.0000 on all six runs; latency in steps identical</td></tr>
+      <tr><td>Label-shuffle control (P+N+S, labels permuted across training episodes)</td><td>test macro-F1 0.091, at chance</td></tr>
+      <tr><td>Trivial shortcuts (episode length, commands, start pose → class)</td><td>macro-F1 0.15 against 0.10 chance</td></tr>
+      <tr><td>Command channels removed (seed 0 only)</td><td>terrain F1 changes by at most 0.003, grip/slip F1 by up to 0.015. Friction MAE moves 0.015–0.020 in opposite directions for the two inputs, which on this one seed reverses criterion 3 (P+N 0.155, P+N+S 0.166)</td></tr>
+      <tr><td>Second full run from a clean copy</td><td>largest difference on headline numbers 0.0000 (training is deterministic)</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> No leak, no shortcut, and the numbers reproduce exactly; an independent verification reproduced all headline numbers with a largest difference of 0.0000. No threshold or tolerance was changed and every seed is reported. The one fragile result is criterion 3 itself, which reverses on one seed when the command inputs are removed.</p>
+  </div>
+</section>
+
+<section id="limits">
+  <div class="kicker">10</div>
+  <h2>Approximations and what was not done</h2>
+  <ul>
+    <li><strong>Zone-level force and shear</strong> are a solver artefact (section 7, item 6). Sensor noise values are placeholders. Per-zone saturation (300 N normal, 150 N shear) is modelled and affects 0.04&nbsp;% of walking frames.</li>
+    <li><strong>Standing</strong> uses ankle gains × 4 and ankle balance feedback, because the walking policy's PD gains cannot hold the K1 upright under plain PD. Rig episodes use a foot-only rig; a whole-robot rig tipped the feet 20–30° and was dropped.</li>
+    <li><strong>Tilted foot.</strong> In the sole frame, shear / Fz exceeds friction at heel strike and toe-off (99th percentile 0.36 at friction 0.2) because the foot is tilted about 10°; shear / Fz ≈ friction holds only for a flat foot.</li>
+    <li><strong>Data losses.</strong> SONIC falls on low platforms in 55 of 90 episodes; G80 falls on hard-slip in 54 of 180 (23 in the test-out band 0.08–0.12, 26 in the lowest training band 0.14–0.19, 5 elsewhere); 21 of 504 strip episodes never reach the new surface; 5 SONIC episodes fall at spawn on cross-slopes; 38 of 678 edge episodes have no partial-support frame. All are kept up to the fall and flagged.</li>
+    <li><strong>Not done:</strong> a shear test in Isaac Lab / PhysX; sand, gravel, grass and mud (out of scope); a compliant-sole contact model; friction between 0.36 and 0.7; a second model architecture; anything on real hardware.</li>
+    <li><strong>Cost of a run.</strong> Generating the dataset takes about 12 minutes on 40 CPU cores; the full results pipeline about 46 minutes on one H100, of which CNN training is 19.</li>
+  </ul>
+  <figure><video controls preload="metadata" src="../videos/montage_terrains.mp4"></video><figcaption>The six surfaces with the flat-foot gait and this eight-zone sole. Rendered separately, after this run.</figcaption></figure>
+</section>
+
+<section id="next">
+  <div class="kicker">11</div>
+  <h2>Next steps</h2>
+  <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px">
+    <li><strong>Decide what the real-sole test should measure before collecting data.</strong> Grip against slip is close to solved without the sole in this simulation; partial support and early slip are where a sole has room. Re-state the gate around partial-support detection, slip onset before the foot has moved, and transfer to an unseen gait.</li>
+    <li><strong>Record the real K1 with the controller that will actually run,</strong> and with more than one: the gait dependence is the largest effect in this report.</li>
+    <li><strong>If simulation is used further for the shear question, replace the rigid sole</strong> with a compliant one (many small soft pads, or a finite-element or soft-contact model) so that zone distribution and partial slip mean something. Without that, more simulated data will keep answering "no" for a reason unrelated to the real sensor.</li>
+    <li><strong>Fill the friction gap</strong> (0.36–0.7) and test the unseen-gait hypothesis properly: defined in advance, more seeds, more gaits.</li>
+  </ol>
+  <p class="small" style="margin-top:16px">Scores are on walking test windows (1.0 s, label at the last frame), mean ± sd over 3 seeds unless marked single run: macro-F1 for terrain class over six terrains, F1 for support state, mean absolute error for friction and log10 stiffness. Related: <a href="step1-run2.html">step 1, second simulation run</a>, <a href="step1-run3.html">step 1, sensor-layout check</a>, <a href="support-state.html">support state</a>, <a href="sole-closeup.html">the simulated sole up close</a>, <a href="../summary_en.html">step 1 summary</a>.</p>
+</section>
+
+</main>
+</body>
+</html>

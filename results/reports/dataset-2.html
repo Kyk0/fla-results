@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixed Patch Dataset</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">FLA · Experiment 2: dataset · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>A dataset for seeing the floor before the step</h1>
+  <p class="lede">The Booster K1 walks over hard and soft floors in MuJoCo. A torso camera looks steeply down at one fixed patch of floor just ahead of the feet on every frame; the sole and the joints feel the floor after each step. This page describes how the camera and the patch were chosen, why the robot's shadow was switched off, which textures were used, and how the data are split.</p>
+  <div class="flag">Simulation only. Rendered camera, simulated sole, one gait.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>400 episodes, 16,918 steps, one gait.</strong> G113, an ordinary flat-foot walking policy, on two floor classes: hard and soft. 241 episodes were replayed from the step-1 data and all 241 came out bit-identical.</li>
+    <li><strong>One fixed patch per frame.</strong> The image rectangle [171, 66, 253, 140], about 0.3 × 0.3 m of floor centred <span class="num">0.45</span> m ahead of the trunk. The robot's own body enters it in <span class="num">0.68</span>&nbsp;% of frames.</li>
+    <li><strong>No shadows.</strong> With shadows on, the robot's shadow covered more than a tenth of the patch in <span class="num">31.2</span>&nbsp;% of pilot frames, so they were switched off.</li>
+    <li><strong>72 CC0 textures, 25 held out for test.</strong> No texture image is in two splits, and every episode keeps the split it had in the step-1 data.</li>
+    <li><strong>Deceptive looks.</strong> 85 test episodes are also rendered with the texture of the other class: hard that looks soft, soft that looks hard. They are <span class="num">21.0</span>&nbsp;% of all steps and never used in training.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#why">What the data are for</a></li>
+    <li><a href="#camera">Camera and patch: the pilot</a></li>
+    <li><a href="#shadow">Shadows removed</a></li>
+    <li><a href="#textures">Textures and looks</a></li>
+    <li><a href="#splits">Episodes, steps and splits</a></li>
+    <li><a href="#stored">What is stored</a></li>
+    <li><a href="#checks">Checks and limits</a></li>
+  </ol>
+</nav>
+
+<section id="why">
+  <div class="kicker">1</div>
+  <h2>What the data are for</h2>
+  <p>The question of this experiment is whether a vision model can learn the floor class from the sole's labels and name it before the foot lands. That needs, for every footstep, what the camera saw before the step and what the sole and the joints felt during it. To keep the task narrow, there is one gait, two floor classes and one fixed patch of floor that a model classifies on every frame. The results are on the <a href="fixed-patch.html">fixed-patch results page</a>.</p>
+  <ul>
+    <li><strong>Floors.</strong> Hard is the rigid, grippy floor of the step-1 data; soft is its soft floor. A third episode type, the strip, starts on a hard centre and walks out onto a soft surround, so the floor changes under the robot.</li>
+    <li><strong>Gait.</strong> G113 only.</li>
+    <li><strong>Sole.</strong> The coarse sole features of the stance foot: four pressure blocks, four shear vectors, centre of pressure, total force and contact-area ratio. Joints and IMU as stored in the step-1 data, with its noise.</li>
+  </ul>
+</section>
+
+<section id="camera">
+  <div class="kicker">2</div>
+  <h2>Camera and patch: the pilot</h2>
+  <p>The camera is fixed to the trunk at the mount of the first vision experiment: 0.09 m forward and 0.18 m up from the trunk origin, about 0.72 m above the floor while walking. Its intrinsics are like those of a RealSense D455: 424 × 240 px, vertical field of view 58°, fx = fy = 216.5 px, 10 frames per second.</p>
+  <p>A pilot on 5 training rollouts (two hard, two soft, one strip; commanded 0.26 to 0.42 m/s) tried 7 pitches from 55° to 72.5° and patch distances from 0.20 to 0.80 m in steps of 0.0125 m, with a segmentation pass on every frame to find robot pixels. The rule: the leading toe should be at the bottom of the image in at least half of the frames, and the median floor visible ahead of the leading toe should be 0.6 to 0.85 m; then take the nearest patch.</p>
+  <figure><img src="media/dataset-2_pilot_camera.png" alt="Six torso camera frames from the pilot on asphalt, plaster, red carpet, grass and a strip floor, each with a green box for the candidate patch; the robot's dark shadow falls on the floor in several of them" style="width:100%;border-radius:8px;border:1px solid var(--line)"><figcaption>Pilot frames at pitch 67.5° with the pilot patch. The robot's shadow is still on: in two frames it reaches the patch.</figcaption></figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Patch distance from the trunk</th><th class="n">Robot pixels in the patch, all speeds</th><th class="n">At 0.40 m/s or faster</th></tr></thead>
+    <tbody>
+      <tr><td>0.4375 m (what the pilot rule picked)</td><td class="n">3.2&nbsp;%</td><td class="n">8.2&nbsp;%</td></tr>
+      <tr><td>0.45 m (used)</td><td class="n best">0.45&nbsp;%</td><td class="n best">2.1&nbsp;%</td></tr>
+      <tr class="sep"><td>0.45 m, final dataset, 80,000 frames</td><td class="n">0.68&nbsp;%</td><td class="n">2.25&nbsp;%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The first two rows come from a robustness check on 50 other saved rollouts. At the distance the pilot rule chose, the robot's own leg entered the patch in 8.2&nbsp;% of frames at higher speed. Moving the patch slightly further out cut that to 2.1&nbsp;%, so 0.45 m was used. In the final dataset the share is 0.05&nbsp;% below 0.30 m/s, 0.38&nbsp;% at 0.30 to 0.40 m/s and 2.25&nbsp;% at 0.40 m/s or more. Nothing is masked; the robot share is stored per frame.</p>
+  </div>
+  <h3>The chosen camera and patch</h3>
+  <ul>
+    <li><strong>Pitch 67.5°</strong> down from the trunk's horizontal. With the walking lean, the optical axis is 65.8 / 68.5 / 70.0° below horizontal (5th / 50th / 95th percentile over all rendered frames).</li>
+    <li><strong>Framing.</strong> The leading toe is in the bottom quarter of the image in 73&nbsp;% of frames, the trailing toe at the bottom edge, and floor is visible to about 0.80 m (median) ahead of the leading toe.</li>
+    <li><strong>Patch.</strong> The image rectangle [171, 66, 253, 140], 82 × 74 px: the projection of a 0.3 × 0.3 m square of floor centred 0.45 m ahead of the trunk origin in the median walking pose. That is about 250 to 270 px per metre.</li>
+  </ul>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Ground footprint of the patch, 80,000 frames</th><th class="n">5th pct</th><th class="n">Median</th><th class="n">95th pct</th></tr></thead>
+    <tbody>
+      <tr><td>Centre, ahead of the trunk origin (m)</td><td class="n">0.429</td><td class="n">0.452</td><td class="n">0.496</td></tr>
+      <tr><td>Centre, sideways (m)</td><td class="n">−0.050</td><td class="n">−0.007</td><td class="n">+0.036</td></tr>
+      <tr><td>Near edge, ahead (m)</td><td class="n">0.283</td><td class="n">0.300</td><td class="n">0.334</td></tr>
+      <tr><td>Near edge, width (m)</td><td class="n">0.276</td><td class="n">0.283</td><td class="n">0.290</td></tr>
+      <tr><td>Far edge, ahead (m)</td><td class="n">0.575</td><td class="n">0.603</td><td class="n">0.657</td></tr>
+      <tr><td>Far edge, width (m)</td><td class="n">0.314</td><td class="n">0.325</td><td class="n">0.341</td></tr>
+      <tr><td>Area (m²)</td><td class="n">0.086</td><td class="n">0.092</td><td class="n">0.102</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The patch stays put on the floor to within a few centimetres as the body sways: its centre moves 1.6 cm closer per degree the camera pitches down. In the pilot, the patch centre lay about 0.29 m ahead of the leading toe (0.23 to 0.36 m). This is why vision in this experiment sees the next floor one or two steps before the foot reaches it.</p>
+  </div>
+</section>
+
+<section id="shadow">
+  <div class="kicker">3</div>
+  <h2>Shadows removed</h2>
+  <p>The pilot frames showed the robot's shadow falling on the patch for some walking directions, because the sun is fixed in the world. Measured on the 5 pilot episodes with the light of the first vision experiment:</p>
+  <ul>
+    <li>the shadow covered more than 10&nbsp;% of the patch in <span class="num">31.2</span>&nbsp;% of frames, and more than 1&nbsp;% in <span class="num">40.0</span>&nbsp;%;</li>
+    <li>the mean shadowed share was <span class="num">6.5</span>&nbsp;%;</li>
+    <li>it depended on the heading: 0&nbsp;% in 3 episodes, 60&nbsp;% and 96&nbsp;% in the other two.</li>
+  </ul>
+  <p>A shadow that follows the robot is a cue that has nothing to do with the floor, and it would differ between walking directions. The scene light was therefore set to cast no shadows, so no shadow can fall on the patch and no shadow flag is needed.</p>
+  <div class="caveat">A real camera will see the robot's shadow. Models trained on these renders have never met one.</div>
+</section>
+
+<section id="textures">
+  <div class="kicker">4</div>
+  <h2>Textures and looks</h2>
+  <p>72 CC0 photo textures from ambientCG (1K colour maps, 512 × 512): 36 hard (concrete, asphalt, tiles, marble, terrazzo) and 36 soft (carpet, grass, moss, and fabric limited to quilted, fleece, felt and terry cloth). The class follows the material: what a person would call that floor. A visual review then dropped foam (crumpled packaging, not a floor), plain flat-colour fabrics (they look like painted concrete) and one board-formed concrete that looks like planks.</p>
+  <figure><img src="media/dataset-2_textures.png" alt="Grid of 72 floor textures labelled by split and class: hard test, hard train, hard validation, soft test, soft train and soft validation" style="width:100%;border-radius:8px;border:1px solid var(--line)"><figcaption>All 72 textures. Prefix: h or s for hard or soft, then te, tr or va for test, train or validation.</figcaption></figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Textures</th><th class="n">Test</th><th class="n">Validation</th><th class="n">Train</th></tr></thead>
+    <tbody>
+      <tr><td>Hard</td><td class="n">13</td><td class="n">4</td><td class="n">19</td></tr>
+      <tr><td>Soft</td><td class="n">12</td><td class="n">4</td><td class="n">20</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The split is per class and stratified by material, with validation taken out of the training textures. Training episodes use training textures only, validation episodes validation textures only, test episodes test textures only. No image is in two splits (checked by hash). Test textures are new images of material families also seen in training: new textures, not new materials.</p>
+  </div>
+  <p class="small" style="margin-top:12px">The independent re-check notes that validation has no asphalt, fabric, marble or tiles texture, and only 8 textures in all.</p>
+  <h3>Looks</h3>
+  <ul>
+    <li><strong>Honest.</strong> Each region shows a texture of its own class. The two regions of a strip get different textures.</li>
+    <li><strong>Deceptive</strong> (deceptive floor: looks like one class, behaves like the other). Each region of a deceptive test episode shows a test texture of the other class. These episodes are rendered in both looks, paired: same walk, same sole signal, only the picture differs.</li>
+  </ul>
+  <figure><img src="media/dataset-2_contact_sheet.png" alt="Twelve torso camera frames in two columns, each with the fixed patch as a green box and the stored crop beside it: honest hard, soft and strip floors at the top, deceptive floors below" style="width:100%;border-radius:8px;border:1px solid var(--line)"><figcaption>Final camera and patch, no shadows. Top three rows honest, bottom three deceptive (for example, hard floor textured as carpet or moss, soft floor textured as tiles or terrazzo).</figcaption></figure>
+</section>
+
+<section id="splits">
+  <div class="kicker">5</div>
+  <h2>Episodes, steps and splits</h2>
+  <p>400 G113 walking episodes from the step-1 data. 159 were saved rollouts and were copied; 241 were replayed deterministically, and every stored array was compared bit for bit: 241 of 241 identical, none dropped. Every episode keeps its step-1 split. All validation and test episodes of these classes are included; training is a fixed random subset.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Episodes</th><th class="n">Train</th><th class="n">Validation</th><th class="n">Test</th><th class="n">Test, deceptive</th></tr></thead>
+    <tbody>
+      <tr><td>Hard</td><td class="n">98</td><td class="n">24</td><td class="n">14</td><td class="n">34</td></tr>
+      <tr><td>Soft</td><td class="n">98</td><td class="n">24</td><td class="n">14</td><td class="n">34</td></tr>
+      <tr><td>Strip, hard to soft</td><td class="n">30</td><td class="n">6</td><td class="n">7</td><td class="n">17</td></tr>
+      <tr class="sep"><td>Steps, hard / soft</td><td class="n">5,174 / 4,404</td><td class="n">1,265 / 1,046</td><td class="n">789 / 681</td><td class="n">1,872 / 1,687</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The deceptive column holds test episodes shown with the other class's look; their steps are counted by the real floor, so 1,872 are hard floors that look soft and 1,687 soft floors that look hard, 3,559 in all, 21.0&nbsp;% of the 16,918 steps. The fixed-patch results use the 35 honest test episodes plus the honest look of the 85 deceptive ones as the main test set.</p>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>A step</strong> is a touchdown before any fall with a stance window (touchdown to lift-off, at most 0.6 s) of at least 5 frames at 50 Hz. 978 shorter touch-and-go contacts were dropped.</li>
+    <li><strong>The last camera frame</strong> before touchdown is 0.02 / 0.06 / 0.10 s earlier (5th / 50th / 95th percentile). Every kept step has one.</li>
+    <li><strong>Frames that saw the landing spot.</strong> For training, each step is linked to the earlier frames whose patch contains its landing point: 0 / 7 / 13 frames per step. 91.0&nbsp;% of steps have at least one; the rest are steps the patch never covered, such as first steps and turns.</li>
+    <li><strong>Speed</strong> is binned by mean commanded forward speed: below 0.30, 0.30 to 0.40, and 0.40 m/s or more.</li>
+    <li><strong>Strips go one way.</strong> Every strip episode starts on the hard centre and walks onto soft floor. A few turn and cross back, but at the level of steps all boundaries in this dataset are hard to soft.</li>
+  </ul>
+</section>
+
+<section id="stored">
+  <div class="kicker">6</div>
+  <h2>What is stored</h2>
+  <ul>
+    <li><strong>Per frame (10 Hz):</strong> trunk and camera pose, the patch's footprint on the floor, the true class at its centre and the soft share of the footprint (strip frames can straddle the boundary), the class the floor looks like, robot pixels in the patch, the patch RGB crop and its depth in millimetres (noise-free; a D455-like noise model can be applied). Full frames at 5 Hz for clips.</li>
+    <li><strong>Per step:</strong> episode, split, look, speed, side, touch-down time, landing pose, the class of the touched region, the class it looks like, friction and stiffness, the last frame before touchdown, and the windows of sole features and of joints and IMU (22 joint positions, 22 joint velocities, gyro and gravity vector).</li>
+    <li><strong>Size:</strong> 3.2 GB, 97,000 frames (400 main looks plus 85 paired honest looks).</li>
+  </ul>
+</section>
+
+<section id="checks">
+  <div class="kicker">7</div>
+  <h2>Checks and limits</h2>
+  <ul>
+    <li><strong>Sole sanity, noise-free.</strong> 36 episodes (3 per class and split) were replayed again, all bit-identical. Standing weight was within 2&nbsp;% of m·g in all 59 static windows (largest error 0.10&nbsp;%), and force was zero whenever the sole had no floor contact (1,302 phases, largest value 0).</li>
+    <li><strong>Independent re-check.</strong> It confirmed the 400 episodes and 16,918 steps, that no episode is in two splits, the texture counts per split with no duplicate images, the hashes of the test lists, and the patch rectangle. In 20 sampled frames the robot covered at most 0.1&nbsp;% of the patch and no shadow was visible. Details on the <a href="recheck-2.html">re-check page</a>.</li>
+    <li><strong>No shadows, one camera pose, no lighting change.</strong> Easier than a real camera.</li>
+    <li><strong>Textures on a flat plane.</strong> A texture has no depth, gloss or give; real carpet and real tile differ in more than a picture.</li>
+    <li><strong>One gait and one direction of floor change</strong> (hard to soft).</li>
+  </ul>
+  <p class="small" style="margin-top:16px">This page describes data, not scores; the results pages report macro-F1 per step on held-out textures. Related: <a href="fixed-patch.html">fixed-patch results</a>, <a href="teachers-2.html">teachers of experiment 2</a>, <a href="recheck-2.html">re-check of experiment 2</a>, <a href="dataset.html">dataset of the six-class experiment</a>. Textures: ambientCG, CC0.</p>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terrain from Touch v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">FLA · Step 1, second simulation run · 14 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Terrain from Touch: the second simulation run</h1>
+  <p class="lede">The Booster K1 in MuJoCo with a pressure-map sole: 19 × 8 points per foot, read on top of rigid contact. Seven questions, fixed in advance with one rule for what counts as a real difference: map against four pressure blocks, the value of shear, unseen gaits, a mixed-terrain course, partial support, and whether any of it survives a change in how the sole is simulated.</p>
+  <div class="flag">Simulation only. The most important answer does not survive a change of sensor model.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>Read this first.</strong> The point map's advantage over four pressure blocks is large in this simulation and does not survive a change in how the map is produced. Point-map models trained on one sole setting and tested on another lose most of their accuracy; block models lose much less.</li>
+    <li><strong>On the main data the map wins on every metric:</strong> terrain F1 <span class="num">0.877</span> against <span class="num">0.829</span>, partial-support F1 <span class="num">0.802</span> against <span class="num">0.471</span>, long edge events missed <span class="num">2.0</span>&nbsp;% against <span class="num">26.6</span>&nbsp;%.</li>
+    <li><strong>Shear adds little.</strong> Block shear on top of the map: no difference with joints and IMU. Per-point shear here has no content of its own.</li>
+    <li><strong>Sole-only models transfer better to an unseen gait</strong> for all five sole inputs: mean <span class="num">0.629</span> against <span class="num">0.532</span>; on the human-like gait <span class="num">0.526</span> against <span class="num">0.071</span>.</li>
+    <li><strong>On a mixed course</strong> the sole model beats joints and IMU alone (accuracy <span class="num">0.842</span> against <span class="num">0.785</span>) and hand-written rules (<span class="num">0.311</span>).</li>
+    <li><strong>A real recording is needed</strong> before a fine pressure map can be trusted over block sums.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#answers">The seven answers</a></li>
+    <li><a href="#changed">What changed since the first run</a></li>
+    <li><a href="#setup">Setup, with what is approximate</a></li>
+    <li><a href="#main">Main results</a></li>
+    <li><a href="#q1">Map, block shear, point shear</a></li>
+    <li><a href="#q4">An unseen gait</a></li>
+    <li><a href="#q5">The mixed course</a></li>
+    <li><a href="#q6">Partial support and unseen friction</a></li>
+    <li><a href="#q7">Does simulation detail pay off?</a></li>
+    <li><a href="#v1v2">First run against second run</a></li>
+    <li><a href="#policy">A new walking policy (parked)</a></li>
+    <li><a href="#integrity">Integrity, approximations, failures</a></li>
+    <li><a href="#next">Next steps</a></li>
+  </ol>
+</nav>
+
+<section id="answers">
+  <div class="kicker">1</div>
+  <h2>The seven answers</h2>
+  <p>Inputs: <strong>P</strong> is joints and IMU (no walking command). The five sole inputs, each with and without P: <strong>C1</strong> point map plus per-point shear; <strong>C2</strong> point map plus block shear; <strong>C3</strong> point map only; <strong>C4</strong> four pressure blocks per foot plus block shear; <strong>C5</strong> four pressure blocks only. All come from one recording. Walking, test split, mean of three seeds unless stated. The metric definitions and the rule for calling a difference real were fixed before the dataset existed.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>#</th><th>Question</th><th>Answer by the rule</th><th>Key numbers</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Does the pressure map beat four pressure blocks?</td><td><strong>Yes on the main dataset, on every metric; not robust (question 7).</strong></td><td>P+C3 against P+C5: terrain F1 0.877 against 0.829, support F1 0.929 against 0.810, partial-support F1 0.802 against 0.471, friction MAE 0.156 against 0.174, long edge events missed 2.0&nbsp;% against 26.6&nbsp;%</td></tr>
+      <tr><td>2</td><td>Does block shear add anything on top of the map?</td><td><strong>No difference with joints and IMU. Without them, terrain F1 is better and nothing else.</strong></td><td>P+C2 against P+C3: 0.889 against 0.877 terrain F1, inside the rule's 2-point floor. C2 against C3: 0.881 against 0.856</td></tr>
+      <tr><td>3</td><td>Does per-point shear add anything over block shear?</td><td><strong>No, with two exceptions with joints and IMU (friction better, partial support worse), and the simulator cannot test this question.</strong></td><td>P+C1 against P+C2: friction MAE 0.141 against 0.158 (better), partial-support F1 0.801 against 0.827 (worse); all else no difference. Per-point shear here is the foot's total shear shared out by pressure</td></tr>
+      <tr><td>4</td><td>Do sole-only models transfer to an unseen gait better than models with joints and IMU?</td><td><strong>Yes, for all five inputs.</strong></td><td>Mean terrain F1 on the held-out gait, C2 against P+C2: 0.629 against 0.532. On held-out SONIC: 0.526 against 0.071</td></tr>
+      <tr><td>5</td><td>On a mixed course, how much better is the sole model than joints and IMU, and than rules?</td><td><strong>Better than both on accuracy, F1 and latency.</strong></td><td>Selected model P+C2: accuracy 0.842, boundary latency 0.62 s. P: 0.785 and 0.71 s. Rule-based: 0.311 and 3.57 s, half the boundaries missed</td></tr>
+      <tr><td>6</td><td>Partial support on edge events of 0.3 s or longer?</td><td><strong>The point map detects them; blocks and joints miss a quarter to a third.</strong></td><td>Missed long events: P 37.3&nbsp;%, block inputs 26.6–28.0&nbsp;%, point-map inputs 2.0–2.6&nbsp;%. Shear does not change the detection of long events; its one real effect is the lower partial-support F1 of P+C1</td></tr>
+      <tr><td>7</td><td>Do the answers survive a change of simulation detail?</td><td><strong>Answers 2 and 3 survive on the three metrics tested (terrain F1, support F1, friction MAE). Answer 1 does not.</strong></td><td>Point-map models trained on the nominal sole fall from terrain F1 0.86–0.88 to 0.53–0.60 with shifted sensor parameters and to 0.20–0.27 on the pad sole and the foot-outline mask; block models fall to 0.59–0.76</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> On the main data the map wins and the size of the win is in support state, not terrain class. But answer 7 undercuts answer 1: point-map models trained on one sole setting lose most of their accuracy on another (up to 22 points lost for block models on the pad sole, 2 to 9 elsewhere, far more for map models). The simulation supports "a pressure map carries useful geometry about what is under the foot"; it cannot yet tell how much of that will hold on the real sole.</p>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>Three walking sources, not four.</strong> A new velocity policy was parked after three fixes without measurable progress (section 11). Everything uses G113 and G80, two ordinary flat-foot walking policies, and SONIC, human-like heel-to-toe walking.</li>
+    <li><strong>While walking, the simulated foot still loads its corners.</strong> The rigid foot is a box that rocks on its edges, so at heel strike and toe-off two to four corner points carry the load and reach the sensor model's 60 N limit. Standing and the hand-press rig show an evenly loaded front and back, as described for the real sole; walking does not. This is the most visible difference between the renders and a real sole.</li>
+    <li><strong>Brief touches of an edge are mostly missed by everything.</strong> Edge events shorter than 0.3 s are missed 74–76&nbsp;% of the time with the point map and 82–85&nbsp;% without it.</li>
+  </ul>
+</section>
+
+<section id="changed">
+  <div class="kicker">2</div>
+  <h2>What changed since the first run</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>First run</th><th>Second run</th></tr></thead>
+    <tbody>
+      <tr><td>Sole</td><td>2 × 4 rigid zones per foot, forces taken per zone from the contact solver</td><td>Contact: four rigid blocks (front and back, each split into left and right) and a middle raised 1 mm. Reading: 19 × 8 points at 10 mm per foot (152), rebuilt from the foot's total force and moment</td></tr>
+      <tr><td>Sensor views</td><td>zones: normal force N, shear S</td><td>map and per-point shear; four blocks with block shear; all from one recording</td></tr>
+      <tr><td>Sensor parameters</td><td>one fixed setting</td><td>random per episode (boundaries, clearance, layer compliance, neighbour spread, crosstalk, gain, offset, noise, quantisation), plus fixed settings for the sensitivity test</td></tr>
+      <tr><td>Joints and IMU (P)</td><td>joints, IMU, command</td><td>joints, IMU; no command (one diagnostic run with it)</td></tr>
+      <tr><td>Models</td><td>temporal CNN</td><td>same temporal CNN; point maps first pass a small masked 2D encoder per foot and frame. Weights of all 156 models saved</td></tr>
+      <tr><td>Dataset</td><td>24.7 h, 4,572 episodes</td><td>33.2 h, 6,139 episodes (train 21.9 h, validation 3.2 h, test 8.1 h), plus a test-only hard-mid set (friction 0.36–0.7), per-foot ground labels, sensitivity sets and 120 course runs</td></tr>
+      <tr><td>New tests</td><td></td><td>leave-one-gait-out with and without P; a mixed-terrain course against P and a rule-based detector; sensitivity of the conclusions to the sole model</td></tr>
+      <tr><td>Gate</td><td>three pass/fail thresholds</td><td>no gate; seven questions with one rule, fixed in advance, for a real difference</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The first run asked one pass/fail question about zone shear (<a href="step1-run1.html">first run</a>). This run changes the sole model, removes the command from P, adds a third more data and asks seven narrower questions, including whether the answers depend on how the sole is simulated.</p>
+  </div>
+</section>
+
+<section id="setup">
+  <div class="kicker">3</div>
+  <h2>Setup, with what is approximate</h2>
+  <ul>
+    <li><strong>Contact geometry.</strong> Rigid, the same outer box as before (180 × 70 mm), so the walking policies see the heel and toe edges they were trained on. Front and back parts carry load; the middle is 1 mm higher. Boundaries default to thirds and are randomised per episode. All three sources were checked on the new foot on flat hard-grip: 0 falls in 64 episodes each, forward speed within 0.1&nbsp;% of the first run.</li>
+    <li><strong>The K1 foot mesh</strong> (the model wears shoes) shows a flat heel, then a 16 mm long groove 4–15 mm deep, then a flat front with toe spring. That "middle" is a groove, not a third of the length. Thirds were kept as planned; the random range of the boundaries covers the mesh value.</li>
+  </ul>
+  <h3>Why the map is rebuilt from the foot's total force</h3>
+  <p>The plan assumed the rigid simulator gets each region's total force right. Measured on G113 walking on flat ground, it does not: one block carries over 95&nbsp;% of a foot's load in 33–38&nbsp;% of loaded physics steps, and the whole load can move to another block within one 2 ms step. For flat parts of one rigid body the split is statically indeterminate, and the solver's choice is an artefact, the same one that put the load in one corner zone in the first run. What the dynamics do determine is the foot's total force, its centre of pressure and the twist about it. The map is rebuilt from those at every physics step: a thin elastic layer on a rigid plane, pressure at a point proportional to how far the plane presses into the layer given the ray-cast gap to the ground under that point, with the plane's height and two tilts solved so that total force and centre of pressure match the simulator exactly. Then the sensor model: neighbour spread, crosstalk, per-point gain and offset, noise, a 60 N per-point limit, quantisation, 150 Hz to 50 Hz.</p>
+  <h3>Consequences, stated as limits of this simulator</h3>
+  <ul>
+    <li>Block forces and block shear are sums over the rebuilt map, not solver outputs.</li>
+    <li><strong>Per-point shear has no independent content.</strong> It is the foot's total shear shared in proportion to pressure, plus a twist term: all shear comes from three numbers per foot. Question 3 therefore tests noise handling and encoding, not physics. Per-point shear alone even reaches support F1 0.879, because it carries the pressure pattern.</li>
+    <li>On flat ground the map is a function of total force and centre of pressure. What it adds over blocks is the ground geometry under the foot: bumps, voids, edges.</li>
+    <li><strong>Point mask.</strong> A 19 × 8 rectangle (152 points per foot) on the contact box, not a foot-shaped mask of about 100 points: the rigid foot touches at its box corners and a foot-shaped mask has no points there. The foot outline, traced from a screenshot, is one arm of the sensitivity test and is drawn in the renders.</li>
+    <li><strong>Layer compliance</strong> was lowered from 0.5 to 0.2 mm per 100 N after the pilot, because with 0.5 mm the middle carried 5–6&nbsp;% of the load while walking on flat ground. With 0.2 mm it carries 3.4–4.1&nbsp;% on average (median 0; 0 when standing). "The middle does not touch flat ground" holds when standing and for most of the stance, not all of it.</li>
+  </ul>
+  <h3>Sole checks, 17 of 17 passed</h3>
+  <p>The six checks of the first run on the new geometry; standing, no point above 1.0&nbsp;% of the foot's load (limit 15&nbsp;%) and the middle at 0.00&nbsp;% (limit 5&nbsp;%); centre of pressure from the map within 0.006 mm of the simulator's (limit 5 mm); a 5 mm bump under the middle raises its share to 80&nbsp;%; half over an edge, points over the void read exactly zero before noise and the support fraction matches ground truth; the sum over points equals the foot force within 0.0009&nbsp;% (limit 1&nbsp;%). "Load shared by many points" had no number in the plan; the rule used is "at least half the points of the front and of the back carry at least half the uniform share" (measured 100&nbsp;%), which replaced a first rule that no even spread could meet.</p>
+  <div class="grid2">
+    <figure><video controls preload="metadata" src="../v2/videos/rig_press.mp4"></video><figcaption>The simulated sole on a test rig: the foot is pressed down. Colour is pressure, arrows are shear. Front and back load, the middle stays empty.</figcaption></figure>
+    <figure><video controls preload="metadata" src="../v2/videos/rig_edge.mp4"></video><figcaption>Test rig: the foot is set down half on an edge. Only the supported part of the sole reads pressure.</figcaption></figure>
+  </div>
+  <h3>Data, training and the rule-based detector</h3>
+  <ul>
+    <li><strong>Dataset</strong> (8.0 GB). The same six classes and separate friction and stiffness bands per split as the first run. Walking with G113, G80 and SONIC, plus standing, foot rig, lifted and surface-change strips. 310 falls in 5,869 walking, standing and lifted episodes, kept up to the fall. The validator passes on every episode; no terrain instance, band or raw array is shared between splits (checked three times, independently).</li>
+    <li><strong>Training.</strong> Point-map models at first memorised each episode's fixed per-point gain and offset (training F1 0.98, validation 0.75 after one epoch). Every sole input is therefore trained with a fresh random gain (sd 0.1) and offset (sd 0.3 N) per window; validation and test data are not perturbed.</li>
+    <li><strong>Rule-based detector.</strong> Hand-written rules on kinematic foot slip in double support, joint tracking error, stance-foot tilt and its scatter, foothold height difference and a contact estimate, thresholds fitted on the training split only. It never outputs "soft". Terrain F1 0.285 on the test split.</li>
+  </ul>
+</section>
+
+<section id="main">
+  <div class="kicker">4</div>
+  <h2>Main results</h2>
+  <p>Walking, test split, mean of three seeds. Edge events are partial-support events on edges; long means 0.3 s or more.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Terrain F1</th><th class="n">Support F1</th><th class="n">Partial F1</th><th class="n">Friction MAE</th><th class="n">Grip/slip F1</th><th class="n">Strip latency, s</th><th class="n">Long edge missed</th><th class="n">Short edge missed</th><th class="n">Lifted delay, s</th></tr></thead>
+    <tbody>
+      <tr><td>P</td><td class="n">0.817</td><td class="n">0.760</td><td class="n">0.358</td><td class="n">0.181</td><td class="n">0.948</td><td class="n">0.64</td><td class="n">0.373</td><td class="n">0.845</td><td class="n">0.30</td></tr>
+      <tr class="sep"><td>P+C1 (map + point shear)</td><td class="n">0.872</td><td class="n">0.929</td><td class="n">0.801</td><td class="n best">0.141</td><td class="n">0.949</td><td class="n">0.35</td><td class="n">0.022</td><td class="n best">0.743</td><td class="n">0.11</td></tr>
+      <tr><td>P+C2 (map + block shear)</td><td class="n best">0.889</td><td class="n best">0.938</td><td class="n best">0.827</td><td class="n">0.158</td><td class="n best">0.978</td><td class="n">0.36</td><td class="n">0.026</td><td class="n">0.755</td><td class="n">0.11</td></tr>
+      <tr><td>P+C3 (map)</td><td class="n">0.877</td><td class="n">0.929</td><td class="n">0.802</td><td class="n">0.156</td><td class="n">0.957</td><td class="n">0.38</td><td class="n best">0.020</td><td class="n">0.744</td><td class="n best">0.10</td></tr>
+      <tr><td>P+C4 (blocks + block shear)</td><td class="n">0.836</td><td class="n">0.813</td><td class="n">0.477</td><td class="n">0.176</td><td class="n">0.969</td><td class="n">0.49</td><td class="n">0.280</td><td class="n">0.816</td><td class="n">0.11</td></tr>
+      <tr><td>P+C5 (blocks)</td><td class="n">0.829</td><td class="n">0.810</td><td class="n">0.471</td><td class="n">0.174</td><td class="n">0.945</td><td class="n">0.51</td><td class="n">0.266</td><td class="n">0.820</td><td class="n">0.12</td></tr>
+      <tr class="sep"><td>C1</td><td class="n">0.877</td><td class="n">0.929</td><td class="n">0.802</td><td class="n best">0.141</td><td class="n">0.967</td><td class="n best">0.33</td><td class="n">0.027</td><td class="n">0.757</td><td class="n best">0.10</td></tr>
+      <tr><td>C2</td><td class="n">0.881</td><td class="n">0.934</td><td class="n">0.816</td><td class="n">0.156</td><td class="n">0.977</td><td class="n">0.39</td><td class="n">0.022</td><td class="n">0.751</td><td class="n best">0.10</td></tr>
+      <tr><td>C3</td><td class="n">0.856</td><td class="n">0.923</td><td class="n">0.786</td><td class="n">0.170</td><td class="n">0.957</td><td class="n">0.47</td><td class="n">0.026</td><td class="n">0.747</td><td class="n best">0.10</td></tr>
+      <tr><td>C4</td><td class="n">0.817</td><td class="n">0.795</td><td class="n">0.428</td><td class="n">0.175</td><td class="n">0.963</td><td class="n">0.50</td><td class="n">0.278</td><td class="n">0.826</td><td class="n">0.11</td></tr>
+      <tr><td>C5</td><td class="n">0.780</td><td class="n">0.792</td><td class="n">0.419</td><td class="n">0.193</td><td class="n">0.919</td><td class="n">0.57</td><td class="n">0.286</td><td class="n">0.854</td><td class="n best">0.10</td></tr>
+      <tr class="sep"><td>Block shear alone</td><td class="n">0.793</td><td class="n">0.746</td><td class="n">0.313</td><td class="n">0.172</td><td class="n">0.947</td><td class="n">0.58</td><td class="n">0.366</td><td class="n">0.854</td><td class="n">0.35</td></tr>
+      <tr><td>Per-point shear alone</td><td class="n">0.857</td><td class="n">0.879</td><td class="n">0.674</td><td class="n">0.165</td><td class="n">0.961</td><td class="n">0.41</td><td class="n">0.050</td><td class="n">0.758</td><td class="n">0.20</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The clearest line runs between map inputs (C1 to C3) and block inputs (C4, C5): partial-support F1 0.786 to 0.827 against 0.419 to 0.477, share of long edge events missed 0.020 to 0.027 against 0.266 to 0.286. Terrain F1 differs much less. Strip latency in steps is 2.00 for every input without the point map and 1.33–2.00 with it; with three seeds of integer medians that is not a real difference by the rule.</p>
+  </div>
+  <figure><img src="../v2/figures/v2_fig1_combinations.png" alt="Two bar charts of terrain macro-F1 and support-state macro-F1 for the five sole inputs C1 to C5, each with and without joints and IMU, with a dashed line for joints and IMU alone" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Terrain and support-state F1 for the five sole inputs, sole only (light) and with joints and IMU (hatched). Dashed line: joints and IMU alone.</figcaption></figure>
+</section>
+
+<section id="q1">
+  <div class="kicker">5</div>
+  <h2>Map, block shear, point shear (questions 1 to 3)</h2>
+  <h3>Question 1: map against blocks</h3>
+  <p>A real difference on all five metrics, with and without joints and IMU. The size is in support state, not terrain class: partial-support F1 goes from 0.47 to 0.80 and long edge events missed from 27&nbsp;% to 2&nbsp;%, while terrain F1 gains 5 points. The per-foot labels show where: on edge terrain, windows in which a foot was actually on an edge are recognised 94&nbsp;% of the time with the map and 59–65&nbsp;% without. A window of edge or rough terrain in which no foot touched an edge or a bump is recognised much less often by every input (edge 28–43&nbsp;%, rough 8–18&nbsp;%), which supports what the first run could only assert: part of the class error is in the label, not in the sensing. The per-foot labels are for analysis only.</p>
+  <h3>Question 2: block shear on top of the map</h3>
+  <p>With joints and IMU: no difference on terrain F1 (+1.3 points, under the 2-point floor), support F1, friction MAE, strip latency or grip/slip F1. Without them, terrain F1 is really better (+2.6 points) and nothing else. The first run's friction effect of shear is not there: 0.158 against 0.156.</p>
+  <h3>Question 3: per-point shear over block shear</h3>
+  <p>No difference, except friction MAE with joints and IMU (0.141 against 0.158, real by the rule) and partial-support F1, which is really worse (0.801 against 0.827). Without joints and IMU the friction difference is the same size (0.141 against 0.156); it passes the spread test and misses the 10&nbsp;% floor by a hair (0.0152 against 0.0156), so by the rule it is no difference. Given how per-point shear is built here, this is an effect of feeding the same information in a different encoding. It says nothing about the real sensor's per-point shear.</p>
+</section>
+
+<section id="q4">
+  <div class="kicker">6</div>
+  <h2>An unseen gait (question 4)</h2>
+  <p>Train on two gaits, test terrain F1 on the third.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">G113 held out</th><th class="n">G80 held out</th><th class="n">SONIC held out</th><th class="n">Mean</th><th class="n">Same input, gait seen</th></tr></thead>
+    <tbody>
+      <tr><td>P+C1</td><td class="n">0.798</td><td class="n">0.673</td><td class="n">0.120</td><td class="n">0.530</td><td class="n">0.872</td></tr>
+      <tr><td>P+C2</td><td class="n best">0.841</td><td class="n">0.686</td><td class="n">0.071</td><td class="n">0.532</td><td class="n">0.889</td></tr>
+      <tr><td>P+C3</td><td class="n">0.788</td><td class="n">0.633</td><td class="n">0.098</td><td class="n">0.506</td><td class="n">0.876</td></tr>
+      <tr><td>P+C4</td><td class="n">0.488</td><td class="n">0.554</td><td class="n">0.079</td><td class="n">0.374</td><td class="n">0.834</td></tr>
+      <tr><td>P+C5</td><td class="n">0.498</td><td class="n">0.481</td><td class="n">0.066</td><td class="n">0.348</td><td class="n">0.828</td></tr>
+      <tr class="sep"><td>C1</td><td class="n">0.779</td><td class="n best">0.715</td><td class="n">0.516</td><td class="n best">0.670</td><td class="n">0.876</td></tr>
+      <tr><td>C2</td><td class="n">0.717</td><td class="n">0.644</td><td class="n best">0.526</td><td class="n">0.629</td><td class="n">0.881</td></tr>
+      <tr><td>C3</td><td class="n">0.653</td><td class="n">0.629</td><td class="n">0.418</td><td class="n">0.567</td><td class="n">0.855</td></tr>
+      <tr><td>C4</td><td class="n">0.623</td><td class="n">0.578</td><td class="n">0.363</td><td class="n">0.521</td><td class="n">0.816</td></tr>
+      <tr><td>C5</td><td class="n">0.466</td><td class="n">0.490</td><td class="n">0.240</td><td class="n">0.399</td><td class="n">0.780</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Sole-only models are really better on the held-out mean for every input. Most of the gain comes from SONIC: with joints and IMU in the input, a model that never saw SONIC scores 0.07–0.12 on it, the level of the shuffled-label control; without them it scores 0.24–0.53. Between the two velocity policies, which move alike, the picture is mixed: with the map, joints and IMU help on held-out G113 (P+C2 0.841 against C2 0.717); with block pressure and block shear they hurt there (P+C4 0.488 against C4 0.623); with block pressure alone they make little difference (P+C5 0.498 against C5 0.466). Every model still loses 21 to 48 points against a gait it has seen. The first run's conclusion stands and is sharper: the controller that will run on the real robot must be in the training data, and joints and IMU are the part of the input that ties a model to a gait.</p>
+  </div>
+  <figure><img src="../v2/figures/v2_fig3_unseen_gait.png" alt="Bar chart of mean terrain macro-F1 on a held-out gait for C1 to C5, sole only and with joints and IMU, with black lines for the score on a seen gait" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Leave-one-gait-out, mean over the three held-out gaits. Black lines: the same input on a gait seen in training.</figcaption></figure>
+</section>
+
+<section id="q5">
+  <div class="kicker">7</div>
+  <h2>The mixed course (question 5)</h2>
+  <p>120 recorded runs, 40 courses per walking source, test only: six types of ground chunk in random order, planned length 60–69 s, completed runs 70–80 s. No source reached the planned 80&nbsp;% of completed courses: every chunk was crossed in 19 of 40 runs by G113, 22 by G80 and 6 by SONIC (SONIC stays up in 12, but in six of those it does not reach the last chunk: its clips turn and wander as well as walk slowly). All runs are scored up to the fall, as planned. The sole model was selected on validation data before any course result: P+C2 (validation terrain F1 0.884; runner-up P+C3 0.880).</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Detector</th><th class="n">Accuracy</th><th class="n">Macro-F1</th><th class="n">Support F1</th><th class="n">Boundary latency, s</th><th class="n">Steps</th><th class="n">Boundaries missed</th></tr></thead>
+    <tbody>
+      <tr><td>Sole model P+C2</td><td class="n best">0.842</td><td class="n best">0.841</td><td class="n best">0.928</td><td class="n best">0.62</td><td class="n">2</td><td class="n best">0.7&nbsp;%</td></tr>
+      <tr><td>P only</td><td class="n">0.785</td><td class="n">0.783</td><td class="n">0.776</td><td class="n">0.71</td><td class="n">2</td><td class="n">1.3&nbsp;%</td></tr>
+      <tr><td>Rule-based</td><td class="n">0.311</td><td class="n">0.272</td><td class="n">0.633</td><td class="n">3.57</td><td class="n">8</td><td class="n">49.9&nbsp;%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The sole model is really better than P on accuracy (+5.7 points), macro-F1 (+5.8) and median latency (0.09 s earlier); in steps both detect the new ground on the second step in the pooled data (P needs three steps on SONIC). The largest gap is on SONIC (accuracy 0.812 against 0.699, latency 0.62 s against 0.89 s). The rule-based detector is far behind both: its tracking-error rule fires on SONIC's low-gain controller for the whole run, and it has no rule that separates soft ground. A learned model on signals the controller already has is a much stronger baseline than hand rules.</p>
+  </div>
+  <div class="grid2">
+    <figure><img src="../v2/figures/v2_fig4_course.png" alt="Three bar charts for the mixed course: accuracy, macro-F1 and median boundary latency for the sole model, joints and IMU only, and the rule-based detector" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Mixed course, pooled over the three walking sources and scored up to the fall.</figcaption></figure>
+    <figure><video controls preload="metadata" src="../v2/videos/course_g113_seed001.mp4"></video><figcaption>One mixed course run with the flat-foot policy G113.</figcaption></figure>
+  </div>
+</section>
+
+<section id="q6">
+  <div class="kicker">8</div>
+  <h2>Partial support and unseen friction (question 6)</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Long events missed</th><th class="n">Median delay, s</th><th class="n">Partial-support F1</th><th class="n">Short events missed</th></tr></thead>
+    <tbody>
+      <tr><td>P</td><td class="n">37.3&nbsp;%</td><td class="n">0.12</td><td class="n">0.358</td><td class="n">84.5&nbsp;%</td></tr>
+      <tr><td>P + blocks (C4, C5)</td><td class="n">26.6–28.0&nbsp;%</td><td class="n">0.12–0.13</td><td class="n">0.47–0.48</td><td class="n">81.6–82.0&nbsp;%</td></tr>
+      <tr><td>P + point map (C1–C3)</td><td class="n best">2.0–2.6&nbsp;%</td><td class="n best">0.10</td><td class="n best">0.80–0.83</td><td class="n best">74.3–75.5&nbsp;%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The point map catches almost every edge contact that lasts 0.3 s or more; blocks and joints miss a quarter to a third of them. Brief contacts are missed by everything. Shear makes no difference to any of these numbers.</p>
+  </div>
+  <figure><img src="../v2/figures/v2_fig2_partial_support.png" alt="Two bar charts for all inputs: partial-support F1, and the miss rate of edge events lasting 0.3 s or more" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Partial-support F1 (left) and missed long edge events (right); markers are seeds.</figcaption></figure>
+  <h3>hard-mid: friction 0.36–0.7, never seen in training</h3>
+  <p>Friction MAE: P 0.140, P+C5 0.159, P+C3 0.128, P+C2 0.109, C1 0.107. Models assign these windows to hard-grip in 53–64&nbsp;% of cases and to hard-slip in 27–39&nbsp;%. The friction estimate interpolates into the unseen range about as well as it works inside the trained ranges, and shear inputs give the lowest errors here: the one place in this run where shear shows a consistent benefit. It was not one of the comparisons fixed in advance, so it is an observation.</p>
+</section>
+
+<section id="q7">
+  <div class="kicker">9</div>
+  <h2>Does simulation detail pay off? (question 7)</h2>
+  <p>Models trained on the fixed nominal sole, tested on the same test simulations read in five ways. Terrain F1; support F1 behaves alike.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Nominal</th><th class="n">Shifted parameters</th><th class="n">Pad sole</th><th class="n">Foot-outline mask</th><th class="n">No saturation</th></tr></thead>
+    <tbody>
+      <tr><td>P+C1</td><td class="n">0.865</td><td class="n">0.579</td><td class="n">0.273</td><td class="n">0.204</td><td class="n">0.786</td></tr>
+      <tr><td>P+C2</td><td class="n best">0.876</td><td class="n">0.597</td><td class="n">0.226</td><td class="n">0.209</td><td class="n best">0.788</td></tr>
+      <tr><td>P+C3</td><td class="n">0.860</td><td class="n">0.530</td><td class="n">0.209</td><td class="n">0.241</td><td class="n">0.779</td></tr>
+      <tr class="sep"><td>P+C4</td><td class="n">0.805</td><td class="n best">0.737</td><td class="n">0.588</td><td class="n">0.743</td><td class="n">0.670</td></tr>
+      <tr><td>P+C5</td><td class="n">0.778</td><td class="n">0.688</td><td class="n best">0.590</td><td class="n best">0.755</td><td class="n">0.650</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Answer 1 flips: on shifted parameters, the pad sole and the outline mask, the block models are really better than the point-map models on terrain F1, and on the pad sole and the outline mask also on support F1. Answers 2 and 3 hold on all five test sets: no difference. The 60 N limit does not decide answers 1 and 2: trained and tested without saturation, the verdicts are the same as nominal (P+C3 0.864 against P+C5 0.776). Questions 3 to 6 were not rerun without the limit. A model trained with saturation and tested without loses 8–14 points, so the per-point range of the real sensor must be known before training for it.</p>
+  </div>
+  <figure><img src="../v2/figures/v2_fig5_sensitivity.png" alt="Grouped bar chart of terrain macro-F1 for P+C1 to P+C5 trained on the nominal sole and tested nominal, shifted, on pads, with the foot-outline mask and without saturation" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Trained on the nominal sole, tested five ways. Pink: foot-outline mask; yellow: trained and tested without saturation.</figcaption></figure>
+  <p style="margin-top:14px">On the point "a fine pressure map beats four blocks", the simulation cannot be trusted until real recordings exist. A point-map model learns the reading method along with the ground. Block sums are much less sensitive to it, and that robustness is itself an argument for them, or for training on real data.</p>
+  <h3>Exploratory, after the verdict: why the point-map models fail there</h3>
+  <p>Not part of the seven answers. The main models, trained on per-episode random sensor parameters, tested on the same five sets (terrain F1):</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Model</th><th>Training</th><th class="n">Nominal</th><th class="n">Shifted</th><th class="n">Pad sole</th><th class="n">Outline mask</th><th class="n">No saturation</th></tr></thead>
+    <tbody>
+      <tr><td>P+C2</td><td>randomised</td><td class="n best">0.895</td><td class="n best">0.884</td><td class="n">0.266</td><td class="n">0.127</td><td class="n best">0.827</td></tr>
+      <tr><td>P+C2</td><td>nominal only</td><td class="n">0.876</td><td class="n">0.597</td><td class="n">0.226</td><td class="n">0.209</td><td class="n">0.788</td></tr>
+      <tr class="sep"><td>P+C3</td><td>randomised</td><td class="n">0.884</td><td class="n">0.869</td><td class="n">0.212</td><td class="n">0.133</td><td class="n">0.797</td></tr>
+      <tr><td>P+C3</td><td>nominal only</td><td class="n">0.860</td><td class="n">0.530</td><td class="n">0.209</td><td class="n">0.241</td><td class="n">0.779</td></tr>
+      <tr class="sep"><td>P+C5</td><td>randomised</td><td class="n">0.838</td><td class="n">0.820</td><td class="n best">0.643</td><td class="n best">0.824</td><td class="n">0.797</td></tr>
+      <tr><td>P+C5</td><td>nominal only</td><td class="n">0.778</td><td class="n">0.688</td><td class="n">0.590</td><td class="n">0.755</td><td class="n">0.650</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Randomising the sensor parameters buys robustness to those parameters: on shifted parameters the point-map models recover from 0.53–0.60 to 0.87–0.88. It does not buy robustness to how the map is formed: on the pad sole and the outline mask the randomised models fail as badly as the nominal ones.</p>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>What differs in the inputs there</strong> (walking frames with load): the same share of load in the corner points on the pad sole, but the load sits on fewer points (90&nbsp;% of it on 34 points for pads and 25 for the outline mask, against 42) and neighbouring points differ more. The outline mask also removes the corner and edge points where the box foot puts its load (25&nbsp;% of the load in the outer ring against 63&nbsp;%). For the outline mask, which reads the same simulations, the block sums stay close to nominal (correlation 0.96, median difference 16&nbsp;%); for the pad sole, a different simulation, only the distributions can be compared (overlap 0.93–0.94).</li>
+    <li><strong>Reading.</strong> The point-map models use the fine spatial shape that the elastic-layer reconstruction produces. Whether a real sole produces that shape is what the simulation cannot say. A real recording would settle it with four numbers: how many taxels carry 90&nbsp;% of the load at heel strike, mid-stance and toe-off; the share of load at the edges; how much neighbouring taxels differ; the per-taxel range.</li>
+  </ul>
+</section>
+
+<section id="v1v2">
+  <div class="kicker">10</div>
+  <h2>First run against second run</h2>
+  <p>Not a like-for-like comparison: the sole, the sensor model, the command input, the dataset size and the network all differ. Both runs use the same three walking sources, classes, bands and metric code.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Run</th><th>Input</th><th class="n">Terrain F1</th><th class="n">Support F1</th><th class="n">Partial F1</th><th class="n">Friction MAE</th><th class="n">Strip latency, s</th><th class="n">Lifted delay, s</th></tr></thead>
+    <tbody>
+      <tr><td>First</td><td>P with command</td><td class="n">0.802</td><td class="n">0.755</td><td class="n">0.353</td><td class="n">0.186</td><td class="n">0.67</td><td class="n">0.29</td></tr>
+      <tr><td>First</td><td>P+N (2 × 4 zone Fz from the solver)</td><td class="n">0.861</td><td class="n">0.866</td><td class="n">0.633</td><td class="n">0.166</td><td class="n">0.52</td><td class="n best">0.07</td></tr>
+      <tr><td>First</td><td>P+N+S</td><td class="n">0.860</td><td class="n">0.853</td><td class="n">0.599</td><td class="n best">0.150</td><td class="n">0.55</td><td class="n">0.08</td></tr>
+      <tr class="sep"><td>Second</td><td>P, no command</td><td class="n">0.817</td><td class="n">0.760</td><td class="n">0.358</td><td class="n">0.181</td><td class="n">0.64</td><td class="n">0.30</td></tr>
+      <tr><td>Second</td><td>P with command (diagnostic)</td><td class="n">0.818</td><td class="n">0.765</td><td class="n">0.369</td><td class="n">0.180</td><td class="n">0.62</td><td class="n">0.27</td></tr>
+      <tr><td>Second</td><td>P+C5 (four block Fz from the map)</td><td class="n">0.829</td><td class="n">0.810</td><td class="n">0.471</td><td class="n">0.174</td><td class="n">0.51</td><td class="n">0.12</td></tr>
+      <tr><td>Second</td><td>P+C4 (plus block shear)</td><td class="n">0.836</td><td class="n">0.813</td><td class="n">0.477</td><td class="n">0.176</td><td class="n">0.49</td><td class="n">0.11</td></tr>
+      <tr><td>Second</td><td>P+C2 (point map plus block shear)</td><td class="n best">0.889</td><td class="n best">0.938</td><td class="n best">0.827</td><td class="n">0.158</td><td class="n best">0.36</td><td class="n">0.11</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> P reproduces across the two runs, with or without the command. The first run's eight zones per foot scored higher than this run's four blocks. The two differ in resolution and in where the numbers come from (the first run read the solver's per-zone forces, which this run showed to be unreliable while walking), so the gap cannot be assigned to one cause. The first run's friction gain from zone shear (0.166 to 0.150) is not reproduced by block shear here (0.174 against 0.176 for blocks, 0.156 against 0.158 for the map); per-point shear does lower the friction error (0.141 against 0.158, question 3). With joints and IMU in the input, neither run found a shear effect on terrain class or support state; without them, this run found one on terrain class (question 2).</p>
+  </div>
+</section>
+
+<section id="policy">
+  <div class="kicker">11</div>
+  <h2>A new walking policy (parked)</h2>
+  <p>A fourth walking source was trained in Isaac Lab, warm-started from G113, with generated terrain (rough, slopes to 10°, stepping stones, 3–6 cm platforms) and friction 0.1–1.0. The acceptance rule, fixed before the evaluation that mattered: every chunk crossed in at least 16 of 20 baseline courses, then at least 80&nbsp;% of 40 fresh courses.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Stage</th><th>What changed</th><th class="n">Best checkpoint</th><th class="n">Crossed, of 20</th><th class="n">No fall, of 20</th></tr></thead>
+    <tbody>
+      <tr><td>Baseline</td><td>existing policies G113 / G80, same courses</td><td class="n dim">–</td><td class="n">7 / 14</td><td class="n">7 / 14</td></tr>
+      <tr><td>Start</td><td>G113 recipe plus generated terrain, warm start</td><td class="n">200</td><td class="n" colspan="2">walked at 0.13 m/s and lost speed tracking</td></tr>
+      <tr><td>Fix 1</td><td>command curriculum off, terrain promotion by distance walked</td><td class="n">500 / 1000</td><td class="n">14 / 11</td><td class="n">13 / 15</td></tr>
+      <tr><td>Fix 2</td><td>more stepping stones and gaps, stricter promotion</td><td class="n">300</td><td class="n">0</td><td class="n">2</td></tr>
+      <tr><td>Fix 3</td><td>from fix 1 at 1000: its terrain mix with a slightly larger plank share (0.20 against 0.15; fix 2 had 0.24), no gaps, smaller policy step, more weight on forward speed</td><td class="n">500</td><td class="n">10</td><td class="n">16</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Three different fixes, none within reach of 16 of 20, and the last within chance of the first: parked. The remaining failures are falls on plank chunks and slowing down on terrain. The evaluated checkpoints are not used anywhere in this run.</p>
+  </div>
+</section>
+
+<section id="integrity">
+  <div class="kicker">12</div>
+  <h2>Integrity, approximations, failures</h2>
+  <h3>Verified independently</h3>
+  <ul>
+    <li>An independent evaluation recomputed terrain F1, support F1, partial F1 and friction MAE for eight seed-0 models from the raw test episodes with its own code: equal to four decimals.</li>
+    <li>Saved weights reproduce the stored predictions on 139,410 test windows (two models checked independently; all 156 models by the training code, 0 mismatches).</li>
+    <li>A model trained on shuffled terrain labels scores 0.062 (real model 0.887).</li>
+    <li>A shortcut check on the large partial-support gain found none: unloaded points read offset plus noise (about 0.25 N in partial-support frames; 0.06 ± 0.24 N over the void in the rig edge clip), and exact zeros are as frequent in full support as in partial. One caveat stays: the map and the support label are both computed from the same simulated geometry, so this result is as good as that geometry.</li>
+    <li>Tables re-render from the stored metrics with an empty difference. The sole checks (17 of 17) and the test suite were re-run independently.</li>
+  </ul>
+  <h3>A correction made after the first tables</h3>
+  <p>Edge events lasting exactly 0.30 s (21 of 2,908 in the main test set) were first split by comparing float32 times, which put 13 of them on the short side. The split now uses the integer frame difference (0.30 s or longer counts as long), which puts all 21 on the long side: 828 short and 2,080 long events. Recomputed from the stored predictions, long-event miss rates moved by at most 0.003 and short-event miss rates by up to 0.042 (one leave-one-gait-out model); no verdict changed. The independent recomputation compares float64 times, which rounds 7 of those 21 events to the short side; its long-event miss rates agree with the tables and its short-event miss rates are about 0.005 lower.</p>
+  <h3>Approximations and placeholders</h3>
+  <ul>
+    <li>Per-point shear and block shear as described in section 3.</li>
+    <li><strong>The 60 N per-point limit</strong> is a placeholder carried over from the first run. On the noise-free map 31&nbsp;% of loaded walking samples have a point above 60 N; in the recorded data, after neighbour spread and averaging, 8.4&nbsp;% of loaded foot frames have a point at the limit. Per stance on hard-grip with G113, the recorded foot force is 9&nbsp;% (normal) and 11&nbsp;% (shear) below the true force in the median, and 18–24&nbsp;% below at the 5th percentile. Section 9 shows answers 1 and 2 do not depend on the limit; absolute forces in the dataset are biased low.</li>
+    <li>Sole size, point count and pitch, part boundaries, middle clearance, layer compliance, noise and resolution are defaults or guesses, randomised per episode within set ranges.</li>
+    <li>The rectangular mask and the corner loading while walking (section 1). The pilot numbers were produced with the earlier compliance and are not comparable with the final tables.</li>
+  </ul>
+  <h3>Failures and things not done</h3>
+  <ul>
+    <li>No fourth walking source (section 11). Leave-one-gait-out has three folds, not four.</li>
+    <li>No source completes the course in 80&nbsp;% of runs; courses were kept as designed and scored up to the fall. Completed runs last 70–80 s, not 60.</li>
+    <li>The sensitivity test trains on one fixed setting by design; the exploratory table in section 9 adds the randomisation-trained models and is labelled as after the fact.</li>
+    <li>Renders show the raw map with saturated points marked. Corner loading differs from observations of the real sole.</li>
+  </ul>
+  <figure><video controls preload="metadata" src="../v2/videos/closeup_hard_grip.mp4"></video><figcaption>Close-up of the simulated sole while walking on a grippy floor, slowed to 0.25×. The corner loading at heel strike and toe-off is visible.</figcaption></figure>
+</section>
+
+<section id="next">
+  <div class="kicker">13</div>
+  <h2>Next steps</h2>
+  <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px">
+    <li><strong>Record the real sole before any more simulation of it.</strong> Ten minutes of standing, hand presses and walking on two surfaces would answer what this run cannot: how load is spread while walking, the per-point range, and whether per-point shear has content of its own.</li>
+    <li><strong>Decide the foot.</strong> If the real K1 sole really carries load on front and back with a groove between, the simulated foot should get rounded edges so that it stops rocking on box corners; that changes what the walking policies see and needs a decision.</li>
+    <li><strong>Train for robustness to the reading method,</strong> not on one setting, and keep block sums as the fallback input: they lose 5 points of terrain F1 and most of the partial-support detection, and they survive a change of sensor.</li>
+    <li><strong>Put the deployed controller in the training data,</strong> and consider a sole-only model where the gait is not known in advance.</li>
+  </ol>
+  <p class="small" style="margin-top:16px">Scores are on walking test windows, mean of three seeds unless stated: macro-F1 for terrain class over six terrains and for support state, F1 for partial support, mean absolute error for friction, latencies in seconds, miss rates as shares of events. Related: <a href="step1-run1.html">step 1, first simulation run</a>, <a href="step1-run3.html">step 1, sensor-layout check</a>, <a href="support-state.html">support state</a>, <a href="sole-closeup.html">the simulated sole up close</a>, <a href="../summary_en.html">step 1 summary</a>, <a href="teachers-2.html">teachers of the fixed-patch experiment</a>.</p>
+</section>
+
+</main>
+</body>
+</html>

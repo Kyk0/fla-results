@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixed Patch Teachers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">FLA · Experiment 2: teachers · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Teachers for hard against soft floor</h1>
+  <p class="lede">Before a camera can learn from the sole, the sole has to label the steps. Three teachers label every footstep of the Booster K1 as hard or soft floor after the step: one reads only the sole, one only the joints and IMU, one both. Every step is labelled by a model that never trained on its episode.</p>
+  <div class="flag">Simulation only. One gait, two floor classes.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>The task is almost solved by every teacher.</strong> Sole <span class="num">0.997</span>, joints and IMU <span class="num">0.990</span>, both together <span class="num">0.995</span>, on 22,773 steps. Chance is 0.500.</li>
+    <li><strong>The sole is slightly better than the joints.</strong> +0.007 on all steps, real by the rule used here, but both error rates are already below 1&nbsp;%.</li>
+    <li><strong>Reading both does not help</strong> over the sole alone.</li>
+    <li><strong>Standing and stopping is the only weak spot.</strong> On steps commanded below 0.05 m/s, the joints teacher drops to <span class="num">0.899</span>, the sole to <span class="num">0.975</span>.</li>
+    <li><strong>The consequence:</strong> the three label sets agree with truth on 99.0 to 99.7&nbsp;% of steps, so a vision head trained on any of them cannot show which teacher is better on this task.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#setup">What was done</a></li>
+    <li><a href="#main">How well each teacher labels</a></li>
+    <li><a href="#speed">By walking speed</a></li>
+    <li><a href="#diff">Is the sole really better?</a></li>
+    <li><a href="#shift">A shifted sole readout</a></li>
+    <li><a href="#change">At a floor change</a></li>
+    <li><a href="#meaning">What it means and its limits</a></li>
+  </ol>
+</nav>
+
+<section id="setup">
+  <div class="kicker">1</div>
+  <h2>What was done</h2>
+  <ul>
+    <li><strong>Data.</strong> Every walking episode of G113, an ordinary flat-foot walking policy, in the step-1 data on hard floor (240), soft floor (240), and strips that start on hard floor and walk onto soft (60): 22,805 steps. 22,773 are scored; 32 transition steps have no class and are labelled but not scored.</li>
+    <li><strong>A step</strong> is a touchdown before any fall, with its stance window from touchdown to lift-off, 5 to 30 frames at 50 Hz. Truth is the floor class under the landing foot.</li>
+    <li><strong>Teachers.</strong> The small temporal convolutional network of the step-1 work, on one step's stance window. The sole teacher reads only 16 coarse sole features: four pressure blocks, four shear vectors, centre of pressure, total force and contact area. The joints teacher reads joint positions and velocities and the IMU. The third reads both.</li>
+    <li><strong>Cross-fitting.</strong> Five folds by episode. The fold-k model trains on training episodes outside fold k and stops early on validation episodes outside fold k; it then labels the episodes of fold k. No model ever sees a test-split episode, and those hold stiffness and friction ranges kept out of training. Three seeds.</li>
+    <li><strong>Settings</strong> were chosen on the validation split only: sole learning rate 0.002, dropout 0.1; joints and both 0.004 and 0.3; width 96 for all. A sole teacher trained on shuffled labels is the control.</li>
+    <li><strong>Chance.</strong> Soft floors are 0.462 of the scored steps. A random guess at the class prior scores 0.500, a constant majority answer 0.350.</li>
+  </ul>
+</section>
+
+<section id="main">
+  <div class="kicker">2</div>
+  <h2>How well each teacher labels</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Teacher</th><th class="n">All steps</th><th class="n">Test split</th><th class="n">Single-floor episodes</th><th class="n">Strips</th></tr></thead>
+    <tbody>
+      <tr><td>Sole (coarse)</td><td class="n best">0.997 ± 0.001<br>[0.996, 0.997]</td><td class="n best">0.997 ± 0.001<br>[0.996, 0.999]</td><td class="n best">0.997 ± 0.001<br>[0.996, 0.998]</td><td class="n best">0.995 ± 0.001<br>[0.992, 0.997]</td></tr>
+      <tr><td>Joints + IMU</td><td class="n">0.990 ± 0.001<br>[0.988, 0.992]</td><td class="n">0.993 ± 0.001<br>[0.990, 0.995]</td><td class="n">0.990 ± 0.001<br>[0.989, 0.992]</td><td class="n">0.987 ± 0.002<br>[0.980, 0.992]</td></tr>
+      <tr><td>Sole + joints + IMU</td><td class="n">0.995 ± 0.001<br>[0.994, 0.996]</td><td class="n best">0.997 ± 0.001<br>[0.996, 0.999]</td><td class="n">0.995 ± 0.001<br>[0.994, 0.996]</td><td class="n">0.991 ± 0.002<br>[0.987, 0.995]</td></tr>
+      <tr class="sep"><td>Sole, shuffled labels</td><td class="n">0.377 ± 0.045<br>[0.357, 0.397]</td><td class="n">0.365 ± 0.039<br>[0.326, 0.400]</td><td class="n">0.378 ± 0.042<br>[0.354, 0.397]</td><td class="n">0.363 ± 0.072<br>[0.338, 0.384]</td></tr>
+      <tr><td class="dim">Scored steps</td><td class="n dim">22,773</td><td class="n dim">5,016</td><td class="n dim">20,301</td><td class="n dim">2,472</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Macro-F1 against truth, mean ± sd over three seeds, with a 95&nbsp;% interval from resampling episodes. All three teachers are right on about 99&nbsp;% of steps or more, everywhere. Accuracy is the same as F1 to three decimals (0.997, 0.990, 0.995); per class, the sole scores 0.997 on hard and 0.996 on soft. On the test split, with stiffness and friction values no model trained on (soft stiffness 8.3e3 to 1.6e4 against 1.1e4 to 1.1e5 in training; friction up to 1.30 against 1.10), all three keep 0.993 to 0.997.</p>
+  </div>
+  <p class="small" style="margin-top:12px">The shuffled control sits at or below chance (seeds 0.429, 0.349, 0.353): it collapses toward one class, as the constant majority answer (0.350) does. Its accuracy is 0.515. The independent re-check reproduced the main scores but did not verify the stiffness and friction ranges of the test split.</p>
+</section>
+
+<section id="speed">
+  <div class="kicker">3</div>
+  <h2>By walking speed</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Teacher</th><th class="n">Stand / stop, below 0.05 m/s</th><th class="n">0.05 to 0.30</th><th class="n">0.30 to 0.40</th><th class="n">0.40 and above</th></tr></thead>
+    <tbody>
+      <tr><td>Sole (coarse)</td><td class="n best">0.975 ± 0.003</td><td class="n best">0.996 ± 0.001</td><td class="n best">0.999 ± 0.001</td><td class="n best">0.999 ± 0.000</td></tr>
+      <tr><td>Joints + IMU</td><td class="n">0.899 ± 0.011</td><td class="n">0.992 ± 0.001</td><td class="n">0.998 ± 0.000</td><td class="n">0.998 ± 0.000</td></tr>
+      <tr><td>Sole + joints + IMU</td><td class="n">0.952 ± 0.007</td><td class="n best">0.996 ± 0.001</td><td class="n">0.998 ± 0.000</td><td class="n best">0.999 ± 0.001</td></tr>
+      <tr class="sep"><td>Sole, shuffled labels</td><td class="n">0.367 ± 0.009</td><td class="n">0.390 ± 0.034</td><td class="n">0.358 ± 0.044</td><td class="n">0.388 ± 0.067</td></tr>
+      <tr><td class="dim">Scored steps</td><td class="n dim">1,447</td><td class="n dim">7,177</td><td class="n dim">9,039</td><td class="n dim">5,110</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Speed is the commanded forward speed at touchdown. Above 0.05 m/s every teacher scores 0.992 to 0.999. When the robot stands or stops, the joints barely move and the joints teacher falls to 0.899; the sole still feels the floor directly and keeps 0.975. This is the only subset where the teachers differ, and the <a href="fixed-patch.html#a">fixed-patch results</a> use it to try to separate them.</p>
+  </div>
+</section>
+
+<section id="diff">
+  <div class="kicker">4</div>
+  <h2>Is the sole really better?</h2>
+  <p>Differences in seed-mean macro-F1 with a paired 95&nbsp;% interval from resampling episodes. A difference counts as real only if the interval excludes 0 and the difference is larger than twice the seed sd.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Comparison</th><th>Steps</th><th class="n">Difference</th><th class="n">95&nbsp;% interval</th><th>Real?</th></tr></thead>
+    <tbody>
+      <tr><td>Sole minus joints</td><td>all</td><td class="n">+0.0067</td><td class="n">[+0.0053, +0.0083]</td><td>yes</td></tr>
+      <tr><td>Both minus sole</td><td>all</td><td class="n">−0.0020</td><td class="n">[−0.0027, −0.0014]</td><td>no</td></tr>
+      <tr><td>Both minus joints</td><td>all</td><td class="n">+0.0048</td><td class="n">[+0.0034, +0.0062]</td><td>yes</td></tr>
+      <tr class="sep"><td>Sole minus joints</td><td>test split</td><td class="n">+0.0045</td><td class="n">[+0.0022, +0.0069]</td><td>yes</td></tr>
+      <tr><td>Both minus sole</td><td>test split</td><td class="n">−0.0003</td><td class="n">[−0.0014, +0.0008]</td><td>no</td></tr>
+      <tr><td>Both minus joints</td><td>test split</td><td class="n">+0.0042</td><td class="n">[+0.0019, +0.0069]</td><td>yes</td></tr>
+      <tr class="sep"><td>Sole minus joints</td><td>strips</td><td class="n">+0.0080</td><td class="n">[+0.0027, +0.0147]</td><td>yes</td></tr>
+      <tr><td>Both minus sole</td><td>strips</td><td class="n">−0.0032</td><td class="n">[−0.0062, −0.0004]</td><td>no</td></tr>
+      <tr><td>Both minus joints</td><td>strips</td><td class="n">+0.0047</td><td class="n">[−0.0001, +0.0103]</td><td>no</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The sole beats the joints by a small margin that passes the rule everywhere: +0.007 [+0.005, +0.008] on all steps, +0.005 [+0.002, +0.007] on the test split. Both error rates are below 1&nbsp;%, so for labelling the gap does not matter. Reading both sensors does not help over the sole: on all steps both minus sole is −0.002, with an interval that excludes 0 but a size within twice the seed sd, so it does not count.</p>
+  </div>
+</section>
+
+<section id="shift">
+  <div class="kicker">5</div>
+  <h2>A shifted sole readout</h2>
+  <p>The same teacher weights, applied to a second, shifted model of how the simulated sole turns contact into readings. Two sets: 159 of these episodes replayed bit-identically for the earlier vision experiment (cross-fitted as above), and 32 separate G113 runs on hard and soft floor that no model saw.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Teacher</th><th class="n">Replays, usual readout</th><th class="n">Replays, shifted</th><th class="n">Separate runs, usual</th><th class="n">Separate runs, shifted</th></tr></thead>
+    <tbody>
+      <tr><td>Sole (coarse)</td><td class="n">0.997 ± 0.001</td><td class="n">0.997 ± 0.000</td><td class="n">1.000 ± 0.000</td><td class="n">1.000 ± 0.000</td></tr>
+      <tr><td>Joints + IMU</td><td class="n">0.989 ± 0.001</td><td class="n">0.989 ± 0.001</td><td class="n">0.997 ± 0.000</td><td class="n">0.997 ± 0.000</td></tr>
+      <tr><td>Sole + joints + IMU</td><td class="n">0.996 ± 0.001</td><td class="n">0.995 ± 0.001</td><td class="n">1.000 ± 0.000</td><td class="n">1.000 ± 0.000</td></tr>
+      <tr class="sep"><td>Sole, shuffled labels</td><td class="n">0.375 ± 0.042</td><td class="n">0.367 ± 0.033</td><td class="n">0.356 ± 0.000</td><td class="n">0.356 ± 0.001</td></tr>
+      <tr><td class="dim">Scored steps</td><td class="n dim">6,761</td><td class="n dim">6,761</td><td class="n dim">1,317</td><td class="n dim">1,317</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The coarse sole teacher loses nothing under the shifted readout: 0.997 to 0.997 on the replays (+0.0002 [−0.0004, +0.0008]), 1.000 to 1.000 on the separate runs. The coarse features were chosen for this reason; step 1 showed that the fine pressure map does not survive a change of sensor model.</p>
+  </div>
+  <p class="small" style="margin-top:12px">The independent re-check did not recompute the shifted readout; only the original check covers it.</p>
+</section>
+
+<section id="change">
+  <div class="kicker">6</div>
+  <h2>At a floor change</h2>
+  <p>On strip episodes: how many steps after the boundary each teacher needs to name the new floor (0 = on the boundary step itself). "Never" means not before the next boundary. 60 strips, one boundary each, always hard to soft; pooled over three seeds.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Teacher</th><th class="n">Cases</th><th class="n">0</th><th class="n">1</th><th class="n">2</th><th class="n">3</th><th class="n">4+</th><th class="n">Never</th><th class="n">Median</th><th class="n">90th pct</th><th class="n">Mean</th></tr></thead>
+    <tbody>
+      <tr><td>Sole (coarse)</td><td class="n">180</td><td class="n">179</td><td class="n">1</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.01</td></tr>
+      <tr><td>Joints + IMU</td><td class="n">180</td><td class="n">178</td><td class="n">0</td><td class="n">0</td><td class="n">2</td><td class="n">0</td><td class="n">0</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.03</td></tr>
+      <tr><td>Sole + joints + IMU</td><td class="n">180</td><td class="n best">180</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.00</td></tr>
+      <tr class="sep"><td>Sole, shuffled labels</td><td class="n">180</td><td class="n">16</td><td class="n">0</td><td class="n">2</td><td class="n">2</td><td class="n">6</td><td class="n">154</td><td class="n">0.0</td><td class="n">23.5</td><td class="n">4.96</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The teachers name the new floor on the boundary step in 178 to 180 of 180 cases. That is expected: each teacher reads one step's own stance window and keeps no memory, so nothing carries over from the old floor. The shuffled control is censored in 154 of 180 cases, so its median of 0 describes only the 26 cases it got right.</p>
+  </div>
+</section>
+
+<section id="meaning">
+  <div class="kicker">7</div>
+  <h2>What it means and its limits</h2>
+  <ul>
+    <li><strong>An easy task.</strong> Hard floor (stiffness 7.7e8) and soft floor (1e4 to 1e5) differ by about four orders of magnitude. In the six-class experiment, by contrast, the hard grippy floor alone scored 0.76.</li>
+    <li><strong>Consequence for vision.</strong> The sole, joints and both-together label sets agree with truth on 99.0 to 99.7&nbsp;% of steps. A vision head trained on any of them can differ from one trained on truth by at most about 1&nbsp;% label noise, so the vision comparison cannot separate the teachers on this task. It did not: see the <a href="fixed-patch.html">fixed-patch results</a>.</li>
+    <li><strong>Window end from the simulator.</strong> The stance window ends at the noise-free contact signal of the simulator, as in the earlier experiment. A real robot has to detect lift-off itself.</li>
+    <li><strong>Deceptive floors.</strong> The teachers read no image, so a deceptive look cannot change their labels; their scores on deceptive episodes depend only on the physics and are on the results page.</li>
+    <li><strong>Independent re-check.</strong> It recomputed the main, speed and shuffled scores and the differences from the stored predictions and found them the same, and found no teacher that labelled an episode it had trained on or that had seen a test episode. The floor-change table rests on the original check only.</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores are macro-F1 per step against simulator truth, cross-fitted, mean ± sd over three seeds. Related: <a href="dataset-2.html">dataset of experiment 2</a>, <a href="fixed-patch.html">fixed-patch results</a>, <a href="recheck-2.html">re-check of experiment 2</a>, <a href="teachers.html">teachers of the six-class experiment</a>, <a href="step1-run2.html">step 1, second simulation run</a>.</p>
+</section>
+
+</main>
+</body>
+</html>

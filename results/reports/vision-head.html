@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vision Head</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="meta">FLA · Experiment 1 vision head · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Does the sole teach a camera better?</h1>
+  <p class="lede">A frozen ViT looks at the floor before each step, and a small head on top learns to name the floor class. The head is trained three times, changing only who supplies the labels: the sole teacher, the joints and IMU teacher, or the simulator's truth. Six floor classes, three gaits.</p>
+  <div class="flag">Simulation only. Rendered camera, simulated sole. Few test textures: three per class.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>On gaits the teachers saw, the two teachers tie.</strong> Vision taught by the sole scores <span class="num">0.816</span>, taught by joints and IMU <span class="num">0.824</span>. Taught by truth it scores <span class="num">0.857</span>; the re-check calls that gap inconclusive, not zero.</li>
+    <li><strong>On a gait the teachers never saw, only the sole teaches.</strong> Labels from SONIC steps: sole <span class="num">0.488</span>, joints and IMU <span class="num">0.097</span>. Truth would give <span class="num">0.867</span>, so the sole's labels still lose most of the way.</li>
+    <li><strong>This repeats the teachers' own gap.</strong> The re-check notes that the vision result restates the gap in the labels themselves (0.40 against 0.09 macro-F1), on one held-out gait.</li>
+    <li><strong>Vision reads the look, not the physics.</strong> On deceptive floors vision before the step matches the real floor on <span class="num">0.07-0.12</span> of steps and the look on <span class="num">0.66-0.78</span>. The sole after the step matches the real floor on <span class="num">0.820</span>.</li>
+    <li><strong>The uncertainty is larger than the seed spread.</strong> With three test textures per class, resampling textures gives the sole-taught head a 95&nbsp;% interval of 0.71 to 0.89.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#setup">What was done</a></li>
+    <li><a href="#main">Who teaches better</a></li>
+    <li><a href="#budget">Fewer labels</a></li>
+    <li><a href="#deceptive">Floors that lie</a></li>
+    <li><a href="#clip">Four test episodes</a></li>
+    <li><a href="#robust">Robustness checks</a></li>
+    <li><a href="#check">Independent re-check</a></li>
+    <li><a href="#limits">Limits</a></li>
+  </ol>
+</nav>
+
+<section id="setup">
+  <div class="kicker">1</div>
+  <h2>What was done</h2>
+  <ul>
+    <li><strong>Image.</strong> For every footstep, the best frame from the torso camera before contact (the frame where the future footprint is largest and fully visible), cropped to about three foot lengths around the place where the foot will land, at 224 px. The crop is square and about half of it is grey padding below the image.</li>
+    <li><strong>Model.</strong> A frozen DINOv3 ViT-B/16. Its features are the class token plus the mean of the patch tokens weighted by the footprint. A small head is trained on top.</li>
+    <li><strong>Labels.</strong> The same head, trained with labels from the sole teacher (coarse sole features: four pressure blocks, four shear vectors, centre of pressure, total force, contact area), from the joints and IMU teacher, or from simulator truth as the ceiling. Teachers are cross-fitted: none labels an episode it trained on. See <a href="teachers.html">the two teachers</a>.</li>
+    <li><strong>Two settings.</strong> (a) Labels come from steps of G113 and G80, two ordinary flat-foot walking policies the teachers were trained on. (b) Labels come from steps of SONIC, human-like heel-to-toe walking, which the teachers never saw.</li>
+    <li><strong>Test.</strong> 6,269 test steps of all three gaits, 5,282 of them with a floor class, on textures held out of training. Macro-F1 against simulator truth, mean ± sd over 3 seeds. A difference counts as real when it is larger than twice the seed spread.</li>
+  </ul>
+</section>
+
+<section id="main">
+  <div class="kicker">2</div>
+  <h2>Who teaches better</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Labels</th><th>Setting</th><th class="n">All gaits</th><th class="n">G113</th><th class="n">G80</th><th class="n">SONIC</th><th class="n">Labels right on training steps</th></tr></thead>
+    <tbody>
+      <tr><td>Sole teacher</td><td>(a) seen gaits</td><td class="n">0.816 ± 0.028</td><td class="n">0.798</td><td class="n">0.833</td><td class="n">0.809</td><td class="n">0.82</td></tr>
+      <tr><td>Joints + IMU teacher</td><td>(a) seen gaits</td><td class="n">0.824 ± 0.030</td><td class="n">0.826</td><td class="n">0.820</td><td class="n">0.819</td><td class="n">0.82</td></tr>
+      <tr><td>Simulator truth</td><td>(a) seen gaits</td><td class="n best">0.857 ± 0.009</td><td class="n">0.839</td><td class="n">0.894</td><td class="n">0.820</td><td class="n">1.00</td></tr>
+      <tr><td>Sole teacher, shifted readout</td><td>(a) seen gaits</td><td class="n">0.827 ± 0.014</td><td class="n">0.825</td><td class="n">0.830</td><td class="n">0.815</td><td class="n">0.81</td></tr>
+      <tr class="sep"><td>Sole teacher</td><td>(b) SONIC</td><td class="n">0.488 ± 0.026</td><td class="n">0.483</td><td class="n">0.498</td><td class="n">0.480</td><td class="n">0.43</td></tr>
+      <tr><td>Joints + IMU teacher</td><td>(b) SONIC</td><td class="n">0.097 ± 0.048</td><td class="n">0.104</td><td class="n">0.092</td><td class="n">0.091</td><td class="n">0.13</td></tr>
+      <tr><td>Simulator truth</td><td>(b) SONIC</td><td class="n best">0.867 ± 0.023</td><td class="n">0.852</td><td class="n">0.897</td><td class="n">0.835</td><td class="n">1.00</td></tr>
+      <tr><td>Sole teacher, shifted readout</td><td>(b) SONIC</td><td class="n">0.498 ± 0.044</td><td class="n">0.509</td><td class="n">0.487</td><td class="n">0.496</td><td class="n">0.42</td></tr>
+      <tr class="sep"><td>Shuffled labels (control)</td><td></td><td class="n">0.197 ± 0.032</td><td class="n">0.206</td><td class="n">0.194</td><td class="n">0.183</td><td class="n dim">–</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figure><img src="media/vision-head_fig_abc.png" alt="Three bar and line charts: test macro-F1 of the vision head by label source when labels come from the seen gaits, when they come from the unseen SONIC gait, and as a function of labelled steps per texture" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>(a) Labels from G113 and G80. (b) Labels from SONIC. (c) Fewer labelled steps per texture. Error bars: seed sd.</figcaption></figure>
+  <div class="take">
+    <p><strong>Reading the table.</strong> In (a) the two teachers give the same vision score, and in (b) the sole wins by 39 points. The last column explains both: in (a) the two label sets are equally right, agreeing with truth on 0.82 of training steps, in (b) the sole's labels are right far more often than the joints and IMU labels. Vision learns about as well as its labels allow; the sole-taught head in (b) slightly exceeds its own labels (0.40 macro-F1 against truth). The shifted readout of the sole changes nothing, so both conclusions survive that sensor change. The joints and IMU head in (b) is at or below the shuffled control.</p>
+  </div>
+  <div class="caveat">
+    The independent re-check reproduced every number here and adds the following.
+    <strong>(a) sole against joints and IMU:</strong> a bootstrap over textures gives a difference of −0.009 [−0.052, 0.035]; the tie is expected, since the two label sets agree equally with truth and share the same wrong label on 8&nbsp;% of training steps.
+    <strong>(a) truth against sole:</strong> 0.041 [−0.016, 0.091]. Inconclusive, not "equal".
+    <strong>(b) sole against joints and IMU:</strong> 0.396 [0.31, 0.48]. Real, but it restates the teachers' gap and rests on one held-out gait. The joints and IMU head answers "edge" on 63-99&nbsp;% of steps.
+    <strong>Shifted readout:</strong> the same teacher weights run on another readout of the same simulation; the sole is not built differently.
+    <strong>Shuffled control:</strong> a random guesser matched to the test class mix scores 0.167. Once the clustering of predictions by texture is taken into account, the control is at chance.
+  </div>
+  <p class="small" style="margin-top:12px">No pad-sole data exists for the vision dataset, so the sensor-change test rests on the shifted readout only. For context, the sole teacher itself falls on the pad sole from 0.806 to 0.586 on seen gaits and from 0.437 to 0.325 on SONIC.</p>
+</section>
+
+<section id="budget">
+  <div class="kicker">3</div>
+  <h2>Fewer labels</h2>
+  <p>The same comparison when only a few labelled steps per texture are used for training.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Labels, setting</th><th class="n">5 per texture</th><th class="n">20</th><th class="n">100</th><th class="n">All</th></tr></thead>
+    <tbody>
+      <tr><td>Sole, (a)</td><td class="n">0.743</td><td class="n">0.797</td><td class="n">0.804</td><td class="n">0.816</td></tr>
+      <tr><td>Joints + IMU, (a)</td><td class="n">0.770</td><td class="n">0.776</td><td class="n">0.788</td><td class="n">0.824</td></tr>
+      <tr><td>Truth, (a)</td><td class="n best">0.808</td><td class="n best">0.842</td><td class="n best">0.855</td><td class="n best">0.857</td></tr>
+      <tr class="sep"><td>Sole, (b)</td><td class="n">0.459</td><td class="n">0.488</td><td class="n">0.502</td><td class="n">0.488</td></tr>
+      <tr><td>Joints + IMU, (b)</td><td class="n">0.087</td><td class="n">0.067</td><td class="n">0.098</td><td class="n">0.097</td></tr>
+      <tr><td>Truth, (b)</td><td class="n best">0.838</td><td class="n best">0.863</td><td class="n best">0.876</td><td class="n best">0.867</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Means over 3 seeds. In (a), sole and joints and IMU labels differ at no budget. In (b), the sole's labels beat the joints and IMU labels at every budget (0.459-0.502 against 0.067-0.098). Even 5 labelled steps per texture get most of the way.</p>
+  </div>
+</section>
+
+<section id="deceptive">
+  <div class="kicker">4</div>
+  <h2>Floors that lie</h2>
+  <p>In the look_swap scenes every region shows a test texture of another class: a deceptive floor looks like one class and behaves like another. Vision answers before the step, the sole teacher after it.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Head</th><th class="n">Vision vs real floor</th><th class="n">Vision vs look</th><th class="n">Sole vs real floor</th><th class="n">Sole vs look</th></tr></thead>
+    <tbody>
+      <tr><td>(a) sole labels</td><td class="n">0.120 ± 0.010</td><td class="n">0.656 ± 0.029</td><td class="n best">0.820 ± 0.001</td><td class="n">0.035 ± 0.001</td></tr>
+      <tr><td>(a) joints + IMU labels</td><td class="n">0.108 ± 0.010</td><td class="n">0.700 ± 0.021</td><td class="n best">0.820 ± 0.001</td><td class="n">0.035 ± 0.001</td></tr>
+      <tr><td>(a) truth labels</td><td class="n">0.071 ± 0.011</td><td class="n">0.784 ± 0.004</td><td class="n best">0.820 ± 0.001</td><td class="n">0.035 ± 0.001</td></tr>
+      <tr class="sep"><td>(b) sole labels</td><td class="n">0.118 ± 0.012</td><td class="n">0.473 ± 0.066</td><td class="n best">0.820 ± 0.001</td><td class="n">0.035 ± 0.001</td></tr>
+      <tr><td>(b) joints + IMU labels</td><td class="n">0.074 ± 0.018</td><td class="n">0.217 ± 0.014</td><td class="n best">0.820 ± 0.001</td><td class="n">0.035 ± 0.001</td></tr>
+      <tr><td>(b) truth labels</td><td class="n">0.081 ± 0.006</td><td class="n">0.799 ± 0.018</td><td class="n best">0.820 ± 0.001</td><td class="n">0.035 ± 0.001</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figure><img src="media/vision-head_fig_d.png" alt="Bar chart for deceptive scenes: the three vision heads score about 0.1 against the physical floor and 0.66 to 0.78 against the look, while the sole teacher after the step scores 0.82 against the physical floor and near zero against the look" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Deceptive scenes, heads from setting (a). Accuracy against the physical floor (left) and against the look (right).</figcaption></figure>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Accuracy on 9,795 look_swap steps. Vision before the step reports what the floor looks like, whoever taught it; the head taught by truth follows the look most closely. The sole after the step reports what the floor is and almost never what it looks like. The sole's row is the same for every head because it is the same teacher on the same steps.</p>
+  </div>
+  <div class="caveat">From the independent re-check: 3,848 look_swap steps are left out (no class, or a hard_mid look). The (b) heads range from 0.22 to 0.80 against the look. On SONIC steps the "sole teacher" here is the teacher trained with G113 held out, which did see SONIC. The second deceptive kind, a sheet hiding gaps between planks, keeps its class, so it is scored for support state instead: see <a href="support-state.html">support state from vision</a>.</div>
+</section>
+
+<section id="clip">
+  <div class="kicker">5</div>
+  <h2>Four test episodes</h2>
+  <p>Four whole test episodes, picked at random among two-floor episodes without a fall: two honest and two deceptive. The vision row is the (a) head taught by the sole (seed 0), the same head for the SONIC episode, which it never saw. Vision's frame is taken 0.7-1.8 s before touchdown; the sole's answer is shown at touchdown plus 0.1 s.</p>
+  <figure><video controls preload="metadata" src="media/vision-head_episodes.mp4"></video><figcaption>Third-person view, torso camera with the next footprint in red, and per step: vision before the step, the sole teacher after it, and the true floor. Green is right, red is wrong. 84 s.</figcaption></figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Episode</th><th>Floors</th><th class="n">Vision right</th><th class="n">Sole right</th></tr></thead>
+    <tbody>
+      <tr><td>1, honest, G113</td><td>grippy, then soft</td><td class="n">31 / 37</td><td class="n best">36 / 37</td></tr>
+      <tr><td>2, honest, SONIC</td><td>grippy, then soft</td><td class="n">7 / 28</td><td class="n best">27 / 28</td></tr>
+      <tr><td>3, deceptive, G80</td><td>grippy looks slippery, rough looks hard_mid</td><td class="n">8 / 36</td><td class="n best">24 / 36</td></tr>
+      <tr><td>4, deceptive, G113</td><td>grippy and slippery, both look sloped</td><td class="n">0 / 38</td><td class="n best">36 / 38</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the clip.</strong> Episode 1 has 6 steps with no usable frame, counted as vision wrong. In episode 2 vision calls every soft step slippery: the held-out soft texture there, a checkerboard carpet, is never recognised as soft by this head (2 of 295 honest steps on it across gaits are right). That is a real texture failure, not a bug. In episode 3 the sole is only 24 of 36: on rough floor with the G80 gait it says grippy on 8 steps and edge on 3. In episode 4 vision is wrong everywhere because both floors look like a slope.</p>
+  </div>
+  <p class="small" style="margin-top:12px">One episode each, so the counts illustrate; the measured numbers are in the tables above.</p>
+</section>
+
+<section id="robust">
+  <div class="kicker">6</div>
+  <h2>Robustness checks</h2>
+  <ul>
+    <li><strong>The robot in the crop.</strong> Leaving out the 614 of 5,282 scored steps whose crop shows the robot's own body changes no headline number by more than 0.008 (largest: (b) sole 0.488 to 0.480).</li>
+    <li><strong>Padding.</strong> A crop clipped to the image, with no padding (224 × 112), against the main square crop: (a) sole 0.820 / 0.816, joints and IMU 0.808 / 0.824, truth 0.839 / 0.857; (b) sole 0.468 / 0.488, truth 0.878 / 0.867. No difference is real.</li>
+    <li><strong>Steps without a frame.</strong> 34 test steps have no best frame, and the head answers grippy floor for them by default. This lowers every head by about 0.005 (the (a) sole head scores 0.821 without them).</li>
+    <li><strong>A pilot oddity gone.</strong> In the pilot, truth heads trained on SONIC scored 0.89 against 0.77 for G113 and G80. On the full set it is 0.867 ± 0.023 against 0.857 ± 0.009, not a real difference. The re-check confirmed the full-set numbers, not the pilot's.</li>
+    <li><strong>Viewing distance (not verified).</strong> With a fixed 60-epoch linear head a small gap remains (0.855 ± 0.005 against 0.840 ± 0.004) and closes when the distances of the best frames are matched; SONIC's best frames are at 0.44 m, the others at 0.38 m. The re-check could not verify this without retraining.</li>
+    <li><strong>The edge-loaded foot (not verified).</strong> Kept steps whose 30-frame window touches a frame where the foot is loaded on its edge: 0.0&nbsp;% G113, 0.4&nbsp;% G80, 3.0&nbsp;% SONIC, far less than the 39-point gap. These shares come from the dataset build; the re-check could not verify them. See <a href="dataset.html#gap">the dataset page</a>.</li>
+  </ul>
+</section>
+
+<section id="check">
+  <div class="kicker">7</div>
+  <h2>Independent re-check</h2>
+  <ul>
+    <li><strong>No leaks.</strong> No test or deceptive episode and no test texture in the training or validation rows of any of the heads. No teacher labelled an episode it trained on. Head selection never used test rows or truth.</li>
+    <li><strong>Few textures, wide intervals.</strong> Three test textures per class. A bootstrap over textures gives the (a) sole head a 95&nbsp;% interval of [0.71, 0.89]; its bootstrap sd is 0.047 against a seed sd of 0.028. The seed spread understates the uncertainty.</li>
+    <li><strong>Geometry knows the future.</strong> The crop box and the footprint weights come from the true landing pose. A classifier on crop and footprint geometry alone, with no pixels, gets 0.45 in (a) and 0.30 in (b), and 0.50 accuracy against the real floor on look_swap. The ViT heads score only 0.07-0.12 there, so they mostly read appearance, but some geometry signal could sit inside the honest test numbers.</li>
+    <li><strong>What the errors look like.</strong> In 20 samples the errors are appearance errors: the checkerboard carpet (soft) is read as tiles, slippery, by every head; the truth head scores 0.00 on that texture.</li>
+    <li><strong>Not ruled out.</strong> The unseen-gait result has one direction only: only SONIC was held out for vision. DINOv3's pretraining may have seen the CC0 textures. Transfer to real floors is untested.</li>
+  </ul>
+  <p>Full list: <a href="recheck-1.html">independent re-check of experiment 1</a>.</p>
+</section>
+
+<section id="limits">
+  <div class="kicker">8</div>
+  <h2>Limits</h2>
+  <ul>
+    <li><strong>Simulation.</strong> Rendered textures on flat planes, a simulated sole.</li>
+    <li><strong>Three test textures per class.</strong> One texture can swing a class.</li>
+    <li><strong>One unseen gait.</strong> The size of the (b) gap is uncertain; its direction matches every teacher hold-out.</li>
+    <li><strong>The crop is placed from the future landing pose.</strong> A robot has to forecast it; the course clip on <a href="vlm-lora.html">the VLM page</a> uses such a forecast.</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores: macro-F1 per step against simulator truth on held-out textures, mean ± sd over 3 seeds; deceptive scenes as accuracy. Related: <a href="dataset.html">the dataset</a>, <a href="teachers.html">the two teachers</a>, <a href="support-state.html">support state from vision</a>, <a href="vlm-real-photos.html">the VLM on real photos</a>, <a href="vlm-lora.html">the VLM tuned on the sole's labels</a>, <a href="recheck-1.html">independent re-check</a>. Experiment 2, with a fixed patch and two classes: <a href="fixed-patch.html">fixed patch</a>. Model: DINOv3 ViT-B/16. Textures: ambientCG, CC0.</p>
+</section>
+</main>
+</body>
+</html>

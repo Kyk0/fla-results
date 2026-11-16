@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Re-check of Experiment 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="meta">FLA · Experiment 1 independent re-check · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Independent re-check of experiment 1</h1>
+  <p class="lede">After experiment 1 (six floor classes, three gaits, an image crop around the landing footprint), an independent re-check that did none of the work recomputed the reported numbers with its own code, searched for leaks between training and test, and looked at samples. This page lists what it found, claim by claim.</p>
+  <div class="flag">59 claims: 33 hold, 22 hold with caveats, 1 does not hold, 3 could not be verified.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>The numbers are right.</strong> Every reported number the re-check could recompute reproduced, apart from two small count errors in the text, and every check program of the project passed when run again.</li>
+    <li><strong>No leaks.</strong> No test episode or test texture in any training set, and no teacher labelled an episode it trained on.</li>
+    <li><strong>One claim fails:</strong> that LoRA makes the VLM really worse against the real floor on deceptive scenes. The difference is inside the noise.</li>
+    <li><strong>Many caveats are about uncertainty.</strong> With three test textures per class, the seed spread understates how uncertain the scores are, and several "ties" are inconclusive rather than equal.</li>
+    <li><strong>Trivial baselines.</strong> The support-state results are about as good as always answering the most common state.</li>
+    <li><strong>Not ruled out:</strong> the crop's placement leaks some geometry, only one gait was held out for vision, the ViT may have seen the textures in pretraining, and nothing was tested on a real robot.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#how">How it was done</a></li>
+    <li><a href="#tally">Tally</a></li>
+    <li><a href="#dataset">Dataset</a></li>
+    <li><a href="#teachers">Teachers</a></li>
+    <li><a href="#vision">Vision head</a></li>
+    <li><a href="#support">Support state</a></li>
+    <li><a href="#vlm">VLM</a></li>
+    <li><a href="#leaks">Leaks and controls</a></li>
+    <li><a href="#samples">Twenty samples</a></li>
+    <li><a href="#threats">Threats and what could not be checked</a></li>
+  </ol>
+</nav>
+
+<section id="how">
+  <div class="kicker">1</div>
+  <h2>How it was done</h2>
+  <ul>
+    <li><strong>Read-only.</strong> The re-check changed nothing in the data or the results.</li>
+    <li><strong>Its own code.</strong> Macro-F1 computed by its own code, truth read directly from the dataset's step table, split lists read raw. None of the project's metric code was imported.</li>
+    <li><strong>The project's own checks, run again:</strong> dataset check 17 pass / 0 fail; the teacher, vision head, support state, VLM real-photo and VLM tuning checks all pass.</li>
+    <li><strong>Statistics beyond the seeds.</strong> Where the reports used the spread over 3 seeds, the re-check added bootstraps over textures or episodes and texture-aware null models.</li>
+    <li><strong>Looking.</strong> 20 random test steps were looked at in full (image, footprint, labels, every head's answer).</li>
+  </ul>
+</section>
+
+<section id="tally">
+  <div class="kicker">2</div>
+  <h2>Tally</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Part</th><th class="n">Claims</th><th class="n">Hold</th><th class="n">Hold with caveats</th><th class="n">Do not hold</th><th class="n">Not verifiable</th></tr></thead>
+    <tbody>
+      <tr><td>Part 1: dataset, teachers, vision head, support state, VLM on real photos</td><td class="n">44</td><td class="n">26</td><td class="n">15</td><td class="n">0</td><td class="n">3</td></tr>
+      <tr class="sep"><td>All, with part 2 (the VLM tuned on the sole's labels)</td><td class="n">59</td><td class="n">33</td><td class="n">22</td><td class="n">1</td><td class="n">3</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> "Hold with caveats" means the number reproduces but its reading needs a qualification: a wider interval, a trivial baseline, or a condition the report did not state. The tables below give each claim with its verdict and the caveat next to it.</p>
+  </div>
+</section>
+
+<section id="dataset">
+  <div class="kicker">3</div>
+  <h2>Dataset</h2>
+  <p>Details: <a href="dataset.html">the dataset</a>.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Verdict</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Test-list fingerprints the same on both machines and in the vision run</td><td>holds</td><td>for the honest and the deceptive test list</td></tr>
+      <tr><td>1,572 episodes, 54,010 steps (29,105 / 4,267 / 6,269 / 14,369 = 26.6&nbsp;%), 726 hidden-gap steps</td><td>holds</td><td>exact; the step table is identical on both machines</td></tr>
+      <tr><td>Dataset check 17 pass / 0 fail</td><td>holds</td><td>17 / 0 when run again</td></tr>
+      <tr><td>All replays bit-identical</td><td>holds with caveats</td><td>only 20 episodes checked independently; there joints, IMU, labels and contact flags equal the step-1 files</td></tr>
+      <tr><td>Episode and texture splits disjoint</td><td>holds with caveats</td><td>0 episodes in two splits; 42 / 12 / 26 textures disjoint; only <strong>3 test textures per class</strong> (18 scored); the deceptive looks reuse the 26 test textures</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="teachers">
+  <div class="kicker">4</div>
+  <h2>Teachers</h2>
+  <p>Details: <a href="teachers.html">the two teachers</a>.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Verdict</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Seen gaits: sole 0.804 ± 0.003, joints + IMU 0.805 ± 0.002</td><td>holds</td><td></td></tr>
+      <tr><td>Unseen SONIC: sole 0.399 ± 0.004, joints + IMU 0.095 ± 0.015</td><td>holds with caveats</td><td>joints + IMU is a degenerate "edge" predictor, below a random guesser (about 0.17), so "chance" undersells how badly it fails</td></tr>
+      <tr><td>Other hold-outs: G113 0.627 / 0.279, G80 0.485 / 0.264</td><td>holds</td><td></td></tr>
+      <tr><td>Other sensors, seen / SONIC: shifted 0.784 / 0.429, pad sole 0.586 / 0.325, outline 0.621 / 0.419</td><td>holds</td><td>re-scored from saved predictions</td></tr>
+      <tr><td>Shuffled sole teacher 0.057</td><td>holds</td><td>0.052 seen, 0.070 unseen; collapses to nearly one class</td></tr>
+      <tr><td>The sole teacher reads only the 16 coarse features</td><td>holds with caveats</td><td>true for all 44 sole models; for both teachers the step window ends at the simulator's noise-free contact flag</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="vision">
+  <div class="kicker">5</div>
+  <h2>Vision head</h2>
+  <p>Details: <a href="vision-head.html">the vision head</a>. (a): labels from gaits the teachers saw; (b): labels from SONIC, which they never saw. Test: 5,282 steps with a class.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Verdict</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>(a) sole 0.816 ± 0.028 vs joints + IMU 0.824 ± 0.030, no real difference</td><td>holds with caveats</td><td>texture bootstrap −0.009 [−0.052, 0.035]; the tie is expected: both label sets agree equally with truth (0.821 / 0.825) and share the same wrong label on 8&nbsp;% of training steps</td></tr>
+      <tr><td>(a) truth 0.857 ± 0.009, the 3-4 point gap not real</td><td>holds with caveats</td><td>truth minus sole 0.041 [−0.016, 0.091]: inconclusive, not "equal"</td></tr>
+      <tr><td>(b) sole 0.488 ± 0.026 vs joints + IMU 0.097 ± 0.048, real</td><td>holds with caveats</td><td>difference 0.396 [0.31, 0.48]; restates the teachers' gap (labels 0.40 vs 0.09) and rests on one held-out gait; the joints + IMU head answers "edge" on 63-99&nbsp;% of steps</td></tr>
+      <tr><td>(b) truth 0.867 ± 0.023; sole labels 0.40</td><td>holds</td><td>labels 0.404 ± 0.016</td></tr>
+      <tr><td>Label budgets 5 / 20 / 100 / all</td><td>holds</td><td>all values the same</td></tr>
+      <tr><td>(b) sole beats joints + IMU at every budget</td><td>holds</td><td></td></tr>
+      <tr><td>Shifted readout 0.827 ± 0.014 / 0.498 ± 0.044</td><td>holds with caveats</td><td>the same teacher weights on another readout of the same simulation; the sole is not built differently</td></tr>
+      <tr><td>No pad-sole data; teacher pad numbers</td><td>holds</td><td></td></tr>
+      <tr><td>Deceptive scenes (9,795 steps): vision 0.07-0.12 vs real floor, 0.66-0.78 vs look</td><td>holds with caveats</td><td>3,848 look_swap steps are excluded (no class or a hard_mid look); the (b) heads give 0.22-0.80 vs look</td></tr>
+      <tr><td>Sole teacher on the same steps: 0.820 vs real floor, 0.035 vs look</td><td>holds with caveats</td><td>on SONIC steps this is the teacher trained with G113 held out, which did see SONIC</td></tr>
+      <tr><td>Hidden-gap steps left out of the class metric</td><td>holds</td><td>a design statement</td></tr>
+      <tr><td>Dropping 614 crops that show the robot changes nothing by more than 0.008</td><td>holds</td><td>largest change (b) sole 0.488 to 0.480</td></tr>
+      <tr><td>Crop without padding</td><td>holds</td><td>every row reproduces</td></tr>
+      <tr><td>The pilot's SONIC oddity is gone (0.867 vs 0.857)</td><td>holds</td><td>the pilot numbers themselves were not verified</td></tr>
+      <tr><td>The viewing-distance explanation of a small remaining gap</td><td><strong>could not verify</strong></td><td>needs retraining</td></tr>
+      <tr><td>Edge-loaded steps 0.0 / 0.4 / 3.0&nbsp;%</td><td><strong>could not verify</strong></td><td>from the dataset's noise-free re-run</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="support">
+  <div class="kicker">6</div>
+  <h2>Support state</h2>
+  <p>Details: <a href="support-state.html">support state from vision</a>.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Verdict</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Truth definition</td><td>holds</td><td>the prediction files' truth equals the dataset's support state</td></tr>
+      <tr><td>Counts 54 / 303 / 5,912; 5 / 303 / 381; 2 / 497 / 227</td><td>holds</td><td>exact; the partial count in the step-1 data is 12,365 of 12,372, not 12,364 of 12,371 (off by one)</td></tr>
+      <tr><td>Support teachers: sole 0.719 / 0.486, joints + IMU 0.445 / 0.305</td><td>holds</td><td></td></tr>
+      <tr><td>Vision (a): truth 0.529, sole 0.548, joints + IMU 0.411; shuffled 0.341</td><td>holds with caveats</td><td>vision accuracy (0.94-0.95) equals the "always full" baseline of 0.943</td></tr>
+      <tr><td>Sole labels beat joints + IMU labels (0.548 vs 0.411; (b) 0.504 vs 0.264)</td><td>holds</td><td></td></tr>
+      <tr><td>Sole labels as good as truth</td><td>holds</td><td>"none" has only 54 test steps</td></tr>
+      <tr><td>Sole teacher after the step 0.736 ± 0.017</td><td>holds with caveats</td><td>on SONIC steps it is the teacher that saw SONIC, as above</td></tr>
+      <tr><td>Edge steps: vision 0.462 vs sole 0.693; partial recall 0.864 vs 0.673</td><td>holds</td><td></td></tr>
+      <tr><td>Hidden gaps: vision 0.423 / 0.652 vs sole 0.466 / 0.715</td><td>holds with caveats</td><td>answering "partial" every time scores <strong>0.685 accuracy</strong>; vision is below that trivial baseline and the sole only 3 points above it</td></tr>
+      <tr><td>Partial recall falls to 0.642 (truth labels) and 0.525 (sole labels); sole 0.702</td><td>holds</td><td></td></tr>
+      <tr><td>The edge-loaded gap sits inside "none"</td><td><strong>could not verify</strong></td><td>from the dataset's noise-free re-run</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="vlm">
+  <div class="kicker">7</div>
+  <h2>VLM</h2>
+  <h3>Zero-shot on real photos (<a href="vlm-real-photos.html">details</a>)</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Verdict</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Macro-F1 0.678 ± 0.017, accuracy 0.624 ± 0.016, 0 invalid; per class 0.391 / 0.684 / 0.796</td><td>holds</td><td>the re-check's own answer parser agrees</td></tr>
+      <tr><td>239 of 1,350 answers are hard_slip</td><td>holds</td><td></td></tr>
+      <tr><td>Question wording chosen on validation only (0.644 &gt; 0.626 &gt; 0.611)</td><td>holds with caveats</td><td>three validation runs, then one test run; the differences are within noise</td></tr>
+      <tr><td>Validation and test disjoint</td><td>holds</td><td>0 shared files and 0 shared image bytes; different sources</td></tr>
+      <tr><td>Verdict "partly"</td><td>holds with caveats</td><td>only 3 of 6 classes tested; the ± comes from subsamples that share videos</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <h3>Tuned on the sole's labels (<a href="vlm-lora.html">details</a>)</h3>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Verdict</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Test and deceptive rows are exactly those of the vision head</td><td>holds with caveats</td><td>the 5,248 rows are the vision head's test rows that have a best frame; its 0.816 also counts 34 frameless steps; 25 of 25 rebuilt crops byte-identical</td></tr>
+      <tr><td>The real-photo list is the same</td><td>holds</td><td>same 1,350 files, order and truth</td></tr>
+      <tr><td>LoRA trains on the cross-fitted sole labels</td><td>holds</td><td>training split and textures only, 0 test episodes or textures; label agreement with truth only 0.81</td></tr>
+      <tr><td>Question wording unchanged</td><td>holds</td><td>the same in all 15 runs</td></tr>
+      <tr><td>Nothing selected on test</td><td>holds with caveats</td><td>no checkpoint choice, but the pilot scored 300 test-split steps before the run sizes were fixed</td></tr>
+      <tr><td>Held-out textures: LoRA 0.721 ± 0.040 vs zero-shot 0.343 ± 0.004, real</td><td>holds with caveats</td><td>resampling textures gives sd 0.020 (zero-shot) and 0.074 (LoRA); the difference survives: +0.378 [0.197, 0.526]</td></tr>
+      <tr><td>Zero-shot almost never answers slope or edge; 856 of 1,173 hard_grip steps called hard_slip</td><td>holds</td><td></td></tr>
+      <tr><td>LoRA weak on soft (0.40) and rough (0.56)</td><td>holds</td><td></td></tr>
+      <tr><td>Deceptive vs real floor: LoRA 0.124 ± 0.006 vs zero-shot 0.149, "real, but small"</td><td><strong>does not hold</strong></td><td>the numbers reproduce, but the 2× rule used only the LoRA seed sd and zero-shot had no spread; an episode bootstrap (344 episodes) gives −0.025 [−0.062, 0.010]; "both below 1/6" holds</td></tr>
+      <tr><td>Deceptive vs look: 0.524 ± 0.041 vs 0.347, real</td><td>holds with caveats</td><td>+0.176 [0.110, 0.246]; the look accuracy uses 3,315 rows, not 3,990 as reported</td></tr>
+      <tr><td>Real photos: 0.375 ± 0.024 vs 0.679 ± 0.012, LoRA destroys the skill</td><td>holds with caveats</td><td>a real drop, not a move to classes without photos; per class hard_grip 0.39 to 0.94, rough 0.68 to 0.04, soft 0.80 to 0.31; LoRA answers hard_grip on 1,019-1,053 of 1,350</td></tr>
+      <tr><td>Shuffled LoRA 0.061 is at chance</td><td>holds with caveats</td><td>0.061 is exactly a constant hard_grip answer; random guessing scores 0.167, so it is a collapse floor, not chance</td></tr>
+      <tr><td>0 invalid answers</td><td>holds</td><td></td></tr>
+      <tr><td>The amended sanity line of the check</td><td>holds</td><td>the right invariant; dropping the 12 affected rows moves the accuracies by at most 0.0002</td></tr>
+      <tr><td>Verdict: LoRA learns the look and loses real-photo skill</td><td>holds with caveats</td><td>the ViT head scores 0.821 ± 0.028 against 0.721 ± 0.040 on the same rows, +0.109 [0.001, 0.240], borderline and not a fair comparison; no VLM comparison of sole against joints + IMU labels</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="leaks">
+  <div class="kicker">8</div>
+  <h2>Leaks and controls</h2>
+  <ul>
+    <li><strong>No test data in training.</strong> No test or deceptive episode and no test texture in the training or validation rows of any of the 102 heads (class and support). Every head's training gaits match its setting.</li>
+    <li><strong>Label provenance.</strong> Each teacher's labels checked against its own training and validation lists: 0 violations among the 33,294 rows used for training or validation, and 0 among all 54,010 rows. Cross-fitting works: fold k excludes its own episodes from training and from early stopping.</li>
+    <li><strong>Held-out gait.</strong> Absent from every teacher's training and validation lists. No teacher list contains a test episode.</li>
+    <li><strong>No selection on test.</strong> The saved heads' validation score equals their score against the teacher's labels, not against truth (for example 0.7062 against 0.7789). The saved heads reproduce the test predictions exactly for linear heads and on 96-99.7&nbsp;% of steps for heads with a hidden layer.</li>
+    <li><strong>Complete prediction files.</strong> All 81 class, 21 support and 18 crop-variant prediction files hold exactly the test and deceptive rows.</li>
+    <li><strong>Minor.</strong> 34 test steps have no best frame and get grippy floor by default, which lowers every head by about 0.005.</li>
+    <li><strong>Shuffled control of the class head.</strong> 0.197 (0.234 / 0.180 / 0.177 over seeds) against a threshold of 0.25 that is loose: a random guesser matched to the class mix scores 0.167. Seed 0's 0.234 looks far above a step-level null, but predictions cluster by texture; against a texture-aware null it ranks 74th of 720, below the 95th percentile of 0.261. <strong>At chance once clustering is taken into account.</strong></li>
+  </ul>
+</section>
+
+<section id="samples">
+  <div class="kicker">9</div>
+  <h2>Twenty samples</h2>
+  <figure><img src="media/recheck-1_sample_sheet.png" alt="Sheet of twenty test steps: for each, the square crop with grey padding below and the camera frame with the landing footprint in red and the crop box, with truth, look and the answers of every head and teacher printed above" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Twelve honest test steps (two per class over three gaits), six look_swap and two hidden-gap steps, picked at random. For each: the square crop the heads see, and the camera frame with the landing footprint.</figcaption></figure>
+  <ul style="margin-top:14px">
+    <li><strong>Image, footprint and labels agree.</strong> The footprint sits on the landing spot and the textures match their class. Two teacher labels look off (an "edge" step that lands fully supported, called grippy by both teachers; a rough step called grippy by both); both are known limits of the label definitions.</li>
+    <li><strong>About half of every square crop is grey padding</strong> below the image, because the footprint is at the bottom of the frame. On slopes the padding also shifts sideways. The crop without padding gives the same numbers, so padding is not a big shortcut.</li>
+    <li><strong>The robot in view.</strong> The robot's legs fill one SONIC crop; arms or hands show in others. Excluding flagged crops changes nothing. No depth-like artefacts or empty space in the crops.</li>
+    <li><strong>The errors are appearance errors.</strong> A checkerboard carpet (soft) is read as tiles, slippery, by every head; the truth-taught head scores 0.00 on that texture. The look_swap samples get the look class, not the physics.</li>
+  </ul>
+</section>
+
+<section id="threats">
+  <div class="kicker">10</div>
+  <h2>Threats and what could not be checked</h2>
+  <h3>Threats to the main conclusion</h3>
+  <ul>
+    <li><strong>Texture sampling (tested).</strong> Three test textures per class. The texture-bootstrap 95&nbsp;% interval for the (a) sole head is [0.71, 0.89]; its bootstrap sd is 0.047 against a seed sd of 0.028, so the seed spread understates the uncertainty. Seeds share the same training rows.</li>
+    <li><strong>Geometry and privileged placement (tested).</strong> The crop box and footprint weights come from the future landing pose, which only the simulator knows. A classifier on crop and footprint geometry alone, with no pixels, gets 0.45 in (a) and 0.30 in (b), and 0.50 accuracy against the real floor on look_swap. The ViT heads score only 0.07-0.12 there, so they mostly read appearance, but some geometry signal could sit inside the honest test numbers.</li>
+    <li><strong>The seen-gait tie is near-predetermined (tested).</strong> Both label sets have equal quality.</li>
+    <li><strong>One direction for the unseen gait (not tested).</strong> Only SONIC was held out for vision. The collapse of the joints and IMU teacher may be specific to these two training gaits.</li>
+    <li><strong>Could not rule out.</strong> DINOv3's pretraining may have seen the CC0 ambientCG textures. Transfer to the real world is untested.</li>
+  </ul>
+  <h3>Could not check</h3>
+  <ul>
+    <li>Replay fidelity beyond 20 episodes, and rendering correctness beyond the 20 samples.</li>
+    <li>The DINOv3 features themselves: they were not re-extracted.</li>
+    <li>The pilot's numbers, the viewing-distance explanation (needs retraining), and the edge-loaded-foot shares (from the dataset's noise-free re-run).</li>
+    <li>How the 288 separate sensor test simulations and the pad-sole simulation were built; only their saved predictions were re-scored.</li>
+    <li>The mapping from real-photo materials to project classes, and the photos' licence.</li>
+    <li>The LoRA training itself (not re-run) and GPU nondeterminism. Zero-shot on real photos gives 0.679 in the tuning run against 0.678 before: a few answers differ (310 against 307 hard_grip answers).</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores are macro-F1 per step against simulator truth on held-out textures unless a row says accuracy; intervals in brackets are bootstrap intervals over textures or episodes. Experiment 1 pages: <a href="dataset.html">dataset</a>, <a href="teachers.html">teachers</a>, <a href="vision-head.html">vision head</a>, <a href="support-state.html">support state</a>, <a href="vlm-real-photos.html">VLM on real photos</a>, <a href="vlm-lora.html">VLM with LoRA</a>. The re-check of experiment 2: <a href="recheck-2.html">independent re-check of experiment 2</a>.</p>
+</section>
+</main>
+</body>
+</html>

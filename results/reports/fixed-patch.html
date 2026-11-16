@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixed Patch Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">FLA · Experiment 2: fixed patch, hard against soft · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Fixed patch: can the sole teach a camera hard from soft?</h1>
+  <p class="lede">A torso camera on the Booster K1 looks at one fixed patch of floor ahead of the feet on every frame, and a small head names it hard or soft before the step. The sole names the floor after the step. Five comparisons, A to E: who teaches vision best, whether fusing vision with joints helps, which vision model, floors that look wrong, and floor changes.</p>
+  <div class="flag">Simulation only. Rendered camera, simulated sole, one gait.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>A camera taught by the sole is as good as one taught by the simulator.</strong> <span class="num">0.985</span> against <span class="num">0.985</span> on 25 textures never seen in training. This is a tie by construction: every teacher is right on about 99&nbsp;% of steps, so the test cannot rank teachers.</li>
+    <li><strong>Fusing vision with joints helps only because it answers later.</strong> Vision plus joints and IMU scores <span class="num">0.997</span>, but after the step, and it adds nothing over the sole alone. On deceptive floors it drops to <span class="num">0.514</span>.</li>
+    <li><strong>A small ViT is enough; the 7B VLM is not.</strong> DINOv3 ViT-S and ViT-B heads both score <span class="num">0.985</span>; SigLIP with no training <span class="num">0.976</span>; Qwen2.5-VL-7B with no training <span class="num">0.668</span>.</li>
+    <li><strong>New materials break the camera.</strong> With a whole material family held out of training, the head falls to <span class="num">0.726</span>.</li>
+    <li><strong>Vision reads the look, not the physics.</strong> On deceptive floors (they look like one class and behave like the other) vision scores <span class="num">0.028</span>; the sole after the step scores <span class="num">0.997</span>.</li>
+    <li><strong>At a floor change vision is early, the sole is on time.</strong> Vision already reports the new floor about <span class="num">1.33</span> steps before the boundary, because the patch lies ahead of the feet.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#setup">What was done</a></li>
+    <li><a href="#clip">One run on a test course</a></li>
+    <li><a href="#a">A. Who teaches vision better</a></li>
+    <li><a href="#b">B. Vision alone or with joints</a></li>
+    <li><a href="#c">C. Which vision model</a></li>
+    <li><a href="#d">D. Floors that lie</a></li>
+    <li><a href="#e">E. When the floor changes</a></li>
+    <li><a href="#overall">What it means and its limits</a></li>
+  </ol>
+</nav>
+
+<section id="setup">
+  <div class="kicker">1</div>
+  <h2>What was done</h2>
+  <p>The question: does a vision head trained on the sole's labels name the floor before the step as well as one trained on simulator truth? And how do other teachers, fusion with joints, other vision models, deceptive looks and floor changes compare?</p>
+  <ul>
+    <li><strong>Data.</strong> 400 episodes of G113, an ordinary flat-foot walking policy, on hard and soft floors in MuJoCo: 16,918 steps. The floors carry 72 CC0 photo textures; 25 are held out for testing (13 hard, 12 soft). Details on the <a href="dataset-2.html">dataset page</a>.</li>
+    <li><strong>The patch.</strong> About 0.3 × 0.3 m of floor, centred about 0.45 m ahead of the trunk, cut from the same image rectangle on every frame.</li>
+    <li><strong>The vision head.</strong> A small MLP on frozen DINOv3 features of the patch. A step's answer is the mean probability over the last 5 frames (0.5 s at 10 Hz) up to the last frame before touchdown. It is scored against the floor the foot actually touches.</li>
+    <li><strong>Training labels for a frame.</strong> The label of the step that later lands inside that frame's patch. Frames that no step lands in are not used for training. The 9&nbsp;% of steps that no earlier patch covered give no training frame, but they are scored at test.</li>
+    <li><strong>Teachers.</strong> A classifier on the sole alone (coarse sole features: four pressure blocks, four shear vectors, centre of pressure, total force, contact area), one on joints and IMU alone, and one on both. They are cross-fitted so that none ever labelled an episode it trained on, and none trained on a test episode. See the <a href="teachers-2.html">teachers page</a>.</li>
+    <li><strong>Test sets.</strong> Honest looks: 35 test episodes plus the honest look of 85 more, 5,029 steps on 25 textures. Deceptive looks: the same 85 episodes shown with the texture of the other class, 3,559 steps, never used in training.</li>
+    <li><strong>Uncertainty.</strong> Three training seeds, and 95&nbsp;% intervals from resampling the test textures within each class and from resampling episodes. A difference counts as real only if its texture-resampled interval excludes 0.</li>
+    <li><strong>Chance.</strong> A random guess at the class prior scores 0.500, a constant majority answer 0.346. Soft floors make up 0.471 of the honest test steps.</li>
+  </ul>
+  <figure><img src="media/dataset-2_contact_sheet.png" alt="Torso camera frames on several floors, each with the fixed patch marked by a green box and the stored crop beside it; the lower rows are deceptive floors" style="width:100%;border-radius:8px;border:1px solid var(--line)"><figcaption>Torso camera, pitched down. The green box is the fixed patch; the stored crop is next to each frame.</figcaption></figure>
+</section>
+
+<section id="clip">
+  <div class="kicker">2</div>
+  <h2>One run on a test course</h2>
+  <p>A new course, straight ahead: eight patches of 2.0 × 2.5 m, hard and soft in both orders, two of them deceptive. Patch 5 is soft but textured as terrazzo, patch 7 is hard but textured as carpet. All textures are test textures. G113 walks at 0.35 m/s. Nothing was trained on this course; the models are the ones from the comparisons below, one seed each.</p>
+  <figure><video controls preload="metadata" src="media/fixed-patch_course.mp4"></video><figcaption>Rows: the true floor, the ViT head before the step, the VLM with no training before the step, the sole and the joints after the step. Green is right, red is wrong. Shown at 0.6× speed.</figcaption></figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Steps right</th><th class="n">ViT head</th><th class="n">VLM, zero-shot</th><th class="n">Sole</th><th class="n">Joints + IMU</th></tr></thead>
+    <tbody>
+      <tr><td>All 126 steps</td><td class="n">91</td><td class="n">100</td><td class="n">125</td><td class="n best">126</td></tr>
+      <tr><td>Honest patches, 103 steps</td><td class="n">91</td><td class="n">89</td><td class="n">102</td><td class="n best">103</td></tr>
+      <tr><td>Deceptive patches against the real floor, 23 steps</td><td class="n">0</td><td class="n">11</td><td class="n best">23</td><td class="n best">23</td></tr>
+      <tr><td>Deceptive patches against the look, 23 steps</td><td class="n">23</td><td class="n">12</td><td class="n">0</td><td class="n">0</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> All 12 honest errors of the ViT head are the last one to three steps before a change of floor: the patch lies about 0.3 m ahead of the leading toe, so the head names the next floor early. The sole's single error is a foot straddling a soft-to-hard boundary. The VLM's 11 right deceptive steps are not insight: it calls carpet hard, so it is right on the hard floor that looks like carpet (11 of 12) and wrong on all 11 steps of the soft floor that looks hard. On the honest soft carpet it gets 4 of 11, against 9 of 11 for the ViT head.</p>
+  </div>
+  <p class="small" style="margin-top:12px">A single run with one seed of each model, so these counts are a demonstration, not an estimate. The torso view is rendered without shadows, as in the dataset.</p>
+</section>
+
+<section id="a">
+  <div class="kicker">3 · comparison A</div>
+  <h2>Who teaches vision better?</h2>
+  <p>The same head on DINOv3 ViT-B/16 features, trained on the same training frames. Only the source of the labels changes. Honest test looks, 5,029 steps.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Labels for the head</th><th class="n">Macro-F1 (± sd, 3 seeds)</th><th class="n">95&nbsp;% interval, textures</th><th class="n">95&nbsp;% interval, episodes</th><th class="n">Accuracy</th></tr></thead>
+    <tbody>
+      <tr><td>Simulator truth</td><td class="n">0.985 ± 0.000</td><td class="n">[0.972, 0.993]</td><td class="n">[0.979, 0.991]</td><td class="n">0.986</td></tr>
+      <tr><td>Sole teacher</td><td class="n best">0.985 ± 0.003</td><td class="n">[0.974, 0.992]</td><td class="n">[0.978, 0.990]</td><td class="n">0.985</td></tr>
+      <tr><td>Joints + IMU teacher</td><td class="n">0.984 ± 0.002</td><td class="n">[0.968, 0.993]</td><td class="n">[0.977, 0.990]</td><td class="n">0.984</td></tr>
+      <tr><td>Both teachers together</td><td class="n">0.985 ± 0.002</td><td class="n">[0.971, 0.994]</td><td class="n">[0.978, 0.991]</td><td class="n">0.985</td></tr>
+      <tr class="sep"><td>Shuffled labels (control)</td><td class="n">0.565 ± 0.088</td><td class="n">[0.490, 0.629]</td><td class="n">[0.533, 0.596]</td><td class="n">0.586</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> It is a tie, as expected. Every teacher-minus-truth and teacher-minus-teacher difference is within ±0.001 and every texture interval contains 0; sole minus truth is −0.001 [−0.004, +0.002]. The tie is built into the task: the teachers' labels agree with truth on 98.8 to 99.7&nbsp;% of training steps (independent re-check), so the label sets differ on about 1&nbsp;% of frames. The table therefore says the sole can replace simulator truth here, not that it is a better teacher.</p>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>Shuffled control.</strong> 0.565 is 0.420 below the truth head and near chance once whole textures are allowed to flip together. The independent re-check puts each seed at chance but the mean of the three at the 96.3rd percentile of a texture-aware null: borderline, not cleanly at chance.</li>
+    <li><strong>Where the teachers do differ.</strong> Training only on stand and stop steps (commanded speed below 0.05 m/s), the joints teacher is right on 88.5&nbsp;% of training steps and the sole on 97.2&nbsp;%. The heads drop to 0.914 to 0.935 for every label source, with only 169 training frames, and sole minus joints is −0.013 [−0.038, +0.005]: no separation. The re-check finds truth minus joints at −0.009 [−0.020, −0.000], so call that borderline, and the claim that no subset separates the teachers rests on this one small subset.</li>
+    <li><strong>Which frames get which label.</strong> The rule above (the step that lands inside the patch) beats "the next step to touch down": 0.985 against 0.959 ± 0.013 with truth labels and 0.973 ± 0.020 with sole labels. The re-check finds the gain real for truth labels (+0.027 [+0.002, +0.072]) but not for sole labels (+0.012 [−0.002, +0.042]).</li>
+  </ul>
+</section>
+
+<section id="b">
+  <div class="kicker">4 · comparison B</div>
+  <h2>Vision alone, or vision with joints and IMU?</h2>
+  <p>One classifier was given both the mean ViT feature of the same five frames and the joints and IMU window of the step itself (touchdown to lift-off, at most 0.6 s). It therefore answers after the step. It was never trained on a deceptive look.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Classifier</th><th>Answers</th><th class="n">Honest looks, 5,029 steps</th><th class="n">Deceptive looks, real floor, 3,559 steps</th></tr></thead>
+    <tbody>
+      <tr><td>Vision alone, sole labels</td><td>before the step</td><td class="n">0.985 ± 0.003</td><td class="n">0.027 ± 0.008</td></tr>
+      <tr><td>Vision alone, truth labels</td><td>before the step</td><td class="n">0.985 ± 0.000</td><td class="n">0.028 ± 0.003</td></tr>
+      <tr class="sep"><td>Vision + joints + IMU, sole labels</td><td>after the step</td><td class="n best">0.997 ± 0.001</td><td class="n">0.514 ± 0.104</td></tr>
+      <tr><td>Vision + joints + IMU, truth labels</td><td>after the step</td><td class="n best">0.997 ± 0.002</td><td class="n">0.287 ± 0.003</td></tr>
+      <tr class="sep"><td>Joints + IMU teacher alone</td><td>after the step</td><td class="n">0.992 ± 0.001</td><td class="n">0.992 ± 0.000</td></tr>
+      <tr><td>Sole teacher alone</td><td>after the step</td><td class="n best">0.997 ± 0.001</td><td class="n best">0.997 ± 0.001</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> On honest floors the fused classifier beats vision alone by +0.012 [+0.006, +0.022] and the joints teacher by +0.005 [+0.002, +0.007], both real. But it answers after the step, so the first comparison is not like for like, and it adds nothing over the sole alone (+0.000 [−0.003, +0.002] in the independent re-check). On deceptive floors adding vision makes the after-step answer far worse: trained where look and physics always agree, the classifier learned to lean on the look. The verdict is "do not fuse naively", not "fusion helps".</p>
+  </div>
+  <div class="caveat">The re-check finds "learned to trust the look" only partly true: the three sole-label seeds score 0.42, 0.50 and 0.63 against the real floor, and 0.443 against the look. Two of the truth-label checkpoints were picked at the first epoch.</div>
+</section>
+
+<section id="c">
+  <div class="kicker">5 · comparison C</div>
+  <h2>Which vision model?</h2>
+  <p>Four models on the same patch and the same honest test steps. The two zero-shot models get no training: SigLIP compares the image with a few written class descriptions, and Qwen2.5-VL-7B is asked for a one-word answer, hard or soft, read from the probability of its first token.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Model</th><th class="n">Macro-F1</th><th class="n">95&nbsp;% interval, textures</th><th class="n">Accuracy</th><th class="n">Frames per second</th></tr></thead>
+    <tbody>
+      <tr><td>DINOv3 ViT-B/16 + head, truth labels</td><td class="n best">0.985 ± 0.000</td><td class="n">[0.972, 0.993]</td><td class="n">0.986</td><td class="n">1,770 ± 375</td></tr>
+      <tr><td>DINOv3 ViT-S/16 + head, truth labels</td><td class="n best">0.985 ± 0.003</td><td class="n">[0.975, 0.992]</td><td class="n">0.985</td><td class="n best">4,006 ± 801</td></tr>
+      <tr><td>DINOv3 ViT-S/16 + head, sole labels</td><td class="n">0.984 ± 0.004</td><td class="n">[0.974, 0.991]</td><td class="n">0.984</td><td class="n dim">–</td></tr>
+      <tr><td>SigLIP-B/16, zero-shot</td><td class="n">0.976 (1 run)</td><td class="n">[0.952, 0.989]</td><td class="n">0.976</td><td class="n">2,588 ± 131</td></tr>
+      <tr><td>Qwen2.5-VL-7B, zero-shot</td><td class="n">0.668 (1 run)</td><td class="n">[0.494, 0.834]</td><td class="n">0.707</td><td class="n">47 ± 3</td></tr>
+      <tr class="sep"><td>DINOv3 ViT-B + head, whole material family held out</td><td class="n">0.726 ± 0.047</td><td class="n">[0.557, 0.890]</td><td class="n">0.736</td><td class="n dim">–</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The small ViT loses nothing to the large one (−0.001 [−0.004, +0.004]) at more than twice the speed. SigLIP is 0.010 below the ViT-B head (interval [−0.021, −0.002]; in the re-check the upper end touches 0). The VLM is 0.318 below the ViT-B head, real, and most of its errors are soft floors called hard. Holding out a whole material family costs 0.259, also real: the "held-out textures" of the other rows are new textures of known families, not new materials.</p>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>SigLIP needs the right words.</strong> Only one of three wordings works, the one that names materials, five per class (concrete, stone, tile, asphalt, wood; carpet, grass, moss, foam mat, cloth rug). These overlap the texture families, so this is zero-shot informed by the categories. The two generic sets ("hard / soft floor", "rigid / deformable surface") scored 0.37 and 0.36 on validation and 0.39 and 0.41 on test (re-check): below chance.</li>
+    <li><strong>The VLM.</strong> 99.9&nbsp;% of the first-token probability falls on the two answer words. Two of three wordings tied on validation at 0.874; the score falls to 0.668 on test, because validation has only 8 textures.</li>
+    <li><strong>Held-out family, by family</strong> (accuracy, since each family is a single class): asphalt 0.207, carpet 0.473, grass 0.714, moss 0.810, fabric 0.868, tiles 0.983, concrete, marble and terrazzo 1.000. The family is that of the patch texture at the last frame, which differs from the touched floor on 67 steps; by touched floor the main head's carpet accuracy is 0.999 rather than 0.982. Between 19 and 174 training frames per held-out family straddle a boundary, so a little of that family was visible. Each family has only 1 to 5 test textures.</li>
+  </ul>
+  <p class="small" style="margin-top:12px">Speeds: one H100, model alone, features not cached, batch 64 (VLM batch 16, preprocessing included), three timed repeats. Another job held the GPU at 62 to 100&nbsp;% just before each repeat, so these are lower bounds with large spread, and the re-check could not re-time them.</p>
+</section>
+
+<section id="d">
+  <div class="kicker">6 · comparison D</div>
+  <h2>Floors that lie</h2>
+  <p>Hard floor that looks soft and soft floor that looks hard: 3,559 steps, scored once against the real floor and once against the class the floor looks like.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Source</th><th>Answers</th><th class="n">Against the real floor</th><th class="n">Against the look</th></tr></thead>
+    <tbody>
+      <tr><td>ViT-B head, truth labels</td><td>before the step</td><td class="n">0.028 ± 0.003</td><td class="n">0.972 ± 0.003</td></tr>
+      <tr><td>ViT-B head, sole labels</td><td>before the step</td><td class="n">0.027 ± 0.008</td><td class="n">0.973 ± 0.008</td></tr>
+      <tr><td>SigLIP, zero-shot</td><td>before the step</td><td class="n">0.033</td><td class="n">0.966</td></tr>
+      <tr><td>Qwen2.5-VL-7B, zero-shot</td><td>before the step</td><td class="n">0.210</td><td class="n">0.721</td></tr>
+      <tr class="sep"><td>Sole teacher</td><td>after the step</td><td class="n best">0.997 ± 0.001</td><td class="n">0.003 ± 0.001</td></tr>
+      <tr><td>Joints + IMU teacher</td><td>after the step</td><td class="n">0.992 ± 0.000</td><td class="n">0.008 ± 0.000</td></tr>
+      <tr><td>Sole + joints + IMU teacher</td><td>after the step</td><td class="n">0.996 ± 0.001</td><td class="n">0.004 ± 0.001</td></tr>
+      <tr><td>Vision + joints + IMU, truth labels</td><td>after the step</td><td class="n">0.287 ± 0.003</td><td class="n">0.550 ± 0.010</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Vision before the step reports the look, not the physics. On the very same steps with the honest look the ViT head scores 0.987. The sensors after the step report the physics: sole minus vision is +0.969 [+0.947, +0.984]. Sole minus joints is +0.005 [+0.002, +0.008], real but small. A head taught by the sole is fooled just as much (0.027) as one taught by truth (0.028): the sole teaches only what a floor usually looks like, it cannot make vision see stiffness.</p>
+  </div>
+  <p class="small" style="margin-top:12px">The teachers read no image, so their deceptive score equals their honest score by construction. The deceptive looks reuse the 25 test textures, swapped between classes; the result shows that vision reads appearance, not what a model would do on a real ambiguous floor.</p>
+</section>
+
+<section id="e">
+  <div class="kicker">7 · comparison E</div>
+  <h2>When the floor changes</h2>
+  <p>Strip episodes cross from one floor to another. For each boundary: how many steps from the boundary step until a source names the new floor (0 = on the boundary step). "Never" means not within the new segment. "Early" counts steps just before the boundary that already gave the new class. Pooled over three seeds; 24 boundaries, all hard to soft.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Source</th><th>Strips</th><th class="n">Boundaries × seeds</th><th class="n">Right at once</th><th class="n">Median</th><th class="n">90th pct</th><th class="n">Mean</th><th class="n">Never</th><th class="n">Early: mean steps; share</th></tr></thead>
+    <tbody>
+      <tr><td>Vision, truth labels</td><td>honest</td><td class="n">72</td><td class="n">69</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.10</td><td class="n">0</td><td class="n">1.31; 0.71</td></tr>
+      <tr><td>Vision, sole labels</td><td>honest</td><td class="n">72</td><td class="n best">71</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.04</td><td class="n">0</td><td class="n">1.33; 0.75</td></tr>
+      <tr><td>VLM, zero-shot</td><td>honest</td><td class="n">24</td><td class="n">13</td><td class="n">0.0</td><td class="n">8.0</td><td class="n">1.67</td><td class="n">6</td><td class="n">0.67; 0.33</td></tr>
+      <tr><td>Sole teacher</td><td>honest</td><td class="n">72</td><td class="n">69</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.06</td><td class="n">0</td><td class="n">0.08; 0.07</td></tr>
+      <tr><td>Joints + IMU teacher</td><td>honest</td><td class="n">72</td><td class="n">66</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.17</td><td class="n">0</td><td class="n">0.06; 0.03</td></tr>
+      <tr><td>Vision + joints + IMU, truth</td><td>honest</td><td class="n">72</td><td class="n">66</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.11</td><td class="n">0</td><td class="n">0.04; 0.04</td></tr>
+      <tr class="sep"><td>Vision, truth labels</td><td>deceptive</td><td class="n">51</td><td class="n">0</td><td class="n dim">–</td><td class="n dim">–</td><td class="n dim">–</td><td class="n">51</td><td class="n">0.00; 0.00</td></tr>
+      <tr><td>Vision, sole labels</td><td>deceptive</td><td class="n">51</td><td class="n">0</td><td class="n dim">–</td><td class="n dim">–</td><td class="n dim">–</td><td class="n">51</td><td class="n">0.00; 0.00</td></tr>
+      <tr><td>VLM, zero-shot</td><td>deceptive</td><td class="n">17</td><td class="n">0</td><td class="n dim">–</td><td class="n dim">–</td><td class="n dim">–</td><td class="n">17</td><td class="n">0.00; 0.00</td></tr>
+      <tr><td>Sole teacher</td><td>deceptive</td><td class="n">51</td><td class="n best">48</td><td class="n">0.0</td><td class="n">0.0</td><td class="n">0.08</td><td class="n">0</td><td class="n">0.00; 0.00</td></tr>
+      <tr><td>Joints + IMU teacher</td><td>deceptive</td><td class="n">51</td><td class="n">45</td><td class="n">0.0</td><td class="n">1.0</td><td class="n">0.24</td><td class="n">0</td><td class="n">0.00; 0.00</td></tr>
+      <tr><td>Vision + joints + IMU, truth</td><td>deceptive</td><td class="n">51</td><td class="n">0</td><td class="n">10.0</td><td class="n">25.0</td><td class="n">14.20</td><td class="n">46</td><td class="n">0.00; 0.00</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> At an honest boundary vision is ahead of the foot, not behind it: in 75&nbsp;% of boundaries (sole labels) it already answers "soft" on the last hard steps, 1.33 steps early on average, because the patch lies about 0.3 to 0.5 m ahead of the landing foot. Against the floor under the foot these early answers count as errors; for a controller they might be a warning in time, but that was not tested. The sole and the joints switch on the boundary step itself. On deceptive strips vision never reaches the real floor, and the fused classifier fails in 46 of 51 cases. The VLM is slow even on honest strips: 13 of 24 at once, 6 never.</p>
+  </div>
+  <p class="small" style="margin-top:12px">Only 24 boundaries, all hard to soft, one gait and one patch distance. Pooling three seeds triples the count without adding independent cases. The early rate depends on the 0.45 m patch distance and the walking speed. The deceptive strips use 17 of the test episodes, the honest strips 7 test episodes plus the honest look of those 17.</p>
+</section>
+
+<section id="overall">
+  <div class="kicker">8</div>
+  <h2>What it means and its limits</h2>
+  <ul>
+    <li><strong>The sole can stand in for simulator truth as a teacher of vision:</strong> 0.985 against 0.985. The test is weak, because every teacher is about 99 to 99.7&nbsp;% right on this two-class task.</li>
+    <li><strong>What vision learns is the look of known material families.</strong> A new family drops it to 0.726, a deceptive look to 0.03, and no teacher changes that. Only the sensors after the step know the physics: sole 0.997, joints and IMU 0.992.</li>
+    <li><strong>A cue without pixels.</strong> The independent re-check found that body state before the step (mainly trunk height: the robot stands about 6 mm lower on soft floor) predicts the floor at 0.957 and is not fooled by the look. This report never compares vision with such a baseline. Details on the <a href="recheck-2.html">re-check page</a>.</li>
+    <li><strong>Easy task.</strong> Hard and soft differ by about four orders of magnitude in stiffness, so the tie in A says nothing about which teacher would be better on a harder task.</li>
+    <li><strong>Rendering.</strong> No shadows, no lighting change, one camera pose, textures on a flat plane (possibly seen in DINOv3 pretraining), no real images.</li>
+    <li><strong>Labels.</strong> Truth at the foot is the class of the touched region; the teachers' own scores use the earlier labelling, which differs on 36 of 16,918 steps (0.2&nbsp;%). Interval widths are dominated by the 25 test textures. The VLM was used zero-shot only.</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores are macro-F1 per step on held-out textures (honest looks: 5,029 steps on 25 textures; deceptive looks: 3,559 steps), mean ± sd over three training seeds unless marked "1 run". Every number in tables A to E was reproduced to three decimals by an independent re-check: <a href="recheck-2.html">re-check of experiment 2</a>. Related: <a href="dataset-2.html">dataset of experiment 2</a>, <a href="teachers-2.html">its teachers</a>, the six-class experiment <a href="dataset.html">dataset</a>, <a href="teachers.html">teachers</a>, <a href="vision-head.html">vision head</a>, <a href="vlm-lora.html">VLM with LoRA</a>, <a href="recheck-1.html">re-check</a>. Textures: ambientCG, CC0. Models: DINOv3, SigLIP, Qwen2.5-VL-7B.</p>
+</section>
+
+</main>
+</body>
+</html>

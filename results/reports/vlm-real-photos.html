@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VLM on Real Photos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="meta">FLA · Experiment 1 VLM on real photos · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Can an open VLM name the floor from a real photo?</h1>
+  <p class="lede">First a check on real ground: given one real photo of the ground and the project's six floor classes, does Qwen2.5-VL-7B pick the right class with no training at all?</p>
+  <div class="flag">Real photos, but only three of the six classes have any. Photos are not shown here: their licence is unclear.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>Partly.</strong> Zero-shot, the model separates soft, rough and hard ground well above chance: macro-F1 <span class="num">0.678 ± 0.017</span> over three classes, where chance is about 0.33.</li>
+    <li><strong>It is not usable as a floor sensor as it is.</strong> Hard paving is its weak class: right on only <span class="num">0.391</span> of those photos.</li>
+    <li><strong>Its most common error is the one that matters most.</strong> It answers "slippery" on 239 of 1,350 photos, and none of them are slippery. Dry concrete is called slippery.</li>
+    <li><strong>Half the task cannot be tested on these photos.</strong> There are no slippery floors, slopes or edges in the data.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#setup">What was done</a></li>
+    <li><a href="#mapping">Which photos count as which class</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#errors">Where it fails</a></li>
+    <li><a href="#check">Independent re-check</a></li>
+    <li><a href="#limits">Limits</a></li>
+  </ol>
+</nav>
+
+<section id="setup">
+  <div class="kicker">1</div>
+  <h2>What was done</h2>
+  <ul>
+    <li><strong>Model.</strong> Qwen2.5-VL-7B-Instruct (Apache-2.0), as it comes, in bf16 with greedy decoding.</li>
+    <li><strong>The task.</strong> The model gets one photo and must answer in JSON with one of six class names: hard_grip (grippy hard floor), hard_slip (slippery hard floor), soft, rough, slope or edge (planks and steps). An answer that is not valid JSON counts as wrong.</li>
+    <li><strong>Photos.</strong> Real outdoor ground photos, close up and looking down. Validation: 360 GTOS images, 120 per class. Test: 1,350 GTOS-Mobile phone-video frames, three disjoint subsamples of 450, 150 per class each. Validation and test come from different cameras and capture sessions.</li>
+    <li><strong>The wording of the question.</strong> Three wordings were tried on validation only. The best by macro-F1 (the shortest one, which gives no class definitions) was run once on test.</li>
+    <li><strong>Score.</strong> Macro-F1 over the three classes that have photos, mean ± sd over the three test subsamples. The model may still answer any of the six names; naming an untested class is an error.</li>
+  </ul>
+</section>
+
+<section id="mapping">
+  <div class="kicker">2</div>
+  <h2>Which photos count as which class</h2>
+  <p>The photo set has 31 ground materials. They were mapped to the project's classes by material alone, from a contact sheet, before any model run.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Project class</th><th>Materials from the photo set</th></tr></thead>
+    <tbody>
+      <tr><td>hard_grip</td><td>asphalt, cement, brick, stone-asphalt, stone-brick, stone-cement</td></tr>
+      <tr><td>soft</td><td>grass, turf, moss, sand, soil, dry leaves, leaves, wood chips</td></tr>
+      <tr><td>rough</td><td>pebbles, shale, small limestone</td></tr>
+      <tr class="sep"><td>hard_slip</td><td class="dim">none: no material is reliably slippery (no ice, wet or polished floor). Not tested.</td></tr>
+      <tr><td>slope</td><td class="dim">none: slope is geometry, not visible in close-up material photos. Not tested.</td></tr>
+      <tr><td>edge</td><td class="dim">none: geometry. Not tested.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Only three of the six classes can be tested on real photos. Ambiguous materials were left out, among them painted asphalt, metals, plastics, glass, cloth, paper, roots and large limestone (flat slabs in one set, rock piles in the other).</p>
+  </div>
+</section>
+
+<section id="results">
+  <div class="kicker">3</div>
+  <h2>Results</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Test, 1,350 photos</th><th class="n">Value</th></tr></thead>
+    <tbody>
+      <tr><td>Macro-F1 (3 classes)</td><td class="n best">0.678 ± 0.017</td></tr>
+      <tr><td>Accuracy</td><td class="n">0.624 ± 0.016</td></tr>
+      <tr><td>Invalid answers</td><td class="n">0.000 ± 0.000</td></tr>
+      <tr class="sep"><td>Right on hard_grip photos</td><td class="n">0.391 ± 0.034</td></tr>
+      <tr><td>Right on rough photos</td><td class="n">0.684 ± 0.014</td></tr>
+      <tr><td>Right on soft photos</td><td class="n">0.796 ± 0.021</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Well above chance (about 0.33), and the JSON format never failed. But even soft, the best class, is right on only 0.796 of its photos, and hard paving is wrong on most.</p>
+  </div>
+  <figure><img src="media/vlm-real-photos_confusion.png" alt="Confusion matrix of the zero-shot VLM on 1,350 real test photos: rows hard_grip, rough and soft; columns the six class names and invalid; the model never answers slope, edge or invalid" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Confusion matrix on the whole test set: rows are the true class of the photo, columns the model's answer. The figure's title names the wording used, P1.</figcaption></figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Wording (validation, 360 photos)</th><th class="n">Macro-F1</th><th class="n">Accuracy</th><th class="n">Invalid</th></tr></thead>
+    <tbody>
+      <tr><td>P1, shortest, no class definitions</td><td class="n best">0.644</td><td class="n">0.647</td><td class="n">0.000</td></tr>
+      <tr><td>P2</td><td class="n">0.626</td><td class="n">0.661</td><td class="n">0.000</td></tr>
+      <tr><td>P3</td><td class="n">0.611</td><td class="n">0.661</td><td class="n">0.000</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> P1 was chosen on validation by macro-F1 and run once on test. The differences between wordings (0.611 to 0.644) are within noise.</p>
+  </div>
+  <p class="small" style="margin-top:12px">Speed: 18.34 answers per second (batches of 16, 74 s for 1,350 photos) on an H100 that another job kept at about 90&nbsp;% load, so it is a lower bound.</p>
+</section>
+
+<section id="errors">
+  <div class="kicker">4</div>
+  <h2>Where it fails</h2>
+  <ul>
+    <li><strong>Hard paving.</strong> Plain cement is called slippery in 58 of 75 photos, asphalt in 42 of 75.</li>
+    <li><strong>"Slippery" everywhere.</strong> The model answers hard_slip on 239 of 1,350 photos, and none of them are slippery.</li>
+    <li><strong>Rough.</strong> Mostly right, but shale and pebbles are taken for hard_grip in 109 of 300 photos.</li>
+    <li><strong>Soft.</strong> The best class. Grass, moss, dry leaves, turf and wood chips are right in 95 to 100&nbsp;% of photos, but sand and green leaves are right in only 21 of 57 each; most of the rest are called slippery.</li>
+  </ul>
+  <div class="take">
+    <p><strong>What it means.</strong> The error that matters most for walking, grippy against slippery, is the one the model gets wrong most often, and this data cannot test real slippery floors at all. That argues for tuning the model (<a href="vlm-lora.html">the next page</a>), and for real photos of slippery floors before any claim about slip.</p>
+  </div>
+</section>
+
+<section id="check">
+  <div class="kicker">5</div>
+  <h2>Independent re-check</h2>
+  <ul>
+    <li><strong>Holds:</strong> macro-F1 0.678 ± 0.017, accuracy 0.624 ± 0.016, 0 invalid, per class 0.391 / 0.684 / 0.796, with the re-check's own answer parser. 239 of 1,350 answers are hard_slip. Validation and test share no file and no image bytes, and come from different sources.</li>
+    <li><strong>Holds with caveats:</strong> the wording was chosen on validation only (the log shows three validation runs, then one test run), but the differences between wordings are within noise. The overall verdict "partly" holds, but only 3 of 6 classes are tested, and the ± comes from subsamples that share source videos, so it understates the spread.</li>
+    <li><strong>Could not check:</strong> the mapping from photo materials to project classes, and the data licence.</li>
+    <li><strong>Re-run later:</strong> when the same model was run again on the same 1,350 photos for the tuning experiment, it scored 0.679 instead of 0.678: a few answers differ (hard_grip answers 310 against 307).</li>
+  </ul>
+  <p>Full list: <a href="recheck-1.html">independent re-check of experiment 1</a>.</p>
+</section>
+
+<section id="limits">
+  <div class="kicker">6</div>
+  <h2>Limits</h2>
+  <ul>
+    <li><strong>Three of six classes.</strong> No slippery, sloped or edge ground in the photos.</li>
+    <li><strong>Close-up material photos,</strong> not the view from a robot's torso camera.</li>
+    <li><strong>Few source videos.</strong> The test frames come from few videos per class, so the three subsamples share videos.</li>
+    <li><strong>Licence.</strong> The photo set's re-upload declares Apache-2.0, but the original authors' pages state no licence. The photos are treated as research-use only and are not shown or redistributed.</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores: macro-F1 over the three classes that have real photos, mean ± sd over three test subsamples. Photos: GTOS and GTOS-Mobile (Xue, Zhang, Nishino, Dana, CVPR 2017; Xue, Zhang, Dana, CVPR 2018), numbers only. Model: Qwen2.5-VL-7B-Instruct, Apache-2.0. Related: <a href="vlm-lora.html">the VLM tuned on the sole's labels</a>, <a href="vision-head.html">the vision head</a>, <a href="dataset.html">the dataset</a>, <a href="recheck-1.html">independent re-check</a>.</p>
+</section>
+</main>
+</body>
+</html>

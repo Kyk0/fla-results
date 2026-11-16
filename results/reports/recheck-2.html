@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fixed Patch Re-check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <div class="meta">FLA · Experiment 2: independent re-check · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>Re-checking the fixed-patch experiment</h1>
+  <p class="lede">An independent re-check that did none of the work recomputed the numbers of the fixed-patch experiment with its own code, searched for leaks between training and test, ran its own small controls and looked at samples. Every number in the result tables reproduces. One control found a cue the report missed: the robot stands lower on soft floor.</p>
+  <div class="flag">Simulation only. This page checks the dataset, teachers and results pages of experiment 2.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>39 claims: 20 hold, 17 hold with caveats, 0 fail, 2 could not be verified.</strong> Every number in the five result tables reproduces to three decimals.</li>
+    <li><strong>No leaks.</strong> No episode in two splits, no test texture in training, no teacher that labelled an episode it had trained on.</li>
+    <li><strong>Not just colour.</strong> The mean colour of the patch alone scores <span class="num">0.536</span>; the ViT head scores 0.985.</li>
+    <li><strong>A cue without pixels.</strong> The robot stands about 6 mm lower on soft floor. A model with no image, reading only body state and episode data before the step, scores <span class="num">0.957</span>, and it is not fooled by deceptive looks. The vision heads do not use this cue, but the report never compared vision with such a baseline.</li>
+    <li><strong>Two intervals sit at the edge of 0</strong> where the report gave a clear verdict, and the shuffled-label control is borderline rather than cleanly at chance.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#how">How the re-check worked</a></li>
+    <li><a href="#claims">Claims that needed a caveat</a></li>
+    <li><a href="#sets">0.982 or 0.985?</a></li>
+    <li><a href="#leaks">Leaks and timing</a></li>
+    <li><a href="#controls">Colour and no-pixel controls</a></li>
+    <li><a href="#samples">Twenty samples</a></li>
+    <li><a href="#limits">Limits of the design</a></li>
+  </ol>
+</nav>
+
+<section id="how">
+  <div class="kicker">1</div>
+  <h2>How the re-check worked</h2>
+  <ul>
+    <li><strong>Own code.</strong> No metric code from the experiment was imported. Truth, look and texture were read from the raw step and look files; the splits were read raw.</li>
+    <li><strong>Intervals.</strong> 2,000 resamples of the test textures within each class, paired for differences.</li>
+    <li><strong>The experiment's own checks</strong> were re-run and passed (38, 259 and 17 tests, no failures). That is weak evidence, since the same people wrote them.</li>
+    <li><strong>Scope.</strong> 24 claims of the <a href="fixed-patch.html">results page</a>, 11 of the <a href="teachers-2.html">teachers page</a> and 4 of the <a href="dataset-2.html">dataset page</a>.</li>
+  </ul>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claims</th><th class="n">Hold</th><th class="n">Hold with caveats</th><th class="n">Do not hold</th><th class="n">Could not verify</th></tr></thead>
+    <tbody>
+      <tr><td class="n" style="text-align:left">39</td><td class="n">20</td><td class="n">17</td><td class="n best">0</td><td class="n">2</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Nothing failed. The two claims that could not be verified are the frames-per-second figures (not re-timed on a shared GPU; the logged values match the table) and the shifted sole readout of the teachers (not recomputed; only the original check covers it). Most caveats concern what a number licenses, not the number itself.</p>
+  </div>
+</section>
+
+<section id="claims">
+  <div class="kicker">2</div>
+  <h2>Claims that needed a caveat</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Claim</th><th>Reported</th><th>Recomputed</th><th>Caveat</th></tr></thead>
+    <tbody>
+      <tr><td>A: teachers tie</td><td>0.985 / 0.985 / 0.984 / 0.985</td><td>the same</td><td>A tie by construction: the label sets agree with truth on 98.8 to 99.7&nbsp;% of training steps.</td></tr>
+      <tr><td>Shuffled control at chance</td><td>0.565 ± 0.088 [0.490, 0.629]</td><td>0.565 [0.479, 0.627]</td><td>Each seed is at chance under a texture-aware null (ranks 92, 93 and 50&nbsp;%). The seed mean ranks at the 96.3rd percentile (null 95th: 0.559): borderline.</td></tr>
+      <tr><td>Stand/stop variant: sole minus joints</td><td>−0.013 [−0.038, +0.005]</td><td>[−0.041, +0.005]</td><td>Truth minus joints is −0.009 [−0.020, −0.000]: borderline, not "no". "No subset separates the teachers" rests on one subset with 169 training frames.</td></tr>
+      <tr><td>Frame label rule beats "next step"</td><td>0.985 vs 0.959; sole 0.985 vs 0.973</td><td>truth +0.027 [+0.002, +0.072]</td><td>Real for truth labels, not for sole labels: +0.012 [−0.002, +0.042].</td></tr>
+      <tr><td>B: fused beats vision</td><td>+0.012 [+0.006, +0.022]</td><td>+0.012 [+0.005, +0.024]</td><td>The fused classifier answers after the step, so the timing is not like for like. It adds nothing over the sole alone: +0.000 [−0.003, +0.002].</td></tr>
+      <tr><td>B: fused trusts the look</td><td>0.514 ± 0.104 / 0.287 ± 0.003</td><td>the same</td><td>Only partly true: sole-label seeds 0.42 / 0.50 / 0.63 against truth, 0.443 against the look. Two truth-label checkpoints were picked at epoch 1.</td></tr>
+      <tr><td>C: SigLIP below the ViT head</td><td>−0.010 [−0.021, −0.002]</td><td>[−0.024, −0.000]</td><td>Upper bound touches 0. Its winning wordings name the dataset's own material families, so it is zero-shot informed by the categories. The generic wordings score 0.39 / 0.41 on test.</td></tr>
+      <tr><td>C: Qwen2.5-VL-7B zero-shot</td><td>0.668 [0.494, 0.834]</td><td>0.668 [0.495, 0.840]</td><td>Validation 0.874 falls to 0.668 on test, because validation has only 8 textures. Two wordings give the same class on 99.7&nbsp;% of validation frames.</td></tr>
+      <tr><td>C: held-out material family</td><td>0.726 ± 0.047</td><td>the same; 0.723 by touched family</td><td>Family is taken from the patch texture at the last frame, which differs from the touched region on 67 steps (carpet, main head: 0.982 becomes 0.999). 19 to 174 training frames per held-out family straddle a boundary. 1 to 5 test textures per family.</td></tr>
+      <tr><td>D: after the step</td><td>0.997 / 0.992 / 0.996</td><td>the same</td><td>The teachers read no image, so their deceptive score equals their honest score by construction.</td></tr>
+      <tr><td>E: honest strips</td><td>vision 71 / 72, sole 69, joints 66</td><td>the same</td><td>Only 24 boundaries, all hard to soft. Pooling three seeds triples the count without adding independent cases.</td></tr>
+      <tr><td>E: vision is early</td><td>75&nbsp;% of boundaries, 1.33 steps</td><td>0.75 / 1.33</td><td>"A warning in time for a controller" is an interpretation; it was not tested.</td></tr>
+      <tr><td>Dataset textures</td><td>13 / 4 / 19 hard, 12 / 4 / 20 soft</td><td>the same, no duplicate images</td><td>Validation has no asphalt, fabric, marble or tiles texture.</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> The second and third columns differ only in the intervals, because the re-check drew its own resamples. Where its interval reaches 0 and the report called a difference real, or the reverse, this page and the results page follow the re-check. The other claims hold as stated, among them ViT-S equal to ViT-B (−0.001, [−0.005, +0.004]), every deceptive-look score, and that a head taught by the sole is fooled as much as one taught by truth (0.027 against 0.028, −0.001 [−0.006, +0.003]).</p>
+  </div>
+</section>
+
+<section id="sets">
+  <div class="kicker">3</div>
+  <h2>0.982 or 0.985?</h2>
+  <p>One of the experiment's own checks reports 0.982 for the truth-label head, where the results say 0.985. Both are correct; they use different test sets. The check scores only the 35 honest test episodes (1,470 steps): truth labels 0.982, sole labels 0.980, shuffled 0.536. The results score those plus the honest look of the 85 deceptive test episodes (5,029 steps): 0.985. The re-check reproduced both.</p>
+</section>
+
+<section id="leaks">
+  <div class="kicker">4</div>
+  <h2>Leaks and timing</h2>
+  <ul>
+    <li><strong>Splits.</strong> 0 episodes in two splits. The 8 validation textures are disjoint from the 25 test and the 39 training textures. The 72 trained head configurations hold 0 test episodes and 0 test textures, re-derived from the looks. Every training label comes from a training step, and every model choice was made on validation.</li>
+    <li><strong>Teachers.</strong> 0 of 273,660 teacher prediction rows came from a model whose training or early-stopping list held that episode. 0 of 60 teachers saw a test episode of this experiment. All 540 teacher episodes are G113. The sole teacher really reads only the 16 coarse features plus a validity flag.</li>
+    <li><strong>Zero-shot choices.</strong> The VLM wordings that lost on validation were never run on test frames, and the test pass ran once. SigLIP computed all three wordings on every frame; the one chosen on validation also wins on test, so the choice did not matter.</li>
+    <li><strong>Only the past.</strong> The re-check's own frame windows (frames before touchdown, last 5) equal the experiment's for all 10,899 validation and test rows. The frame at touchdown is excluded; the last frame lies 0.02 to 0.10 s before it. Rebuilding the answers from the stored per-frame probabilities changes no class.</li>
+    <li><strong>Short windows.</strong> No step lacks a frame, but 4.97&nbsp;% of honest test steps have fewer than 5 earlier frames: 245 have one frame (mostly both feet settling at 0.08 s at the start of an episode, scored as steps) and 5 have two.</li>
+    <li><strong>The course clip.</strong> All 126 steps use the last frame before touchdown with the stated smoothing. 15 random steps read from the video panels match the per-step table in truth, vision, sole and joints (15 of 15).</li>
+  </ul>
+</section>
+
+<section id="controls">
+  <div class="kicker">5</div>
+  <h2>Colour and no-pixel controls</h2>
+  <p>Small models (logistic regression or gradient boosting, chosen on validation), trained on training steps with truth labels, with features averaged over each step's own five-frame window. Scored on the 5,029 honest test steps.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Input</th><th class="n">Honest looks</th><th class="n">95&nbsp;% interval</th></tr></thead>
+    <tbody>
+      <tr><td>DINOv3 ViT-B head on the patch (from the results)</td><td class="n best">0.985</td><td class="n">[0.972, 0.993]</td></tr>
+      <tr class="sep"><td>Mean RGB of the patch</td><td class="n">0.536</td><td class="n">[0.36, 0.74]</td></tr>
+      <tr><td>Colour statistics: RGB mean and spread, saturation, value, 8-bin histograms</td><td class="n">0.740</td><td class="n">[0.51, 0.93]</td></tr>
+      <tr class="sep"><td>No pixels: trunk and camera height, pitch, roll, patch position, robot share, speed, side, step index, time</td><td class="n">0.957</td><td class="n">[0.938, 0.966]</td></tr>
+      <tr><td>Trunk height alone</td><td class="n">0.931</td><td class="n dim">–</td></tr>
+      <tr><td>Camera height alone</td><td class="n">0.904</td><td class="n dim">–</td></tr>
+      <tr><td>No pixels, without the two heights</td><td class="n">0.870</td><td class="n dim">–</td></tr>
+      <tr><td>Mean depth of the patch alone</td><td class="n">0.849</td><td class="n dim">–</td></tr>
+      <tr><td>Episode data alone: speed, side, step index, time</td><td class="n">0.840</td><td class="n dim">–</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Colour does not explain the ViT result: the ViT head beats mean colour by +0.45 and the colour statistics by +0.25, both with intervals that exclude 0, and mean colour gets 0&nbsp;% on 6 of the 12 soft test textures (for example a carpet and a moss). The no-pixel rows are the real finding. The robot stands about 6 mm lower on soft floor (trunk at 0.539 against 0.545 m), so body state on the current floor already predicts the class almost as well as vision, before the step. Without the heights the score still reaches 0.870, from roll, sideways patch offset and time.</p>
+  </div>
+  <div class="caveat"><strong>Not fooled by the look.</strong> On the deceptive episodes the no-pixel control scores 0.952 against the real floor and 0.048 against the look; the ViT heads score about 0.03 against the real floor. The vision heads do not use the body-state cue, so their numbers stand. But the results never compare vision with a body-state baseline before the step, and that baseline is about as strong as vision and immune to deceptive looks. A model that reads depth could pick the same physical cue up from the image.</div>
+</section>
+
+<section id="samples">
+  <div class="kicker">6</div>
+  <h2>Twenty samples</h2>
+  <p>Twenty test steps drawn by the re-check: honest and deceptive, single floors and strips at a boundary, and two where the truth-label head is wrong. Each row shows the full frame with the patch (red), the five frames the head averaged, and every model's answer next to the truth and the look.</p>
+  <div class="grid2">
+    <figure><img src="media/recheck-2_samples_1.png" alt="Ten sampled test steps, honest and deceptive: torso camera frame with the patch in red, a strip of the five patch crops, and a list of each model's answer with its probability next to the true floor and the look" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Samples 1 to 10: honest hard and soft floors, then deceptive floors.</figcaption></figure>
+    <figure><img src="media/recheck-2_samples_2.png" alt="Ten more sampled test steps, mostly strips at a boundary, with the same three panels per step; two are cases where the truth-label head is wrong" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Samples 11 to 20: deceptive floors, strips at a boundary, and two errors.</figcaption></figure>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>No robot and no shadow</strong> in any patch. The legs sit at the bottom of the frame, below the patch. Patch, frame and labels agree.</li>
+    <li><strong>Errors come from the look, not from a hidden cue.</strong> On honest strips the patch already shows the next region while the foot lands on the current one (samples 13 and 14): this is the "early" error of the floor-change results.</li>
+    <li><strong>A grey fabric that looks like plaster.</strong> The plain grey soft texture gets p = 0.49 from the truth-label head (sample 19), and it serves as a "looks soft" texture in deceptive scenes (sample 7).</li>
+    <li><strong>Right for the wrong reason.</strong> On deceptive strips the head is sometimes right because it reads the region ahead (sample 17). The step at the start of an episode uses a single frame (sample 20).</li>
+  </ul>
+</section>
+
+<section id="limits">
+  <div class="kicker">7</div>
+  <h2>Limits of the design</h2>
+  <p>Threats the numbers themselves cannot show, comparison by comparison.</p>
+  <ul>
+    <li><strong>A, who teaches best.</strong> A tie because hard and soft differ by about four orders of magnitude in stiffness and every teacher is at least 99&nbsp;% right. It says nothing about which teacher is better on a harder task.</li>
+    <li><strong>B, fusion.</strong> Fused beats vision only because it answers after the step; it is not better than the sole alone and is worse on deceptive floors. It supports "do not fuse naively", not "fusion helps". A body-state baseline before the step (0.957, not fooled by the look) is missing from A, B and D.</li>
+    <li><strong>C, vision models.</strong> Held-out textures share material families with training, so the ranking holds only for known families. SigLIP's winning wordings name those families. The speeds come from a shared GPU.</li>
+    <li><strong>D, deceptive floors.</strong> The deceptive looks reuse the 25 test textures, swapped between classes. The result shows that vision reads appearance, which is expected; it does not show what a model would do on a real ambiguous floor.</li>
+    <li><strong>E, floor changes.</strong> 24 boundaries, all hard to soft, one gait, one patch distance. The early rate depends on the 0.45 m patch distance and the walking speed.</li>
+    <li><strong>Everywhere.</strong> No shadows, no lighting change, a single camera pose, simulated textures (possibly in DINOv3's pretraining data), no real images.</li>
+  </ul>
+  <h3>Not checked</h3>
+  <p>The frames per second; the stiffness and friction ranges of the teachers' test split; the shifted sole readout; bit-identity of the replays beyond the experiment's own check; the DINOv3 features themselves, which were not re-extracted.</p>
+  <p class="small" style="margin-top:16px">Scores are macro-F1 per step on held-out textures (5,029 honest steps, 3,559 deceptive steps), against simulator truth unless marked "against the look". Related: <a href="fixed-patch.html">fixed-patch results</a>, <a href="dataset-2.html">dataset of experiment 2</a>, <a href="teachers-2.html">teachers of experiment 2</a>, <a href="recheck-1.html">re-check of the six-class experiment</a>.</p>
+</section>
+
+</main>
+</body>
+</html>

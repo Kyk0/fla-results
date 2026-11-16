@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dataset with Eyes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="meta">FLA · Experiment 1 dataset · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>A dataset with eyes</h1>
+  <p class="lede">To teach a camera from the sole, every footstep needs two things: what the robot saw before the step and what the sole felt after it. The step-1 walking data had a sole but no camera. I replayed a third of it exactly and rendered a torso camera on top, with honest floors and with floors that lie.</p>
+  <div class="flag">Simulation only. Booster K1 in MuJoCo, rendered camera, simulated sole.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>1,572 episodes, 54,010 footsteps.</strong> About 30&nbsp;% of the step-1 walking data, replayed bit for bit. Every replay matched the stored run exactly.</li>
+    <li><strong>For each step: a camera frame before it, the sole after it, and the simulator's truth.</strong> The camera is RGB-D, on the torso, pitched down. The sole is stored as coarse features under three sensor models.</li>
+    <li><strong>Textures are split like the episodes.</strong> Test episodes show only floor textures that training never sees, but there are only three test textures per class.</li>
+    <li><strong>26.6&nbsp;% of the steps are deceptive.</strong> The floor looks like one class and behaves like another, or a sheet hides the gaps between planks.</li>
+    <li><strong>One known gap in the labels.</strong> The step-1 contact flag misses a foot that is loaded on its front edge. It touches up to 3.0&nbsp;% of the heel-to-toe gait's steps in a wide window, and none inside the step windows that are used.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#why">Why a new dataset</a></li>
+    <li><a href="#replay">Exact replay</a></li>
+    <li><a href="#counts">What is in it</a></li>
+    <li><a href="#camera">Camera and frames</a></li>
+    <li><a href="#looks">Honest and deceptive floors</a></li>
+    <li><a href="#steps">Steps, frames and crops</a></li>
+    <li><a href="#sanity">Sole sanity check</a></li>
+    <li><a href="#gap">Known gap: the edge-loaded foot</a></li>
+    <li><a href="#check">Checks</a></li>
+    <li><a href="#limits">Limits</a></li>
+  </ol>
+</nav>
+
+<section id="why">
+  <div class="kicker">1</div>
+  <h2>Why a new dataset</h2>
+  <p>Step 1 of the project trained a simulated sensing sole on a Booster K1 humanoid to name the floor after each step. Its episodes store the joints, the IMU, the sole signal and the true floor, but no images. The question of experiment 1 is whether the sole can teach a camera: a vision model sees the floor before the step, and the sole supplies the label after it. For that, every footstep needs a frame from before and a sole reading from after, on the same trajectory.</p>
+  <p>Six floor classes: grippy hard floor (hard_grip), slippery hard floor (hard_slip), soft, rough, slope, and edge (planks and steps, where a foot can land partly over a gap). Three gaits: two ordinary locomotion policies that step with a flat foot (G113 and G80), and SONIC, human-like heel-to-toe walking.</p>
+</section>
+
+<section id="replay">
+  <div class="kicker">2</div>
+  <h2>Exact replay</h2>
+  <p>The step-1 episodes do not store the full state of the simulation: no base pose and no terrain geometry. Re-running a stored task turned out to reproduce it bit for bit, so the frames come from a deterministic re-run. Each episode is re-simulated from its stored task, and every stored array is compared bit for bit with the original. An episode that differs would be dropped. None did: all 1,572 replays are identical.</p>
+  <p>The frames are rendered afterwards from the saved state. So the honest and the deceptive view of an episode are the same trajectory with different textures, and the sole signal is the same in both.</p>
+  <p>The whole step-1 set (6,139 episodes) would have taken about 9 hours to replay, so I took about 30&nbsp;% of it, stratified by class, gait and split. Test strata are sampled about twice as densely as training and validation, so that at least 20&nbsp;% of the steps can be deceptive and an honest test set is still left.</p>
+</section>
+
+<section id="counts">
+  <div class="kicker">3</div>
+  <h2>What is in it</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Split</th><th class="n">Steps</th><th>Floor textures</th></tr></thead>
+    <tbody>
+      <tr><td>Train</td><td class="n">29,105</td><td>training textures only</td></tr>
+      <tr><td>Validation</td><td class="n">4,267</td><td>validation textures only</td></tr>
+      <tr><td>Test (honest)</td><td class="n">6,269</td><td>test textures only</td></tr>
+      <tr><td>Test (deceptive)</td><td class="n">14,369</td><td>test textures only</td></tr>
+      <tr class="sep"><td>All, 1,572 episodes</td><td class="n">54,010</td><td>14.1 GB</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> An episode keeps the split it had in step 1, and no episode is in two splits. Deceptive episodes are step-1 test episodes, and 14,369 steps are 26.6&nbsp;% of the whole set. Of the deceptive steps, 726 come from the hidden-gap kind (no_support, below).</p>
+  </div>
+  <ul style="margin-top:14px">
+    <li><strong>Floor classes.</strong> The six classes above, plus hard_mid, an extra hard-floor type that appears only in the test data and has no class of its own, and strip episodes in which the robot walks from one floor onto another (grippy to slippery, slippery to grippy, grippy to soft, grippy to rough).</li>
+    <li><strong>Textures.</strong> Photo textures from ambientCG (CC0). Per class, 25&nbsp;% are test textures, two are validation textures and the rest are for training; hard_mid has 8 test textures. The independent re-check counted 42 training, 12 validation and 26 test textures, with no overlap, and only <span class="num">3</span> test textures per scored class.</li>
+    <li><strong>Truth per step.</strong> The class of the floor touched, the support state of the foot (none, partial or full), friction, stiffness and slope, all taken from the simulator 0.1 s after touchdown.</li>
+    <li><strong>The sole.</strong> Coarse sole features only: four pressure blocks, four shear vectors, centre of pressure, total force and contact area. They are stored under three readouts of the same simulation: the step-1 sensor (parameters randomised per episode), the nominal sensor, and a shifted sensor (blocks moved, twice the spread, noise and compliance, crosstalk 0.05, gain spread 0.06, 0.1&nbsp;N quantisation).</li>
+    <li><strong>Not built.</strong> A differently built "pad" sole changes the dynamics, so it cannot be a readout of these runs. The planned small pad-sole test subset was not built.</li>
+  </ul>
+</section>
+
+<section id="camera">
+  <div class="kicker">4</div>
+  <h2>Camera and frames</h2>
+  <ul>
+    <li><strong>Mount.</strong> Fixed to the torso, 0.09 m forward and 0.18 m up from the trunk origin, about 0.72 m above the ground when standing, pitched 40° down.</li>
+    <li><strong>Image.</strong> 424 × 240 pixels, pinhole, vertical field of view 58° like a D455 depth camera, horizontal 88.8°. RGB and depth at 10 Hz.</li>
+    <li><strong>Depth.</strong> Stored without noise, in millimetres; 0 means invalid (closer than 0.4 m or beyond 6 m). A D455-like noise (σ = 0.005 z² m, spatially correlated) is added when the data is loaded, the same way every time for a given frame.</li>
+    <li><strong>The robot itself.</strong> The robot's own arms can be in view, as on the real robot.</li>
+  </ul>
+  <figure><img src="media/dataset_contact_sheet.png" alt="Contact sheet of twenty torso-camera frames over all floor classes and gaits, each with a green crop box, a red landing footprint, the depth image below and the step's labels" style="width:100%;border-radius:8px;border:1px solid var(--line)"><figcaption>The final contact sheet: one step per cell over classes, gaits and looks. Green: the context crop. Red: where the foot will land. Below each frame: its depth image and the step's labels (episode, class, gait, look, distance).</figcaption></figure>
+</section>
+
+<section id="looks">
+  <div class="kicker">5</div>
+  <h2>Honest and deceptive floors</h2>
+  <ul>
+    <li><strong>Honest.</strong> Each terrain region shows a texture of its own class.</li>
+    <li><strong>look_swap.</strong> Every region shows a test texture of a different class: the look of one class on the physics of another. This is the deceptive floor: it looks like one class and behaves like another.</li>
+    <li><strong>no_support.</strong> Only on plank floors. A sheet that exists only for the camera lies 2 mm below the plank tops and hides the gaps. It looks solid and gives no support. The depth image is rendered with the sheet too.</li>
+  </ul>
+  <p>Every deceptive episode is rendered in both looks, so each deceptive step has an honest twin with the same motion and the same sole signal.</p>
+  <figure><img src="media/dataset_pilot_frames.png" alt="Twelve pilot frames from the torso camera: six honest floors and six deceptive ones, each with the red landing footprint and the green context crop" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Pilot frames, the best frame before touchdown. The first six are honest floors of each class; the last six are deceptive, labelled with what they look like and what they are.</figcaption></figure>
+</section>
+
+<section id="steps">
+  <div class="kicker">6</div>
+  <h2>Steps, frames and crops</h2>
+  <ul>
+    <li><strong>A step</strong> is a touchdown before any fall with a sole window of at least 5 frames (from touchdown to lift-off, at most 0.6 s). Contacts shorter than 0.1 s are not steps. In every look it needs, the step must also have at least 3 camera frames taken 0.5 to 2.5 m before the landing spot, with at least half of the landing sole visible.</li>
+    <li><strong>The best frame</strong> is the frame before contact in which the landing footprint is largest, while it is wholly in the image, not covered and beyond the 0.4 m minimum depth. That is usually about 0.4 m ahead, at the bottom of the image.</li>
+    <li><strong>The context crop</strong> is a 0.54 m square on the floor around the landing spot, three foot lengths, projected into that frame.</li>
+    <li><strong>The footprint is small.</strong> In the pilot (18,211 steps, 99.8&nbsp;% with a best frame) its area was 795 / 1,015 / 1,190 px² at the 5th / 50th / 95th percentile, at a horizontal distance of 0.33 / 0.39 / 0.51 m. At 1.4 m it would be only about 10 × 15 px.</li>
+  </ul>
+  <div class="caveat">The crop is placed from where the foot really lands, which the simulator knows and a robot would have to predict. The independent re-check found that this geometry alone carries some signal; see <a href="vision-head.html">the vision head</a>.</div>
+</section>
+
+<section id="sanity">
+  <div class="kicker">7</div>
+  <h2>Sole sanity check</h2>
+  <p>The plan was a simple rule for the sole: while standing, it must read the robot's weight within 2&nbsp;%, and in swing it must read zero.</p>
+  <ul>
+    <li><strong>On the sensor readout the rule fails, by design of the sensor.</strong> The step-1 sensor model adds a per-episode offset and gain error, so 58 of 874 standing windows were more than 2&nbsp;% off (largest 5.1&nbsp;%, mean signed error −0.1&nbsp;%).</li>
+    <li><strong>Decision: keep the threshold, change what it is applied to.</strong> The hard rule was run on the simulator's noise-free contact forces, on 60 re-replayed episodes stratified over classes and gaits. The noisy sensor numbers are kept for information.</li>
+    <li><strong>Standing: pass.</strong> 82 standing windows, largest error 0.89&nbsp;%.</li>
+    <li><strong>Swing: fail as first defined.</strong> In 50 of 2,095 swing phases the contact flag is off while the ground pushes on the foot with more than 0.1&nbsp;% of body weight, at most about 113 to 115&nbsp;% of body weight (the two internal records give 113 and 115). By gait: SONIC 43 of 392, G113 4 of 797, G80 3 of 906. By class: edge 15, rough 14, grippy-to-soft strips 13.</li>
+  </ul>
+  <p>The cause is the gap described next. The swing rule was then checked against the simulator's foot contacts, and the gap was documented with its numbers instead of re-running the replays.</p>
+</section>
+
+<section id="gap">
+  <div class="kicker">8</div>
+  <h2>Known gap: the edge-loaded foot</h2>
+  <p>Step 1 sets its contact flag only when the force along the sole's normal, averaged over a frame, exceeds 2&nbsp;N. At toe-off the box-shaped foot pitches 55-65° and loads its front edge, or it stubs the riser of a step. The ground then pushes hard, but almost along the plane of the sole. The contact flag stays off, the support state is "none", and the sole reads about zero. A sole touching the other foot also counts as contact.</p>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Kept steps that overlap an edge-loaded frame</th><th class="n">G113</th><th class="n">G80</th><th class="n">SONIC</th></tr></thead>
+    <tbody>
+      <tr><td>Inside the step window (touchdown to lift-off)</td><td class="n">0.0&nbsp;%</td><td class="n">0.0&nbsp;%</td><td class="n">0.0&nbsp;%</td></tr>
+      <tr><td>Inside a fixed 30-frame window</td><td class="n">0.0&nbsp;%</td><td class="n">0.4&nbsp;%</td><td class="n">3.0&nbsp;%</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> From the 60-episode noise-free re-run, 2,110 kept steps. The step windows start at touchdown, and none of them overlaps such a frame. In a fixed 30-frame window the share reaches 3.0&nbsp;% of SONIC steps. The sole model and the contact labels miss toe-off and stub loads, mostly for SONIC.</p>
+  </div>
+  <div class="caveat">The independent re-check could not verify these percentages: they come from the noise-free re-run, which it did not repeat.</div>
+</section>
+
+<section id="check">
+  <div class="kicker">9</div>
+  <h2>Checks</h2>
+  <ul>
+    <li><strong>Dataset check: 17 pass, 0 fail.</strong> The independent re-check ran it again and got the same.</li>
+    <li><strong>Counts and fingerprints.</strong> The re-check found 1,572 episodes, 54,010 steps and the split counts above exactly, and the same test-list fingerprints on both machines that held a copy.</li>
+    <li><strong>Replay.</strong> In 20 random episodes the re-check found the joints, IMU, labels and contact flags equal to the step-1 files. Holds with a caveat: only 20 episodes were checked independently.</li>
+    <li><strong>Splits.</strong> No episode in two splits, and training, validation and test textures disjoint. Holds with a caveat: only 3 test textures per class.</li>
+    <li><strong>Looking at frames.</strong> A first contact sheet showed MuJoCo's default checker floor or empty space beyond the textured patch in some frames, and the robot's hand in some crops. Crops that show the robot are flagged per step, and the re-check saw no empty space in its 20 sample crops. In those samples, about half of every square crop is grey padding below the image, because the footprint sits at the bottom of the frame.</li>
+  </ul>
+  <p>The full re-check is on its own page: <a href="recheck-1.html">independent re-check of experiment 1</a>.</p>
+</section>
+
+<section id="limits">
+  <div class="kicker">10</div>
+  <h2>Limits</h2>
+  <ul>
+    <li><strong>Simulation.</strong> Rendered frames and a simulated sole. A texture on a flat plane has no depth, gloss or deformation.</li>
+    <li><strong>Few test textures.</strong> Three per class, so every test score rests on a handful of looks.</li>
+    <li><strong>The crop knows the future.</strong> It is placed from the true landing pose.</li>
+    <li><strong>The edge-loaded foot.</strong> Documented, not fixed.</li>
+    <li><strong>No pad-sole data.</strong> The sensor-change test for vision rests on the shifted readout only.</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores in this experiment are macro-F1 per step against simulator truth, on held-out textures. Next: <a href="teachers.html">the two teachers</a>, <a href="vision-head.html">the vision head</a>, <a href="support-state.html">support state from vision</a>, <a href="vlm-real-photos.html">the VLM on real photos</a>, <a href="vlm-lora.html">the VLM tuned on the sole's labels</a>, <a href="recheck-1.html">independent re-check</a>. Experiment 2 uses its own dataset: <a href="dataset-2.html">dataset of experiment 2</a>. Textures: ambientCG, CC0.</p>
+</section>
+</main>
+</body>
+</html>

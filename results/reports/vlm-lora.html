@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VLM Taught by the Sole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* layout: one reading column, figures and tables break out slightly; numbers in mono */
+  --bg: #f4f5f3;
+  --surface: #ffffff;
+  --ink: #1b2422;
+  --muted: #5d6966;
+  --line: #d9dedb;
+  --accent: #0f6b5c;
+  --accent-soft: #d8ebe6;
+  --base: #8a9794;
+  --warn: #9a5a00;
+  --warn-soft: #f6ead3;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+    --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131917; --surface: #1b2321; --ink: #e6ecea; --muted: #9eaaa7; --line: #2f3a37;
+  --accent: #5cc4b0; --accent-soft: #1f3a35; --base: #6f7c79; --warn: #e3b25e; --warn-soft: #3a2f18;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6; }
+main { max-width: 880px; margin: 0 auto; padding: 48px 20px 80px; display: flex; flex-direction: column; gap: 44px; }
+header { display: flex; flex-direction: column; gap: 12px; }
+h1 { font-family: var(--font-display); font-weight: 600; font-size: 40px; line-height: 1.1; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; text-wrap: balance; }
+h3 { font-size: 17px; font-weight: 600; margin: 0 0 8px; }
+p { margin: 0 0 12px; }
+p:last-child { margin-bottom: 0; }
+.lede { font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.flag { display: inline-block; background: var(--warn-soft); color: var(--warn); border: 1px solid var(--warn); border-radius: 6px; padding: 6px 12px; font-size: 15px; font-weight: 500; align-self: flex-start; }
+section { display: flex; flex-direction: column; }
+ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.short { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+.short ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 10px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+figure { margin: 6px 0 0; display: flex; flex-direction: column; gap: 8px; }
+video { width: 100%; max-width: 100%; border-radius: 8px; border: 1px solid var(--line); background: #000; display: block; }
+figcaption { font-size: 14.5px; color: var(--muted); }
+.chart { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.chart-title { font-size: 15px; font-weight: 600; }
+.chart-note { font-size: 13.5px; color: var(--muted); }
+.row { display: grid; grid-template-columns: minmax(150px, 230px) 1fr 52px; gap: 12px; align-items: center; font-size: 14.5px; }
+.track { background: var(--bg); border-radius: 4px; height: 18px; overflow: hidden; }
+.bar { height: 100%; background: var(--base); border-radius: 4px; }
+.bar.hi { background: var(--accent); }
+.val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; font-size: 14.5px; }
+.tablewrap { overflow-x: auto; margin-top: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 15px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-weight: 600; font-size: 13.5px; color: var(--muted); }
+td.n, th.n { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.best { color: var(--accent); font-weight: 500; }
+.ask { background: var(--accent-soft); border-radius: 10px; padding: 22px 24px; }
+.ask ol { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 12px; }
+.small { font-size: 14.5px; color: var(--muted); }
+@media (max-width: 520px) {
+  h1 { font-size: 32px; }
+  .row { grid-template-columns: 1fr 48px; }
+  .row .track { grid-column: 1 / -1; order: 3; }
+}
+
+nav.toc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 22px; font-size: 15px; }
+nav.toc ol { margin: 0; padding-left: 20px; columns: 2; column-gap: 32px; }
+nav.toc li { margin-bottom: 4px; break-inside: avoid; }
+a { color: var(--accent); }
+.kicker { font-family: var(--font-mono); font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 10px; }
+.grid2 figure { margin: 0; }
+.take { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; margin: 14px 0 0; }
+.caveat { background: var(--warn-soft); border-radius: 8px; padding: 10px 14px; font-size: 15px; margin-top: 12px; }
+h3 { margin-top: 22px; }
+td.dim { color: var(--muted); }
+tr.sep td { border-top: 2px solid var(--line); }
+@media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div class="meta">FLA · Experiment 1 VLM with LoRA · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>
+  <h1>A VLM taught by the sole</h1>
+  <p class="lede">Qwen2.5-VL-7B looks at the torso-camera image of the floor just before a step and names one of six floor classes. Tested as it comes, and after a LoRA fine-tune on labels from the sole teacher, which only feels the step and never sees the image. Then on deceptive floors, and back on real photos.</p>
+  <div class="flag">Simulation, plus the real photos of the previous page (numbers only). One claim of the original report did not hold up.</div>
+</header>
+
+<section class="short">
+  <h2>In short</h2>
+  <ol>
+    <li><strong>LoRA on the sole's labels helps a lot in simulation.</strong> On held-out textures macro-F1 rises from <span class="num">0.343</span> zero-shot to <span class="num">0.721</span>.</li>
+    <li><strong>It learns what floors look like, not what they are.</strong> On deceptive floors it follows the look more after tuning (<span class="num">0.347</span> to <span class="num">0.524</span>) and matches the real floor on only <span class="num">0.124</span> of steps.</li>
+    <li><strong>It loses its skill on real ground.</strong> On the real photos macro-F1 falls from <span class="num">0.679</span> to <span class="num">0.375</span>; it answers "grippy" to most of them.</li>
+    <li><strong>It is still behind a ViT with a small head on the same crops,</strong> 0.721 against 0.821, a borderline difference in a comparison that is not fully fair.</li>
+    <li><strong>The claim that did not hold:</strong> that tuning makes the model really worse against the real floor on deceptive scenes. The difference is inside the noise.</li>
+  </ol>
+</section>
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#setup">What was done</a></li>
+    <li><a href="#main">Results</a></li>
+    <li><a href="#classes">Per class</a></li>
+    <li><a href="#deceptive">Floors that lie</a></li>
+    <li><a href="#real">Back on real photos</a></li>
+    <li><a href="#course">A six-class course</a></li>
+    <li><a href="#check">Independent re-check</a></li>
+    <li><a href="#limits">What it means and limits</a></li>
+  </ol>
+</nav>
+
+<section id="setup">
+  <div class="kicker">1</div>
+  <h2>What was done</h2>
+  <ul>
+    <li><strong>Image.</strong> The same rows as the ViT head (<a href="vision-head.html">the vision head</a>): the best torso-camera frame before contact, cropped around the place where the foot will land and resized to 224 × 224. Steps with no class (a test-only floor type and boundary steps) are dropped.</li>
+    <li><strong>Question.</strong> The same wording as on the real photos (<a href="vlm-real-photos.html">previous page</a>), unchanged: answer in JSON with one of hard_grip (grippy hard floor), hard_slip (slippery hard floor), soft, rough, slope or edge (planks and steps).</li>
+    <li><strong>Training.</strong> 12,000 crops per seed, one epoch, drawn from the 22,421 eligible steps of training episodes with training textures, on G113 and G80 (two ordinary flat-foot walking policies). Labels come from the cross-fitted sole teacher: it reads only coarse sole features (four pressure blocks, four shear vectors, centre of pressure, total force, contact area), and no teacher labels an episode it trained on. LoRA seed k uses teacher seed k.</li>
+    <li><strong>Settings fixed before the pilot and never tuned:</strong> rank 16, alpha 32, learning rate 1e-4 with cosine decay, batch 16, language model only.</li>
+    <li><strong>Control.</strong> A LoRA trained on the seed-0 crops with shuffled labels.</li>
+    <li><strong>Evaluation.</strong> All 5,248 eligible test steps (held-out textures, honest look); a class-stratified sample of 4,000 of the 11,653 deceptive look_swap steps (every region shows a texture of another class); and the 1,350 real photos of the previous page.</li>
+    <li><strong>Statistics.</strong> Spread over 3 LoRA seeds is the sd; zero-shot is one deterministic run, with a bootstrap sd. A difference counts only if it is larger than twice the larger spread.</li>
+  </ul>
+</section>
+
+<section id="main">
+  <div class="kicker">2</div>
+  <h2>Results</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Test</th><th class="n">Zero-shot</th><th class="n">LoRA, sole labels</th><th class="n">LoRA, shuffled</th></tr></thead>
+    <tbody>
+      <tr><td>Held-out textures, macro-F1 (6 classes)</td><td class="n">0.343 ± 0.004</td><td class="n best">0.721 ± 0.040</td><td class="n">0.061</td></tr>
+      <tr><td>Held-out textures, accuracy</td><td class="n">0.416</td><td class="n best">0.726 ± 0.041</td><td class="n">0.224</td></tr>
+      <tr class="sep"><td>Deceptive, accuracy against the real floor</td><td class="n">0.149</td><td class="n">0.124 ± 0.006</td><td class="n">0.167</td></tr>
+      <tr><td>Deceptive, accuracy against the look</td><td class="n">0.347</td><td class="n">0.524 ± 0.041</td><td class="n">0.155</td></tr>
+      <tr class="sep"><td>Real photos, macro-F1 (3 classes)</td><td class="n best">0.679 ± 0.012</td><td class="n">0.375 ± 0.024</td><td class="n">0.167</td></tr>
+      <tr><td>Real photos, accuracy</td><td class="n best">0.626</td><td class="n">0.433 ± 0.017</td><td class="n">0.333</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <figure><img src="media/vlm-lora_fig_stage2.png" alt="Four bar charts comparing the VLM zero-shot, after LoRA on sole labels and after LoRA on shuffled labels: held-out texture macro-F1, deceptive scenes against the physical floor and against the look, and real-photo macro-F1" style="width:100%;border-radius:8px;border:1px solid var(--line);background:#fff"><figcaption>Zero-shot (grey), LoRA on the sole's labels (blue), LoRA on shuffled labels (orange). LoRA: mean ± sd over seeds; zero-shot macro-F1: bootstrap sd.</figcaption></figure>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Tuning on the sole's labels about doubles the score on new textures, a real gain of +0.378. The model answers in valid JSON every time, in every run. The shuffled control answers hard_grip for every crop, so the gain comes from the labels, not from learning the answer format or the crops.</p>
+  </div>
+  <div class="caveat">From the independent re-check. The zero-shot bootstrap sd of 0.004 understates its uncertainty: resampling the 18 test textures gives sd 0.020 for zero-shot and 0.074 for LoRA. The gain survives: +0.378 [0.197, 0.526]. The shuffled control's 0.061 is exactly what a constant hard_grip answer scores, while random guessing at this class mix scores 0.167: it is a collapse floor, not "chance". Zero-shot (0.343) is above a texture-aware null (95th percentile 0.290).</div>
+  <p class="small" style="margin-top:12px">Speeds on a shared H100: training 12.7 crops per second, 34.7 answers per second on simulated crops, 20.2 on real photos; peak memory 23.8 GB. The whole run took 1 h 47 min.</p>
+</section>
+
+<section id="classes">
+  <div class="kicker">3</div>
+  <h2>Per class</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Right on held-out textures</th><th class="n">hard_grip</th><th class="n">hard_slip</th><th class="n">soft</th><th class="n">rough</th><th class="n">slope</th><th class="n">edge</th></tr></thead>
+    <tbody>
+      <tr><td>Zero-shot</td><td class="n">0.179</td><td class="n">0.861</td><td class="n">0.549</td><td class="n">0.812</td><td class="n">0.001</td><td class="n">0.000</td></tr>
+      <tr><td>LoRA, sole labels</td><td class="n best">0.928 ± 0.024</td><td class="n best">0.923 ± 0.010</td><td class="n">0.402 ± 0.011</td><td class="n">0.560 ± 0.185</td><td class="n best">0.592 ± 0.040</td><td class="n best">0.840 ± 0.064</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> Zero-shot almost never answers slope or edge and calls most grippy floors slippery (856 of 1,173 steps): it cannot read slopes or planks from a crop. After tuning, slope and edge are mostly right. Tuning leaves two weak classes: soft (often called grippy or slippery) and rough, the least stable across seeds (often called grippy).</p>
+  </div>
+</section>
+
+<section id="deceptive">
+  <div class="kicker">4</div>
+  <h2>Floors that lie</h2>
+  <p>On a deceptive floor the look belongs to one class and the physics to another. The camera sees only the look.</p>
+  <ul>
+    <li><strong>Against the look:</strong> 0.347 zero-shot, 0.524 ± 0.041 after tuning, a real increase. After tuning the model follows the look even more.</li>
+    <li><strong>Against the real floor:</strong> 0.149 zero-shot, 0.124 ± 0.006 after tuning. Both are below the 1/6 of a uniform guess: neither reads the physics through a false look.</li>
+  </ul>
+  <div class="caveat"><strong>This claim did not hold.</strong> The original report called the drop from 0.149 to 0.124 "real, but small". Its rule used only the LoRA seed sd, and zero-shot had no spread. A bootstrap over the 344 episodes gives −0.025 [−0.062, 0.010]: not a real difference. "Both below 1/6" holds. Also, the look accuracy uses 3,315 rows, not 3,990 as the report says, because hard_mid looks are left out too; the reported numbers match 3,315 rows. Bootstrap for the look increase: +0.176 [0.110, 0.246].</div>
+  <p class="small" style="margin-top:12px">The ViT head does the same on the same 4,000 deceptive rows: 0.127 against the real floor, 0.667 against the look. It follows the look even more than the tuned VLM.</p>
+</section>
+
+<section id="real">
+  <div class="kicker">5</div>
+  <h2>Back on real photos</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Right on real photos</th><th class="n">hard_grip</th><th class="n">rough</th><th class="n">soft</th><th class="n">Macro-F1</th></tr></thead>
+    <tbody>
+      <tr><td>Zero-shot</td><td class="n">0.39</td><td class="n best">0.68</td><td class="n best">0.80</td><td class="n best">0.679 ± 0.012</td></tr>
+      <tr><td>LoRA, sole labels</td><td class="n best">0.94</td><td class="n">0.04</td><td class="n">0.31</td><td class="n">0.375 ± 0.024</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the table.</strong> After tuning on simulated crops the model answers hard_grip to most real photos (1,019-1,053 of 1,350 across seeds), and rough photos become hard_grip in 91-100&nbsp;% of cases. It learned the simulator's textures, not floors. The drop is real, and it is not a shift toward the three classes that have no real photos: those get 8-13&nbsp;% of the tuned model's answers, against 17&nbsp;% zero-shot.</p>
+  </div>
+  <p class="small" style="margin-top:12px">Per-class values and answer counts from the independent re-check. Real photos are GTOS-Mobile (numbers only, not shown).</p>
+</section>
+
+<section id="course">
+  <div class="kicker">6</div>
+  <h2>A six-class course</h2>
+  <p>One run of G113 at 0.35 m/s over a row of seven patches with held-out textures: grippy, slippery, soft, rough, a sloped ridge, then two deceptive patches (looks grippy but is slippery; looks slippery but is soft). Unlike the test set, the crop here is causal: the landing spot is forecast from past footsteps, not taken from the future. Rows: truth, the ViT head (taught by the sole, seed 0), the tuned VLM (seed 0), the sole teacher and the joints and IMU teacher.</p>
+  <figure><video controls preload="metadata" src="media/vlm-lora_course.mp4"></video><figcaption>Booster K1 in MuJoCo, one run with no fall, 0.6× speed. The red box in the torso view is the forecast footprint, not the real one. Green is right, red is wrong; a yellow corner marks a step whose crop came from one of the two weakest fallback rules. 97 s.</figcaption></figure>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Patch (steps)</th><th class="n">ViT head</th><th class="n">VLM (LoRA)</th><th class="n">Sole</th><th class="n">Joints + IMU</th></tr></thead>
+    <tbody>
+      <tr><td>Start (9)</td><td class="n">9</td><td class="n">9</td><td class="n">7</td><td class="n">6</td></tr>
+      <tr><td>Grippy (10)</td><td class="n">10</td><td class="n">10</td><td class="n">10</td><td class="n">10</td></tr>
+      <tr><td>Slippery (12)</td><td class="n">10</td><td class="n">12</td><td class="n">12</td><td class="n">12</td></tr>
+      <tr><td>Soft (11)</td><td class="n">11</td><td class="n">11</td><td class="n">11</td><td class="n">11</td></tr>
+      <tr><td>Rough (11)</td><td class="n">7</td><td class="n">4</td><td class="n">9</td><td class="n">11</td></tr>
+      <tr><td>Slope (13)</td><td class="n">4</td><td class="n">0</td><td class="n">12</td><td class="n">9</td></tr>
+      <tr><td>Deceptive: looks grippy, is slippery (16)</td><td class="n">0</td><td class="n">1</td><td class="n">15</td><td class="n">15</td></tr>
+      <tr><td>Deceptive: looks slippery, is soft (10)</td><td class="n">0</td><td class="n">0</td><td class="n">10</td><td class="n">10</td></tr>
+      <tr><td>End (15)</td><td class="n">14</td><td class="n">14</td><td class="n">15</td><td class="n">14</td></tr>
+      <tr class="sep"><td>All scored steps (107)</td><td class="n">65</td><td class="n">61</td><td class="n best">101</td><td class="n">98</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="take">
+    <p><strong>Reading the clip.</strong> On the five honest patches the ViT head is right on 42 of 57 steps and the VLM on 37. On the two deceptive patches both follow the look: against the look class each is right on 24 of 26 steps, against the real floor 0 and 1. The sole and the joints after the step get 25 of 26 each.</p>
+  </div>
+  <div class="caveat">One run, so the counts illustrate. 22 of the 107 steps had no usable crop under the main rule and use fallback crops; their forecast error is large (median 35.1 cm, against 8.8 cm under the main rule). Vision got 8 of those 22 right, the VLM 10.</div>
+</section>
+
+<section id="check">
+  <div class="kicker">7</div>
+  <h2>Independent re-check</h2>
+  <ul>
+    <li><strong>Every number reproduces to 3 decimals</strong> from the saved predictions, with the re-check's own answer parser.</li>
+    <li><strong>Rows.</strong> The 5,248 rows are the ViT head's test rows that have a best frame; the ViT head's 0.816 also counts 34 frameless steps. The re-check rebuilt 25 random crops: all byte-identical.</li>
+    <li><strong>Labels and leaks.</strong> All training lists are training split, training textures, G113 and G80, with 0 test episodes and 0 test textures. Every label equals the cross-fitted sole teacher's (which agrees with truth on only 0.81 of them). The shuffled list has the same rows and the same label counts.</li>
+    <li><strong>The question wording</strong> is the same in all 15 runs and was last changed before the real-photo test.</li>
+    <li><strong>Nothing was selected on test, with a caveat:</strong> the settings are identical in the pilot and the full run, with no checkpoint choice (one epoch, last weights), but the pilot did score 300 test-split steps before the run sizes were fixed.</li>
+    <li><strong>The ViT head against the VLM,</strong> on the same 5,248 rows: 0.821 ± 0.028 against 0.721 ± 0.040, a texture-bootstrap difference of +0.109 [0.001, 0.240], borderline. Not a fair fight: the VLM trains on 12,000 crops for one epoch with no validation; the ViT head uses 22,421 rows, stops early on validation labels and uses features weighted by the footprint, so it knows where the foot lands. The VLM sees only the crop.</li>
+    <li><strong>Not tested:</strong> the VLM was tuned only on the sole's labels from seen gaits, so there is no VLM comparison of sole against joints and IMU labels. The tuning itself was not re-run.</li>
+  </ul>
+  <p>Full list: <a href="recheck-1.html">independent re-check of experiment 1</a>.</p>
+</section>
+
+<section id="limits">
+  <div class="kicker">8</div>
+  <h2>What it means and limits</h2>
+  <ul>
+    <li><strong>The sole can teach a VLM</strong> in simulation: a large, real gain on new textures, from labels that never saw an image.</li>
+    <li><strong>Vision alone, before the step, cannot replace the sole when appearance lies.</strong> Tuning makes the model follow the look more.</li>
+    <li><strong>A simulation-only LoRA does not transfer to real ground.</strong> It costs most of the zero-shot skill on real photos.</li>
+    <li><strong>For this task the VLM is not worth its size.</strong> A 7B model, it is weaker than a ViT with a small head on the same crops (borderline).</li>
+    <li><strong>Limits:</strong> simulation, three test textures per class, one setting of labels (seen gaits, sole), and real photos for only three of the six classes.</li>
+  </ul>
+  <p class="small" style="margin-top:16px">Scores: macro-F1 per step against simulator truth on held-out textures; deceptive scenes as accuracy; real photos as macro-F1 over three classes. Related: <a href="vlm-real-photos.html">the VLM on real photos</a>, <a href="vision-head.html">the vision head</a>, <a href="teachers.html">the two teachers</a>, <a href="dataset.html">the dataset</a>, <a href="recheck-1.html">independent re-check</a>. Experiment 2, a zero-shot VLM on a fixed patch: <a href="fixed-patch.html">fixed patch</a>. Model: Qwen2.5-VL-7B-Instruct, Apache-2.0. Textures: ambientCG, CC0.</p>
+</section>
+</main>
+</body>
+</html>
