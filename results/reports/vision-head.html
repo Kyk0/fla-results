@@ -95,8 +95,17 @@ td.dim { color: var(--muted); }
 tr.sep td { border-top: 2px solid var(--line); }
 @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
 </style>
+<style id="site-extra">
+.topnav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topnav .in { max-width: 880px; margin: 0 auto; padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; font-size: 14.5px; }
+.topnav a { color: var(--muted); text-decoration: none; }
+.topnav a:hover { color: var(--accent); }
+.topnav a.home { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); margin-right: 6px; }
+.topnav a.here { color: var(--accent); font-weight: 500; }
+</style>
 </head>
 <body>
+<nav class="topnav" aria-label="Site"><div class="in"><a class="home" href="index.html">FLA results</a><a href="../vision_en.html">Vision from Touch</a><a href="../summary_en.html">Terrain from Touch</a><a href="sole-closeup.html">The sole, close up</a><a href="index.html#reports">All reports</a><a href="index.html#words">Words used</a></div></nav>
 <main>
 <header>
   <div class="meta">FLA · Experiment 1 vision head · 16 Nov 2026 · <a href="index.html">all reports</a> · <a href="../vision_en.html">summary</a></div>

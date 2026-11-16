@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FLA: all reports</title>
+<title>FLA results</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
@@ -95,78 +95,118 @@ td.dim { color: var(--muted); }
 tr.sep td { border-top: 2px solid var(--line); }
 @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } nav.toc ol { columns: 1; } }
 </style>
+<style id="site-extra">
+.topnav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.topnav .in { max-width: 880px; margin: 0 auto; padding: 10px 20px; display: flex; flex-wrap: wrap; gap: 4px 18px; align-items: baseline; font-size: 14.5px; }
+.topnav a { color: var(--muted); text-decoration: none; }
+.topnav a:hover { color: var(--accent); }
+.topnav a.home { font-family: var(--font-display); font-weight: 600; font-size: 16px; color: var(--ink); margin-right: 6px; }
+.topnav a.here { color: var(--accent); font-weight: 500; }
+</style>
 <style>
-.hub { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
-.hubcard { display:flex; flex-direction:column; gap:6px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px; text-decoration:none; color:var(--ink); }
-.hubcard:hover { border-color:var(--accent); }
-.hubtitle { font-family:var(--font-display); font-weight:600; font-size:19px; line-height:1.25; color:var(--accent); }
-.hubtext { font-size:14.5px; color:var(--muted); line-height:1.5; }
-@media (max-width:640px) { .hub { grid-template-columns:1fr; } }
+main { max-width: 1040px; }
+.topnav .in { max-width: 1040px; }
+.hero h1 { font-size: 46px; }
+.hero .lede { font-size: 20px; color: var(--ink); max-width: 60ch; }
+.tiles { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.tile .big { font-family: var(--font-mono); font-size: 26px; font-weight: 500; color: var(--accent); line-height: 1.15; }
+.tile .big small { font-size: 14px; color: var(--muted); }
+.tile .what { font-size: 14px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+.start { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+.step { background: var(--accent-soft); border-radius: 12px; padding: 18px; text-decoration: none; color: var(--ink); display: flex; flex-direction: column; gap: 6px; }
+.step b { font-family: var(--font-display); font-size: 19px; }
+.step span { font-size: 14.5px; color: var(--muted); }
+.step i { font-style: normal; font-family: var(--font-mono); font-size: 12.5px; color: var(--accent); }
+.hub { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+.hubcard { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s; }
+.hubcard:hover { border-color: var(--accent); transform: translateY(-2px); }
+.hubcard img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; border-bottom: 1px solid var(--line); background: var(--bg); }
+.hubcard .t { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 7px; }
+.hubtitle { font-family: var(--font-display); font-weight: 600; font-size: 18.5px; line-height: 1.25; }
+.hubtext { font-size: 14.5px; color: var(--muted); line-height: 1.5; }
+.chip { align-self: flex-start; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
+.c-ok { background: var(--accent-soft); color: var(--accent); }
+.c-warn { background: var(--warn-soft); color: var(--warn); }
+.c-bad { background: #f5dddb; color: #9b2c2c; }
+.c-info { background: var(--bg); color: var(--muted); border: 1px solid var(--line); }
+@media (prefers-color-scheme: dark) { .c-bad { background: #3d1f1d; color: #f09a94; } }
+.hub.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+@media (max-width: 560px) { .hub.two { grid-template-columns: 1fr; } }
+.grouphead { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+.grouphead p { color: var(--muted); max-width: 70ch; margin: 0; }
+dl.words { display: grid; grid-template-columns: max-content 1fr; gap: 10px 22px; margin: 0; font-size: 15.5px; }
+dl.words dt { font-weight: 600; }
+dl.words dd { margin: 0; color: var(--muted); }
+@media (max-width: 860px) { .tiles { grid-template-columns: repeat(2, minmax(0,1fr)); } .hub, .start { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 560px) { .hub, .start { grid-template-columns: 1fr; } dl.words { grid-template-columns: 1fr; gap: 2px 0; } dl.words dd { margin-bottom: 10px; } .hero h1 { font-size: 34px; } }
 </style>
 </head>
 <body>
+<nav class="topnav" aria-label="Site"><div class="in"><a class="home" href="index.html">FLA results</a><a href="../vision_en.html">Vision from Touch</a><a href="../summary_en.html">Terrain from Touch</a><a href="sole-closeup.html">The sole, close up</a><a href="index.html#reports">All reports</a><a href="index.html#words">Words used</a></div></nav>
 <main>
 
-<header>
-  <div class="meta">FLA · Booster K1 · all reports</div>
-  <h1>All reports</h1>
-  <p class="lede">Every report of the project as its own page: a sensing sole on a humanoid, what it can tell about the ground, and whether it can teach a camera.</p>
-  <div class="flag">Simulation only, unless a page says otherwise.</div>
+<header class="hero">
+  <div class="meta">FLA · Booster K1 humanoid · simulation · November 2026</div>
+  <h1>A sole that feels the floor, and a camera that learns from it</h1>
+  <p class="lede">A humanoid robot with pressure and shear sensors under its feet can tell what it is standing on, but only after it has stepped. These pages ask whether that sense of touch can teach the robot's camera to recognise the floor before the step.</p>
+  <div class="flag">Everything here is simulation. Nothing has been measured on the real sole yet.</div>
 </header>
-
 <section>
-  <h2>Summaries</h2>
-  <div class="hub">
-    <a class="hubcard" href="../vision_en.html"><span class="hubtitle">Vision from Touch</span><span class="hubtext">Step 1 showed that a sensing sole can tell the K1 what it is standing on, after the step. Here the sole becomes the teacher: the robot looks, steps, and the sole says what the floor was. A vision model learns to predict that…</span></a>
-    <a class="hubcard" href="../summary_en.html"><span class="hubtitle">Terrain from Touch</span><span class="hubtext">Can a sensing sole tell a humanoid what it is standing on? A classifier trained and tested in simulation on the K1, with flat-foot walking and human-like heel-to-toe walking.</span></a>
+  <h2>The answer in four numbers</h2>
+  <div class="tiles">
+    <div class="tile"><div class="big">0.985</div><div class="what">A camera taught only by the sole tells hard floor from soft on textures it never saw. Taught by perfect labels it scores the same.</div></div>
+    <div class="tile"><div class="big">0.03 <small>vs</small> 0.997</div><div class="what">On a floor that looks soft and is hard, the camera before the step against the sole after it.</div></div>
+    <div class="tile"><div class="big">0.49 <small>vs</small> 0.10</div><div class="what">A camera taught by the sole against one taught by joint sensors, when the robot walks in a way the teachers never saw.</div></div>
+    <div class="tile"><div class="big">0.726</div><div class="what">The same camera when a whole kind of material is new to it. New materials are the weak point.</div></div>
+  </div>
+  <p class="small" style="margin-top:12px">Scores run from 0 to 1, where 1 is every step right. With two floor types, guessing gives 0.5.</p>
+</section>
+<section>
+  <h2>Where to start</h2>
+  <div class="start">
+    <a class="step" href="../vision_en.html"><i>5 minutes</i><b>Read the summary</b><span>Vision from Touch: what was done, the results, and the limits, on one page.</span></a>
+    <a class="step" href="sole-closeup.html"><i>2 minutes</i><b>Watch the sole</b><span>A slowed-down clip of the sensing points firing under the feet.</span></a>
+    <a class="step" href="fixed-patch.html"><i>10 minutes</i><b>See the comparisons</b><span>The tables behind the four numbers, with a clip of the robot crossing honest and deceptive floors.</span></a>
   </div>
 </section>
-
-<section>
-  <h2>The sole</h2>
-  <div class="hub">
-    <a class="hubcard" href="sole-closeup.html"><span class="hubtitle">The sole, close up</span><span class="hubtext">What the simulated sole actually reports while the K1 walks: which sensing points fire, what the shear looks like, and where the sole&#x27;s reading departs from the true ground force. Seven short segments from the two experiments.</span></a>
-  </div>
+<section id="reports">
+  <div class="grouphead"><h2>Start with these</h2><p>The two summaries tell the whole story. Everything below is the detail behind them.</p></div>
+  <div class="hub">    <a class="hubcard" href="../vision_en.html"><img src="media/thumb_vision_en.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-info">Summary</span><span class="hubtitle">Vision from Touch</span><span class="hubtext">Step 2. The sole labels the floor after each step, and a camera learns to predict that label before the step. Results for a ViT and a vision-language model.</span></div></a>    <a class="hubcard" href="../summary_en.html"><img src="media/thumb_summary_en.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-info">Summary</span><span class="hubtitle">Terrain from Touch</span><span class="hubtext">Step 1. Can a sensing sole tell a humanoid what it is standing on? Ground type, foot support, shear, and a gait the model never saw.</span></div></a>    <a class="hubcard" href="sole-closeup.html"><img src="media/thumb_sole-closeup.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-info">Clip</span><span class="hubtitle">The sole, close up</span><span class="hubtext">A slowed-down clip of what the sole reports while walking: which points fire, the shear arrows, and where its reading departs from the true force.</span></div></a>  </div>
 </section>
-
 <section>
-  <h2>Fixed patch, hard against soft</h2>
-  <div class="hub">
-    <a class="hubcard" href="fixed-patch.html"><span class="hubtitle">Fixed patch: can the sole teach a camera hard from soft?</span><span class="hubtext">A torso camera on the Booster K1 looks at one fixed patch of floor ahead of the feet on every frame, and a small head names it hard or soft before the step. The sole names the floor after the step. Five comparisons, A to E: who…</span></a>
-    <a class="hubcard" href="dataset-2.html"><span class="hubtitle">A dataset for seeing the floor before the step</span><span class="hubtext">The Booster K1 walks over hard and soft floors in MuJoCo. A torso camera looks steeply down at one fixed patch of floor just ahead of the feet on every frame; the sole and the joints feel the floor after each step. This page…</span></a>
-    <a class="hubcard" href="teachers-2.html"><span class="hubtitle">Teachers for hard against soft floor</span><span class="hubtext">Before a camera can learn from the sole, the sole has to label the steps. Three teachers label every footstep of the Booster K1 as hard or soft floor after the step: one reads only the sole, one only the joints and IMU, one both.…</span></a>
-    <a class="hubcard" href="recheck-2.html"><span class="hubtitle">Re-checking the fixed-patch experiment</span><span class="hubtext">An independent re-check that did none of the work recomputed the numbers of the fixed-patch experiment with its own code, searched for leaks between training and test, ran its own small controls and looked at samples. Every…</span></a>
-  </div>
+  <div class="grouphead"><h2>Experiment 2: one patch of floor, hard or soft</h2><p>The narrow experiment. A camera on the torso looks at one fixed patch of floor ahead of the feet and says hard or soft on every frame.</p></div>
+  <div class="hub two">    <a class="hubcard" href="fixed-patch.html"><img src="media/thumb_fixed-patch.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-warn">Holds, with caveats</span><span class="hubtitle">The five comparisons</span><span class="hubtext">Who teaches vision better, vision alone against vision plus joints, four vision models with their speed, deceptive floors, and what happens when the floor changes.</span></div></a>    <a class="hubcard" href="dataset-2.html"><img src="media/thumb_dataset-2.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-ok">Checked</span><span class="hubtitle">Dataset and camera</span><span class="hubtext">How the camera angle and the patch were chosen, the 72 floor textures, and the 400 episodes behind the numbers.</span></div></a>    <a class="hubcard" href="teachers-2.html"><img src="media/thumb_teachers-2.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-ok">Checked</span><span class="hubtitle">The teachers</span><span class="hubtext">Three classifiers that label each step after it happens: sole only, joints only, and both. All are right about 99 % of the time.</span></div></a>    <a class="hubcard" href="recheck-2.html"><img src="media/thumb_recheck-2.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-ok">20 hold · 17 caveats · 0 fail</span><span class="hubtitle">Independent re-check</span><span class="hubtext">Every number recomputed by someone who did none of the work. 20 claims hold, 17 hold with caveats, none fails.</span></div></a>  </div>
 </section>
-
 <section>
-  <h2>Six classes and three gaits</h2>
-  <div class="hub">
-    <a class="hubcard" href="vision-head.html"><span class="hubtitle">Does the sole teach a camera better?</span><span class="hubtext">A frozen ViT looks at the floor before each step, and a small head on top learns to name the floor class. The head is trained three times, changing only who supplies the labels: the sole teacher, the joints and IMU teacher, or…</span></a>
-    <a class="hubcard" href="teachers.html"><span class="hubtitle">The two teachers</span><span class="hubtext">Before a camera can learn from the sole, the sole&#x27;s labels have to be good. Two step-level classifiers act as teachers: one reads only the sole, one reads only joints and IMU. Here is how well each names the floor, on gaits it…</span></a>
-    <a class="hubcard" href="dataset.html"><span class="hubtitle">A dataset with eyes</span><span class="hubtext">To teach a camera from the sole, every footstep needs two things: what the robot saw before the step and what the sole felt after it. The step-1 walking data had a sole but no camera. I replayed a third of it exactly and rendered…</span></a>
-    <a class="hubcard" href="support-state.html"><span class="hubtitle">Support state from vision: a weak result</span><span class="hubtext">Will the next foot be fully supported, half over a gap, or not in contact at all? A second small head on the same ViT features tries to say so before the step. It barely beats answering the most common state every time.</span></a>
-    <a class="hubcard" href="vlm-real-photos.html"><span class="hubtitle">Can an open VLM name the floor from a real photo?</span><span class="hubtext">First a check on real ground: given one real photo of the ground and the project&#x27;s six floor classes, does Qwen2.5-VL-7B pick the right class with no training at all?</span></a>
-    <a class="hubcard" href="vlm-lora.html"><span class="hubtitle">A VLM taught by the sole</span><span class="hubtext">Qwen2.5-VL-7B looks at the torso-camera image of the floor just before a step and names one of six floor classes. Tested as it comes, and after a LoRA fine-tune on labels from the sole teacher, which only feels the step and never…</span></a>
-    <a class="hubcard" href="recheck-1.html"><span class="hubtitle">Independent re-check of experiment 1</span><span class="hubtext">After experiment 1 (six floor classes, three gaits, an image crop around the landing footprint), an independent re-check that did none of the work recomputed the reported numbers with its own code, searched for leaks between…</span></a>
-  </div>
+  <div class="grouphead"><h2>Experiment 1: six floor types, three gaits</h2><p>The broad experiment. Six kinds of floor, three ways of walking, and an image crop around the spot where the foot will land.</p></div>
+  <div class="hub">    <a class="hubcard" href="vision-head.html"><img src="media/thumb_vision-head.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-warn">Holds, with caveats</span><span class="hubtitle">Sole or joints as the teacher</span><span class="hubtext">On a gait the teachers never saw, vision taught by the sole reaches 0.49 and vision taught by joints 0.10. On known gaits they tie.</span></div></a>    <a class="hubcard" href="teachers.html"><img src="media/thumb_teachers.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-ok">Checked</span><span class="hubtitle">The teachers</span><span class="hubtext">How well the sole classifier and the joints classifier label steps, on known gaits, on a new gait, and with a different sensor model.</span></div></a>    <a class="hubcard" href="dataset.html"><img src="media/thumb_dataset.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-ok">Checked</span><span class="hubtitle">Dataset</span><span class="hubtext">54,010 footsteps with what the robot saw before the step and what the sole felt after, including floors made to deceive.</span></div></a>    <a class="hubcard" href="support-state.html"><img src="media/thumb_support-state.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-bad">Weak result</span><span class="hubtitle">Is the foot fully supported?</span><span class="hubtext">Teaching vision to predict full, partial or no support. The result is weak: it does no better than always answering &#x27;full&#x27;.</span></div></a>    <a class="hubcard" href="vlm-real-photos.html"><img src="media/thumb_vlm-real-photos.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-warn">Holds, with caveats</span><span class="hubtitle">A VLM on real floor photos</span><span class="hubtext">A 7B vision-language model names the floor in real photos with no training. It works above chance and calls dry concrete slippery.</span></div></a>    <a class="hubcard" href="vlm-lora.html"><img src="media/thumb_vlm-lora.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-warn">One claim fails</span><span class="hubtitle">Tuning the VLM on the sole&#x27;s labels</span><span class="hubtext">Fine-tuning doubles its score in simulation and halves it on real photos.</span></div></a>    <a class="hubcard" href="recheck-1.html"><img src="media/thumb_recheck-1.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-ok">33 hold · 22 caveats · 1 fails</span><span class="hubtitle">Independent re-check</span><span class="hubtext">Every headline number recomputed, a search for leaks, and twenty samples looked at. 33 claims hold, 22 with caveats, 1 fails.</span></div></a>  </div>
 </section>
-
 <section>
-  <h2>Walking</h2>
-  <div class="hub">
-    <a class="hubcard" href="walking-g1.html"><span class="hubtitle">Walking with a sensing sole: TactileStep on the Unitree G1</span><span class="hubtext">The other pages use the sole to read the floor. This one asks whether it can change the walk. TactileStep trains a humanoid walking policy that feels its soles and is rewarded for landing softly and using more of the sole. I…</span></a>
-    <a class="hubcard" href="walking-k1.html"><span class="hubtitle">Porting a G1 walking recipe to the Booster K1</span><span class="hubtext">The TactileStep rebuild ran on the Unitree G1. The sensing-sole work runs on the smaller Booster K1. The first step toward tactile walking on the K1 was to train an ordinary walking policy there with the Hiking in the Wild…</span></a>
-  </div>
+  <div class="grouphead"><h2>Walking</h2><p>Two attempts to change how the robot walks. Neither reached its goal.</p></div>
+  <div class="hub two">    <a class="hubcard" href="walking-g1.html"><img src="media/thumb_walking-g1.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-bad">Did not work</span><span class="hubtitle">Softer landings on the G1</span><span class="hubtext">Rebuilding a touch-aware walking method on a Unitree G1. At equal speed it lands harder than the policy it started from.</span></div></a>    <a class="hubcard" href="walking-k1.html"><img src="media/thumb_walking-k1.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-bad">Did not work</span><span class="hubtitle">A hiking recipe on the K1</span><span class="hubtext">Porting a walking recipe to the Booster K1. Three attempts; the best walks in one simulator and falls in another.</span></div></a>  </div>
 </section>
-
 <section>
-  <h2>Step 1: terrain from touch</h2>
-  <div class="hub">
-    <a class="hubcard" href="step1-run2.html"><span class="hubtitle">Terrain from Touch: the second simulation run</span><span class="hubtext">The Booster K1 in MuJoCo with a pressure-map sole: 19 × 8 points per foot, read on top of rigid contact. Seven questions, fixed in advance with one rule for what counts as a real difference: map against four pressure blocks, the…</span></a>
-    <a class="hubcard" href="step1-run1.html"><span class="hubtitle">Terrain from Touch: the first simulation run</span><span class="hubtext">Does shear sensing in a humanoid&#x27;s sole add anything to joints, IMU and normal pressure? A virtual sole with eight zones per foot on the Booster K1 in MuJoCo, three gaits, six terrains, and a pass/fail gate fixed before the data…</span></a>
-    <a class="hubcard" href="step1-run3.html"><span class="hubtitle">How many pressure points, and is shear worth it?</span><span class="hubtext">A quick check after the second simulation run of step 1. The simulated pressure map of the Booster K1&#x27;s sole was pooled into 4, 8 or 18 pads per foot or kept at full resolution (152 points), each with and without four shear…</span></a>
-  </div>
+  <div class="grouphead"><h2>Step 1 in full</h2><p>The complete reports behind the first summary.</p></div>
+  <div class="hub">    <a class="hubcard" href="step1-run2.html"><img src="media/thumb_step1-run2.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-info">Report</span><span class="hubtitle">Second run: pressure map and shear</span><span class="hubtext">The main step-1 results: a 19 by 8 pressure map and four shear vectors per foot.</span></div></a>    <a class="hubcard" href="step1-run1.html"><img src="media/thumb_step1-run1.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-info">Report</span><span class="hubtitle">First run: eight zones</span><span class="hubtext">The first version of the sole, with eight pressure zones per foot.</span></div></a>    <a class="hubcard" href="step1-run3.html"><img src="media/thumb_step1-run3.jpg" alt="" loading="lazy"><div class="t"><span class="chip c-info">Report</span><span class="hubtitle">How many sensing points?</span><span class="hubtext">Denser soles score higher on familiar data and break when the sensor model changes. Four pressure blocks with shear hold up best.</span></div></a>  </div>
+</section>
+<section id="words">
+  <h2>Words used on these pages</h2>
+  <dl class="words">
+    <dt>The sole</dt><dd>A sensor under each foot. In simulation it reads pressure at 19 by 8 points and shear, the sideways force, as four arrows per foot.</dd>
+    <dt>Coarse features</dt><dd>A small summary of the sole: four pressure blocks, four shear arrows, where the centre of pressure is, the total force and how much of the sole touches.</dd>
+    <dt>Teacher</dt><dd>A classifier that labels each step after it happened, from the sole or from the joints. Its labels are then used to train the camera model.</dd>
+    <dt>Joints + IMU</dt><dd>What every robot already has: joint angles and speeds, and the body's tilt and acceleration.</dd>
+    <dt>ViT</dt><dd>A vision transformer, here DINOv3. It turns an image patch into numbers; a small trained "head" turns those into hard or soft.</dd>
+    <dt>VLM</dt><dd>A vision-language model, here Qwen2.5-VL with 7 billion parameters. It is shown the image and asked for the floor type in words.</dd>
+    <dt>Zero-shot</dt><dd>Using a model as it comes, with no training on this data.</dd>
+    <dt>LoRA</dt><dd>A cheap way to fine-tune a large model by training a small add-on.</dd>
+    <dt>Deceptive floor</dt><dd>A floor that looks like one type and behaves like another, such as a hard floor with a carpet texture.</dd>
+    <dt>Held-out textures</dt><dd>Floor pictures never used in training. All scores are on these.</dd>
+    <dt>Gait</dt><dd>A way of walking. G113 and G80 step with a flat foot; SONIC walks heel to toe, like a person.</dd>
+    <dt>Macro-F1</dt><dd>The score used throughout. It averages over the floor types so that a common type cannot hide a missed rare one.</dd>
+    <dt>Holds / holds with caveats</dt><dd>The verdict of an independent re-check that recomputed each claim from the saved predictions.</dd>
+  </dl>
 </section>
 
 </main>
